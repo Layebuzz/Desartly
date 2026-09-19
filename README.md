@@ -94,3 +94,11 @@ Browser verification covered square homepage/project heroes at 1440, 768 and 390
 The footer supports inline text, links, addition, removal and ordering. Client logos support sanitized vector SVG uploads, square grayscale tiles and viewport-triggered row reveals. Empty client slots are only shown in the owner editor.
 
 Important: editor content currently persists in browser localStorage. Publishing a preview does not synchronize content between devices or update the deployed site for other visitors. The server content API requires database/storage configuration and frontend integration before cloud CMS publishing is available.
+
+## Hosting
+
+- Production: https://desartly.layebuzz.workers.dev
+- Private repository: https://github.com/Layebuzz/Desartly (main)
+- Deploy: `npm run build && npx wrangler deploy`
+- Owner secrets are stored as Cloudflare Worker secrets; they are never committed.
+- Deployment is currently manual; pushing main does not yet trigger a Cloudflare build.
