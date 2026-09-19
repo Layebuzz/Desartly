@@ -102,3 +102,11 @@ Important: editor content currently persists in browser localStorage. Publishing
 - Deploy: `npm run build && npx wrangler deploy`
 - Owner secrets are stored as Cloudflare Worker secrets; they are never committed.
 - Deployment is currently manual; pushing main does not yet trigger a Cloudflare build.
+
+## Studio navigation and writing
+
+Open Editor map for Pages, Collections, Home sections and Site controls. The fixed **Save changes** button (Cmd/Ctrl+S) stores edits on this device; **Update preview** applies content to its local preview. A dirty indicator and unload warning identify unsaved edits.
+
+Journal supports Markdown blocks, .md imports and three starter templates with split writing/preview. Raw HTML is not executed by the Markdown renderer. The separate sandboxed HTML prototype module remains available.
+
+Settings contains browser title, description and favicon (currently local-browser settings). Owner password changes are server-side: current password and an authenticated session are required; a salted PBKDF2 hash is kept in the DESARTLY_AUTH KV namespace. Existing sessions are revoked when the updated credential version propagates through KV. KV replication can delay this across locations. Local development uses an ignored owner-only file in .pol-data. The original OWNER_PASSWORD secret is only the bootstrap credential once a stored password exists. Password recovery requires resetting the stored record through an authenticated administrator tool.

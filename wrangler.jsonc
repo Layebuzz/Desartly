@@ -23,5 +23,11 @@
         "period": 60
       }
     }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "DESARTLY_AUTH",
+      "id": "dafc5eabe17841f184d67c9f7e6061d7"
+    }
   ]
 }
