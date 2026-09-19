@@ -1,0 +1,27 @@
+{
+  "name": "desartly",
+  "compatibility_date": "2026-09-14",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "main": "./server/worker.js",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "ratelimits": [
+    {
+      "name": "OWNER_RATE_LIMITER",
+      "namespace_id": "9161401",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
+    }
+  ]
+}

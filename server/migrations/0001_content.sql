@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS portfolio_state (
+ id INTEGER PRIMARY KEY CHECK(id = 1),
+ revision INTEGER NOT NULL DEFAULT 0,
+ value TEXT NOT NULL
+);

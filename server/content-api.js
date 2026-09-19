@@ -1,0 +1,67 @@
+import {isOwner} from './owner-auth.js';
+import {validateSite,publicSite,references} from '../src/cms/schema.js';
+const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+export async function bounded(request,limit){const reader=request.body?.getReader();if(!reader)return new Uint8Array();let size=0,parts=[];for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit){await reader.cancel();throw Object.assign(Error('Upload exceeds the size limit.'),{status:413});}parts.push(value);}const bytes=new Uint8Array(size);let n=0;for(const part of parts){bytes.set(part,n);n+=part.length;}return bytes;}
+export async function contentResponse(request,env,store,media,transform){
+ const url=new URL(request.url),path=url.pathname;if(!path.startsWith('/api/'))return null;if(path.startsWith('/api/owner/'))return null;
+ try{
+ if(!store)throw Object.assign(Error('Content database is not connected.'),{status:503});
+ const owner=await isOwner(request,env);const privatePath=path.startsWith('/api/studio');
+ if(privatePath&&!owner)return json({error:'Owner sign-in required.'},401);
+ if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
+ let state=await store.read();
+ const save=async next=>{state=await store.write(next,state.revision);return state;};
+ if(path==='/api/site'&&request.method==='GET')return json({site:publicSite(state.published),revision:state.revision});
+ if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!env.B2_BUCKET_ID,images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
+ if(path==='/api/studio/upload'&&request.method==='POST'){
+  const bytes=await bounded(request,12*1024*1024);const type=request.headers.get('Content-Type')||'';const id=crypto.randomUUID();const name=decodeURIComponent(request.headers.get('X-File-Name')||'Upload').slice(0,180);let variants=[];
+  if(['image/png','image/jpeg','image/webp','image/gif','image/avif'].includes(type)){
+   if(!transform)throw Object.assign(Error('Image processing is not connected.'),{status:503});
+   variants=await transform(bytes);for(const v of variants){v.asset=await media.put(id+'-'+v.width+'.webp',v.bytes,'image/webp');v.size=v.bytes.byteLength;delete v.bytes;}
+  }else if(type==='application/pdf'&&new TextDecoder().decode(bytes.slice(0,5))==='%PDF-')variants=[{width:0,size:bytes.length,asset:await media.put(id+'.pdf',bytes,type)}];
+  else if((type==='video/mp4'&&new TextDecoder().decode(bytes.slice(4,8))==='ftyp')||(type==='video/webm'&&bytes[0]===0x1a&&bytes[1]===0x45&&bytes[2]===0xdf&&bytes[3]===0xa3))variants=[{width:0,size:bytes.length,asset:await media.put(id,bytes,type)}];
+  else return json({error:'Choose a supported image, PDF, MP4 or WebM file.'},415);
+  const item={id,name,type:variants[0].width?'image/webp':type,url:'/api/media/'+id,variants,alt:'',folder:'Uploads',createdAt:new Date().toISOString()};await save({...state,media:[...state.media,item]});return json({item,revision:state.revision});
+ }
+ if(path.startsWith('/api/media/')&&request.method==='GET'){
+  const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&!references(state.published,id)))return json({error:'Media not found.'},404);
+  const width=Number(url.searchParams.get('w'))||1920;const variant=item.variants.find(v=>v.width>=width)||item.variants.at(-1);const response=await media.get(variant.asset);return new Response(response.body,{headers:{'Content-Type':item.type,'X-Content-Type-Options':'nosniff','Cache-Control':owner?'private, no-store':'public, max-age=3600',...(item.type==='application/pdf'?{'Content-Disposition':'attachment; filename="resume.pdf"'}:{})}});
+ }
+ if(path==='/api/config'&&request.method==='GET')return json({turnstileSiteKey:env.TURNSTILE_SITE_KEY||'',local:!!env.LOCAL});
+ if(path==='/api/inquiry'&&request.method==='POST'){
+  if(!env.PUBLIC_RATE_LIMITER||!(await env.PUBLIC_RATE_LIMITER.limit({key:'inquiry:'+ (request.headers.get('CF-Connecting-IP')||'local')})).success)return json({error:'Please try again in a minute.'},429);
+  const body=JSON.parse(new TextDecoder().decode(await bounded(request,16000)));
+  if(body.website_trap)return json({ok:true});
+  if(!env.LOCAL){if(!env.TURNSTILE_SECRET_KEY)return json({error:'Contact delivery is being configured. Please try again later.'},503);const result=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:env.TURNSTILE_SECRET_KEY,response:body.token||''})}).then(r=>r.json());if(!result.success||result.hostname!==url.hostname)return json({error:'Please complete the verification.'},400);}
+  const fields=body.fields||{};if(!String(fields.name||'').trim()||!/^\S+@\S+\.\S+$/.test(fields.email||''))return json({error:'Please provide your name and a valid email.'},400);
+  const item={id:crypto.randomUUID(),reason:body.reason==='hr'?'hr':'client',fields:Object.fromEntries(Object.entries(fields).slice(0,20).filter(([k])=>/^[\w-]{1,50}$/.test(k)).map(([k,v])=>[k,String(v).slice(0,4000)])),createdAt:new Date().toISOString(),status:'new'};await save({...state,inbox:[item,...state.inbox].slice(0,1000)});return json({ok:true});
+ }
+ if(path==='/api/event'&&request.method==='POST'){
+  if(!state.published.settings.analytics)return json({ok:true});
+  if(!env.PUBLIC_RATE_LIMITER||!(await env.PUBLIC_RATE_LIMITER.limit({key:'event:'+(request.headers.get('CF-Connecting-IP')||'local')})).success)return json({ok:true});
+  const body=JSON.parse(new TextDecoder().decode(await bounded(request,1000)));if(!['page','resume','contact-start','contact-submit'].includes(body.event)||typeof body.path!=='string'||!/^\/[a-zA-Z0-9/_-]*$/.test(body.path)||body.path.length>150)return json({error:'Invalid event'},400);
+  const key=new Date().toISOString().slice(0,10)+'|'+body.event+'|'+body.path;const events={...state.events};if(!events[key]&&Object.keys(events).length>=5000)return json({ok:true});events[key]=(events[key]||0)+1;await save({...state,events});return json({ok:true});
+ }
+ if(privatePath&&request.method==='POST'){
+  const body=JSON.parse(new TextDecoder().decode(await bounded(request,8*1024*1024)));
+  // Draft writes use a draft-specific revision so inbox/events cannot invalidate edits.
+  if(['save','publish','restore','import'].includes(path.split('/').at(-1))&&body.draftVersion!==(state.draftVersion||0))return json({error:'A newer draft exists. Reload before saving.'},409);
+  if(path==='/api/studio/save'||path==='/api/studio/import'){
+   const draft=validateSite(body.site);await save({...state,draft,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
+  }
+  if(path==='/api/studio/publish'){
+   const draft=validateSite(body.site);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,20);await save({...state,draft,published:structuredClone(draft),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
+  }
+  if(path==='/api/studio/restore'){
+   const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
+  }
+  if(path==='/api/studio/media'){
+   const item=state.media.find(m=>m.id===body.id);if(!item)return json({error:'Media not found'},404);item.alt=String(body.alt||'').slice(0,300);item.folder=String(body.folder||'Uploads').slice(0,80);item.name=String(body.name||item.name).slice(0,180);await save(state);return json({ok:true});
+  }
+  if(path==='/api/studio/inquiry'){
+   await save({...state,inbox:body.remove?state.inbox.filter(i=>i.id!==body.id):state.inbox.map(i=>i.id===body.id?{...i,status:body.status==='done'?'done':'new'}:i)});return json({ok:true});
+  }
+ }
+ return json({error:'Not found'},404);
+ }catch(error){return json({error:error.status?error.message:'The operation could not be completed. Please retry.'},error.status||500);}
+}
