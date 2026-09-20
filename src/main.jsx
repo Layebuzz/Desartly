@@ -548,7 +548,7 @@ function Project({ projects }) {
         </div>
         <div>
           <small>STATUS</small>
-          <p>{p.sample === false ? "Independent project" : "Concept study"}</p>
+          <p>{p.sample === false ? "Real project" : "Concept study"}</p>
         </div>
         <div>
           <small>FORMAT</small>
@@ -561,6 +561,8 @@ function Project({ projects }) {
             <h2>{b.title}</h2>
             <p>{b.text}</p>
           </section>
+        ) : b.type === "image" ? (
+          <figure className="case-single-image" key={b.id}><img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/>{b.caption&&<figcaption>{b.caption}</figcaption>}</figure>
         ) : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (
@@ -1522,7 +1524,7 @@ function Editor({
           ) : mode === "certificates" ? (
             <div className="credential-editor">
               <span className="eyebrow">CREDENTIALS / EDIT MODE</span>
-              <h1>Certificates</h1>
+              <h1>Certificates</h1><button data-editor-ui className="button" onClick={()=>setCertificateDraft([...certificateDraft,{id:crypto.randomUUID(),title:"New certificate",issuer:"",date:"",url:""}])}>Add certificate</button>
               {certificateDraft.length === 0 && (
                 <p>Add a certificate to begin.</p>
               )}
@@ -1609,6 +1611,7 @@ function Editor({
                 </h1>
                 <p contentEditable suppressContentEditableWarning onBlur={e=>patch({summary:e.currentTarget.textContent})}>{p.summary}</p>
               </div>
+              <section className="project-upload-guide" data-editor-ui><div><span>01 / PROJECT COVER</span><h2>Choose the image that introduces your project.</h2><p>This square image appears on project cards, the homepage feature and at the top of this case study. Upload it once here.</p></div><label className="upload-cover-button">{p.coverImage ? 'Replace project cover' : 'Upload project cover'}<input aria-label="Upload project cover" type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><small>PNG, JPG or WebP · automatically optimized to WebP · displayed as a square</small></section>
               <div className="project-hero">
                 {p.coverImage ? (
                   <img src={p.coverImage} alt="Project cover" />
@@ -1616,7 +1619,7 @@ function Editor({
                   <Art index={p.cover} />
                 )}
               </div>
-              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><label>Square cover<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
+              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>02 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover.</p></div><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
               <SortableGroup
                 as="div"
                 axis="y"
@@ -1716,6 +1719,8 @@ function Editor({
                               {b.text}
                             </p>
                           </section>
+                        ) : b.type === "image" ? (
+                          <figure className="case-single-image"><div data-editor-ui><label>Upload case-study image<input type="file" accept="image/*" onChange={e=>upload(e,image=>blockPatch(b.id,{image}))}/></label><label>Image description<input value={b.alt||""} onChange={e=>blockPatch(b.id,{alt:e.target.value})}/></label><label>Caption<input value={b.caption||""} onChange={e=>blockPatch(b.id,{caption:e.target.value})}/></label></div>{b.image&&<img src={b.image} alt={b.alt||"Project detail"}/>}</figure>
                         ) : b.type === "html" ? (
                           <HtmlPreview block={b} editable onChange={html=>blockPatch(b.id,{html})} onTitleChange={title=>blockPatch(b.id,{title})} />
                         ) : (
