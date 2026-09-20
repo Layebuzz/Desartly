@@ -6,7 +6,7 @@ export function VisualCopy({children, copy = {}, onChange, editable = false, sco
   React.useLayoutEffect(() => {
     const counts = new Map();
     root.current?.querySelectorAll('h1,h2,h3,h4,p,span,small,label,a,button,li,dt,dd,strong,blockquote,figcaption').forEach(el => {
-      if (el.closest('[data-editor-ui],.art,[contenteditable=true]:not([data-copy-key]),iframe,select') || el.children.length || !el.textContent.trim()) return;
+      if ((!editable && el.closest(".editor")) || el.closest('[data-editor-ui],.art,[contenteditable=true]:not([data-copy-key]),iframe,select') || el.children.length || !el.textContent.trim()) return;
       const original = el.dataset.copyOriginal || el.textContent;
       el.dataset.copyOriginal = original;
       const occurrence = counts.get(original) || 0;
