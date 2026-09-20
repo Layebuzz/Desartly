@@ -37,7 +37,7 @@ The editor includes inline copy, navigation and footer controls, section orderin
 - Deploy: `npm run build` then `npx wrangler deploy`
 - Deployment is manual; a push to main does not currently trigger a build.
 
-Bindings are declared in `wrangler.jsonc`. Required secrets: `OWNER_PASSWORD`, `OWNER_SESSION_SECRET`, `B2_KEY_ID`, `B2_APP_KEY`. The bucket ID is nonsecret configuration. B2 credentials are pending owner confirmation; media upload is not operational until those secrets are installed.
+Bindings are declared in `wrangler.jsonc`. Required secrets: `OWNER_PASSWORD`, `OWNER_SESSION_SECRET`, `B2_KEY_ID`, `B2_APP_KEY`. The bucket ID is nonsecret configuration. B2 secrets are installed in the production Worker. A live test verified WebP upload, byte-exact retrieval for the owner and denied guest access to unpublished media. Credentials are restricted to the `desartly/` prefix; no secret values are stored in this repository.
 
 Contact delivery still requires its production rate-limit/Turnstile configuration and frontend integration. Do not present a local form preview as delivered mail. Starter projects are concepts; real client logos, verified outcomes and experience totals must be supplied by the owner.
 
