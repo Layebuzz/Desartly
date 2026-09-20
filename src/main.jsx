@@ -42,6 +42,8 @@ import "./style.css";
 import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
+import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
+import {CaseFields, CaseBrief} from "./PortfolioTools";
 import { MarkdownContent, MarkdownEditor, articleTemplates, SettingsPanel, SiteMetadata } from "./StudioTools";
 import { OwnerGate, Login } from "./OwnerAccess";
 import { composition } from "./layouts";
@@ -95,7 +97,7 @@ function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const items = Array.isArray(navItems) ? navItems : defaultNav;
   return <header className="editor-page-header">
     <span className="logo">Desartly<span>®</span></span>
-    <span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span>
+    <span className="header-name">DESARTLY<br/>DESIGN PORTFOLIO</span>
     <nav>{items.map((item, i) => <div className="inline-nav-item" key={item.id || i}>
       <button data-editor-ui className="nav-grip" draggable onDragStart={()=>{dragIndex.current=i;}} onDragEnd={()=>{dragIndex.current=null;}} aria-label={`Reorder ${item.label}`}><GripVertical size={13}/></button>
       <span className="editor-nav-item" onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex.current!==null){const next=[...items];next.splice(i,0,next.splice(dragIndex.current,1)[0]);onReorder?.(next);dragIndex.current=null;}}} contentEditable suppressContentEditableWarning onBlur={e=>onNavChange?.(i,{label:e.currentTarget.textContent})}>{item.label}</span>
@@ -107,8 +109,8 @@ function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
 function EditablePagePreview({ contextPath, pages, onPagePatch, navItems, onNavChange }) {
   const copy = pages[contextPath] || {};
   const defaults = {
-    "/about": { eyebrow: "THE PERSON BEHIND POL", title: "Curiosity connects everything I do.", intro: "My practice brings together product design, AI agents, branding and advertising." },
-    "/resume": { eyebrow: "RÉSUMÉ / ALI KOMEILI", title: "Design across disciplines.", intro: "Product & AI · Branding · Advertising" },
+    "/about": { eyebrow: "THE PRACTICE / DESARTLY", title: "Curiosity connects everything I do.", intro: "My practice brings together product design, AI agents, branding and advertising." },
+    "/resume": { eyebrow: "RÉSUMÉ / DESARTLY", title: "Design across disciplines.", intro: "Product & AI · Branding · Advertising" },
     "/services": { eyebrow: "WAYS TO WORK TOGETHER", title: "From a first thought to a considered result.", intro: "Choose a starting point and shape the scope together." },
     "/contact": { eyebrow: "THE NEXT CONNECTION", title: "Your next idea. Let’s make it real.", intro: "Tell me what you are building, who it is for and where you need a design partner." },
     "/privacy": { eyebrow: "POL / PRIVACY", title: "Privacy, simply.", intro: "A clear note about how this portfolio handles information." },
@@ -208,9 +210,9 @@ function Card({ p, editable = false, onTitleChange }) {
         <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)onTitleChange?.(p.id,e.currentTarget.textContent)}}>{p.title}</h3>
         <ArrowUpRight className="card-title-arrow" size={17} strokeWidth={1.4} aria-hidden="true" />
       </div>
-      <div className="card-sub">
+      <p className="project-card-summary">{p.summary}</p><div className="card-sub">
         <span>{p.category}</span>
-        <span>{p.sample === false ? "Case study" : "Sample project"}</span>
+        <span>{p.sample === false ? "Case study" : "Concept"}</span>
       </div>
     </Link>
   );
@@ -260,11 +262,13 @@ function AnimatedNumber({ value, editable = false, onBlur }) {
 }
 
 function StatsBand({ stats, editable = false, onChange }) {
+  const shown=editable?stats:stats.filter(stat=>Number.parseFloat(stat.value)>0&&!/replace|add the year/i.test(stat.detail||''));
+  if(!shown.length)return null;
   return (
     <section className="stats-band" aria-label="Selected practice statistics">
       <div className="folio-section-label"><span>03 / A FEW NUMBERS</span><span>Updated as the practice grows</span></div>
       <div className="stats-grid">
-        {stats.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.textContent})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.textContent})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.textContent})}>{stat.detail}</p></div></article>)}
+        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.textContent})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.textContent})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.textContent})}>{stat.detail}</p></div></article>)}
       </div>
     </section>
   );
@@ -279,7 +283,9 @@ async function clientLogo(file) {
   doc.querySelectorAll("*").forEach(node=>Array.from(node.attributes).forEach(attr=>{
     if (/^on/i.test(attr.name) || /href$/i.test(attr.name) && !attr.value.startsWith("#") || /url\(/i.test(attr.value) && !/url\(#[^)]+\)/.test(attr.value)) node.removeAttribute(attr.name);
   }));
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(doc));
+  const svg=new XMLSerializer().serializeToString(doc);
+  if(cloud.ready)return uploadMedia(new Blob([svg],{type:"image/svg+xml"}),file.name);
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
 function ClientsStrip({ clients, editable = false, onChange, onCollectionChange }) {
   const ref = React.useRef(null);
@@ -347,7 +353,7 @@ function HtmlPreview({ block, editable = false, onChange, onTitleChange }) {
 function Footer() {
   const {pages,setPages}=React.useContext(PageContent);
   const editable=React.useContext(EditingPath)!==null;
-  const defaults={description:"Ali Komeili · A practice across disciplines.",copyright:`© ${new Date().getFullYear()} Desartly`,items:[{id:"services",label:"Services",url:"/services"},{id:"journal",label:"Journal",url:"/journal"},{id:"privacy",label:"Privacy",url:"/privacy"}]};
+  const defaults={description:"Desartly · A practice across disciplines.",copyright:`© ${new Date().getFullYear()} Desartly`,items:[{id:"services",label:"Services",url:"/services"},{id:"journal",label:"Journal",url:"/journal"},{id:"privacy",label:"Privacy",url:"/privacy"}]};
   const footer={...defaults,...pages["/site"]?.footer};
   const patch=values=>setPages(current=>({...current,"/site":{...current["/site"],footer:{...footer,...values}}}));
   const patchItem=(id,values)=>patch({items:footer.items.map(item=>item.id===id?{...item,...values}:item)});
@@ -390,16 +396,16 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   const moveSlide = delta => setSlideIndex(current => (current + delta + selected.length) % Math.max(1, selected.length));
   const sectionMap = {
     intro: <section className="folio-intro">
-      <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Portfolio · 2026</span></div>
+      <div className="folio-kicker"><span className="eyebrow">DESARTLY / INDEPENDENT DESIGNER</span><span>Portfolio · 2026</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><h1><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({title:e.currentTarget.textContent})}>{page.title || "Product thinking."}</span><br/><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({subtitle:e.currentTarget.textContent})}>{page.subtitle || "Visual character."}</span></h1><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.textContent})}>{page.intro || "I'm Ali, an independent designer connecting digital experiences, visual identities and ideas that move people."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet the designer</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><span>Independent mind.<br/>Connected practice.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
+        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><h1><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({title:e.currentTarget.textContent})}>{page.title || "Useful products."}</span><br/><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({subtitle:e.currentTarget.textContent})}>{page.subtitle || "Distinct identities."}</span></h1><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.textContent})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet the designer</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><span>Independent mind.<br/>Connected practice.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
         {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{activeProject.category}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
         <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{project.category}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${activeProject.category}` : ""}</span></div>
       </div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
       <div className="folio-section-label"><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
-      <div className="portfolio-section-heading"><h2>A few things<br/><em>I’ve put into the world.</em></h2><p>Products, identities and campaigns.<br/>Different formats. One considered approach.</p></div>
+      <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Advertising</p></div>
       {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p} editable onTitleChange={onProjectTitleChange}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
     </section>,
     practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><h2><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({practiceTitle:e.currentTarget.textContent})}>{page.practiceTitle || "Clarity in thinking."}</span><br/><span contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({practiceSubtitle:e.currentTarget.textContent})}>{page.practiceSubtitle || "Character in the details."}</span></h2><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)setCategories(categories.map((v,j)=>j===i?e.currentTarget.textContent:v))}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.textContent})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","An idea expressed clearly, across campaigns and touchpoints."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
@@ -501,7 +507,7 @@ function Work({ projects }) {
             <Card key={p.id} p={p} />
           ))}
       </div>
-      <p className="sample-note">
+      <div className="collection-share"><button onClick={async e=>{const button=e.currentTarget;try{await navigator.clipboard.writeText(window.location.href);button.textContent='Link copied';}catch{button.textContent='Copy this page URL from your browser';}}}>Copy collection link</button><span>Share a focused selection of work.</span></div><p className="sample-note">
         Concept studies across product, identity and communication.
       </p>
     </main>
@@ -518,12 +524,12 @@ function Project({ projects }) {
       </Link>
       <div className="project-heading">
         <span className="eyebrow">
-          {p.category} / {p.sample === false ? "CASE STUDY" : "SAMPLE PROJECT"}
+          {p.category} / {p.sample === false ? "CASE STUDY" : "CONCEPT STUDY"}
         </span>
         <h1>{p.title}</h1>
         <p>{p.summary}</p>
       </div>
-      <div className="project-hero">
+      <CaseBrief project={p}/><div className="project-hero">
         {p.coverImage ? (
           <img src={p.coverImage} alt={p.title} loading="lazy" decoding="async" />
         ) : (
@@ -544,7 +550,7 @@ function Project({ projects }) {
           <p>Case study</p>
         </div>
       </div>
-      {p.blocks.map((b) =>
+      {p.blocks.filter(b=>b.type!=='text'||(b.text?.trim()&&!/Use this space|Describe your role|Write here\./.test(b.text))).map((b) =>
         b.type === "text" ? (
           <section className="text-block" key={b.id}>
             <h2>{b.title}</h2>
@@ -558,17 +564,17 @@ function Project({ projects }) {
           </section>
         ),
       )}
-      <div className="next-project">
+      {p.relatedNote&&<Link className="related-note" to={"/journal/"+p.relatedNote}>Read the thinking behind this work <Arrow/></Link>}<div className="next-project">
         <small>KEEP EXPLORING</small>
         <Link
           to={
-            "/work/" + projects[(projects.indexOf(p) + 1) % projects.length].id
+            "/work/" + (projects.find(item=>item.id!==p.id&&item.category===p.category)||projects.find(item=>item.id!==p.id)||p).id
           }
         >
-          {projects[(projects.indexOf(p) + 1) % projects.length].title}
+          {(projects.find(item=>item.id!==p.id&&item.category===p.category)||projects.find(item=>item.id!==p.id)||p).title}
           <Arrow />
         </Link>
-      </div>
+      </div><ContactBand/>
     </main>
   );
 }
@@ -576,7 +582,7 @@ function About() {
   const page = usePage();
   return (
     <main className="page about">
-      <span className="eyebrow">THE PERSON BEHIND POL</span>
+      <span className="eyebrow">THE PRACTICE / DESARTLY</span>
       <h1>
         {page.title || (
           <>
@@ -588,9 +594,9 @@ function About() {
       </h1>
       <div className="about-grid">
         <div className="portrait-art">
-          <span>AK</span>
+          <span>D.</span>
           <small>
-            Ali Komeili
+            Desartly
             <br />
             Designer across disciplines
           </small>
@@ -598,7 +604,7 @@ function About() {
         </div>
         <div>
           <h2>
-            <span>I’m Ali.</span>
+            <span>This is Desartly.</span>
             <br /><span>I think in systems.</span>
             <br /><span>I care about the details.</span>
           </h2>
@@ -624,7 +630,7 @@ function Resume() {
   const page = usePage();
   return (
     <main className="page narrow">
-      <span className="eyebrow">RÉSUMÉ / ALI KOMEILI</span>
+      <span className="eyebrow">RÉSUMÉ / DESARTLY</span>
       <h1>
         {page.title || (
           <>
@@ -642,13 +648,7 @@ function Resume() {
           and creative campaigns.
         </p>
       </div>
-      <div className="resume-row">
-        <h2>Experience</h2>
-        <p className="muted">
-          Your experience, dates and achievements will appear here. This preview
-          does not include unverified employment history.
-        </p>
-      </div>
+
       <div className="resume-row">
         <h2>Let’s talk</h2>
         <Link to="/contact">Start a conversation ↗</Link>
@@ -1154,6 +1154,7 @@ function Editor({
     [inspectorOpen, setInspectorOpen] = useState(false);
   const snapshot=JSON.stringify({draft,pages,categories,stats,clients,siteNav,editableHomeSections,blogDraft,certificateDraft});
   const [savedSnapshot,setSavedSnapshot]=useState(snapshot);
+  const [saving,setSaving]=useState(false);
   const dirty=snapshot!==savedSnapshot;
   useEffect(()=>{const warn=e=>{if(dirty){e.preventDefault();e.returnValue="";}};window.addEventListener("beforeunload",warn);return ()=>window.removeEventListener("beforeunload",warn);},[dirty]);
   useEffect(()=>{const shortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();document.activeElement?.blur();setTimeout(()=>document.querySelector(".save-changes")?.click(),0);}};window.addEventListener("keydown",shortcut);return()=>window.removeEventListener("keydown",shortcut);},[]);
@@ -1178,7 +1179,8 @@ function Editor({
       blocks: p.blocks.map((b) => (b.id === id ? { ...b, ...values } : b)),
     });
   }
-  function save() {
+  async function save() {
+    if(saving)return false;setSaving(true);
     try {
       localStorage.setItem("pol-draft", JSON.stringify(draft));
       localStorage.setItem("pol-page-content", JSON.stringify(pages));
@@ -1192,14 +1194,18 @@ function Editor({
         "pol-certificates-draft",
         JSON.stringify(certificateDraft),
       );
+      await saveCloud({schema:1,projects:draft,pages,categories,stats,clients,nav:siteNav,homeSections:editableHomeSections,blogPosts:blogDraft,certificates:certificateDraft});
       setSavedSnapshot(snapshot);
-      setNotice("Changes saved on this device.");
-    } catch {
-      setNotice("Storage is full. Remove a large image and try again.");
-    }
+      setNotice("Draft saved to the cloud. Publish when it is ready for visitors.");
+      return true;
+    } catch (error) {
+      setNotice(error.message || "Storage is full. Remove a large image and try again.");return false;
+    }finally{setSaving(false);}
   }
-  function publish() {
+  async function publish() {
+    if(saving)return;setSaving(true);
     try {
+      await saveCloud({schema:1,projects:draft,pages,categories,stats,clients,nav:siteNav,homeSections:editableHomeSections,blogPosts:blogDraft,certificates:certificateDraft},true);
       localStorage.setItem("pol-published", JSON.stringify(draft));
       localStorage.setItem("pol-page-content", JSON.stringify(pages));
       localStorage.setItem("pol-categories", JSON.stringify(categories));
@@ -1216,10 +1222,10 @@ function Editor({
       setProjects(draft);
       setBlogPosts(blogDraft);
       setSavedSnapshot(snapshot);
-      setNotice("Local preview updated. Nothing has been published online.");
-    } catch {
-      setNotice("Storage is full. Reduce image sizes.");
-    }
+      setNotice("Published. Your changes are now visible to everyone.");
+    } catch (error) {
+      setNotice(error.message || "Storage is full. Reduce image sizes.");
+    }finally{setSaving(false);}
   }
   async function upload(e, cb) {
     try {
@@ -1235,20 +1241,18 @@ function Editor({
         <div>
           <Settings2 size={17} />
           <b>Desartly Studio</b>
-          <span className="local-badge">LOCAL PREVIEW</span>
+          <span className="local-badge">{cloud.ready?"CLOUD CMS":"OFFLINE"}</span>
           <select aria-label="Editing collection" value={mode} onChange={e=>setMode(e.target.value)}>{[["page","Page"],["content","Projects"],["journal","Journal"],["site","Navigation"],["certificates","Certificates"],["settings","Settings"]].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>
         </div>
         <div>
           <button className="inspector-toggle" onClick={() => setInspectorOpen(value => !value)} aria-expanded={inspectorOpen} aria-controls="editor-inspector">
             <Settings2 size={14} /> {inspectorOpen ? "Close map" : "Editor map"}
           </button>
-          <span className="save-state" role="status">{dirty?"Unsaved changes":"All changes saved"}</span><button className="dark save-changes" onClick={save}>Save changes</button>
-          <button onClick={publish}>
-            Update preview
+          <span className="save-state" role="status">{dirty?"Unsaved changes":"All changes saved"}</span><button className="dark save-changes" disabled={saving} onClick={save}>{saving?"Saving…":"Save changes"}</button>
+          <button disabled={saving} onClick={publish}>
+            Publish website
           </button>
-          <Link to={contextPath}>
-            Exit <X size={16} />
-          </Link>
+          <a href={contextPath} onClick={async e=>{if(dirty){e.preventDefault();if(await save())window.location.assign(contextPath);}}}>Exit <X size={16}/></a>
           <button
             onClick={async () => {
               await fetch("/api/owner/logout", { method: "POST" });
@@ -1259,10 +1263,10 @@ function Editor({
           </button>
         </div>
       </div>
-      <div className="save-notice" role="status">{notice||"Edit directly on the page. Save changes keeps your work on this device."}</div>
+      <div className="save-notice" role="status">{notice||"Save changes keeps a private cloud draft. Publish website makes it public."}</div>
       <div className="editor-layout">
         <aside id="editor-inspector" aria-label="Editor map and settings">
-          <div className="studio-map" data-editor-ui><div className="map-heading"><span>WORKSPACE</span><h2>Editor map</h2><p>Your portfolio, one place.</p></div><details open><summary>Pages</summary>{[["/","Home"],["/work","Work"],["/about","About"],["/resume","Resume"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><Link key={path} to={path==="/"?"/edit":path+"/edit"} onClick={e=>{if(dirty){e.preventDefault();save();setTimeout(()=>window.location.assign(path==="/"?"/edit":path+"/edit"),0);}}}>{label}<span>↗</span></Link>)}</details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details open><summary>Collections</summary><button onClick={()=>{setMode("content");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details open><summary>Site controls</summary><button onClick={()=>setMode("site")}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details" open><summary>Current page tools</summary><div className="editor-tabs" data-editor-ui>
+          <div className="studio-map" data-editor-ui><div className="map-heading"><span>WORKSPACE</span><h2>Editor map</h2><p>Your portfolio, one place.</p></div><details open><summary>Pages</summary>{[["/","Home"],["/work","Work"],["/about","About"],["/resume","Resume"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await save())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}<span>↗</span></a>)}</details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details open><summary>Collections</summary><button onClick={()=>{setMode("content");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details open><summary>Site controls</summary><button onClick={()=>setMode("site")}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details" open><summary>Current page tools</summary><div className="editor-tabs" data-editor-ui>
             <button
               className={mode === "page" ? "active" : ""}
               onClick={() => setMode("page")}
@@ -1310,7 +1314,7 @@ function Editor({
           {mode === "site" ? (
             <>
               <label>SITE NAVIGATION</label>
-              <p className="form-note">Edit labels, destinations and order. Changes appear in the public header after Update preview.</p>
+              <p className="form-note">Edit labels, destinations and order. Changes appear in the public header after Publish website.</p>
               {siteNav.map((item, i) => <div className="nav-edit-row" key={item.id || i}>
                 <span className="nav-edit-index">{String(i + 1).padStart(2, "0")}</span>
                 <input aria-label={`Navigation item ${i + 1} label`} value={item.label} onChange={e => updateNav(i, { label: e.target.value })} />
@@ -1331,7 +1335,7 @@ function Editor({
               <label>Cover image</label><input type="file" accept="image/*" onChange={e=>upload(e,image=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,coverImage:image}:v)))}/>
               <button className="add-block" onClick={() => setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,blocks:[...(v.blocks||[]),{id:crypto.randomUUID(),type:"text",title:"New paragraph",text:"Write here."}]}:v))}><Plus size={14}/> Text block</button>
               <button className="add-block" onClick={() => setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,blocks:[...(v.blocks||[]),{id:crypto.randomUUID(),type:"image",image:"",alt:"",caption:"Add a caption."}]}:v))}><Plus size={14}/> Image block</button>
-              <p className="form-note">Edit directly in the writing canvas. Move or remove blocks beside each module; notes are published with Update preview.</p>
+              <p className="form-note">Edit directly in the writing canvas. Move or remove blocks beside each module; notes are published with Publish website.</p>
             </> : <p>No notes yet. Add one above.</p>
           ) : mode === "page" ? (
             <>
@@ -1386,7 +1390,7 @@ function Editor({
               </button>
               <p className="form-note">
                 Add your actual credentials, certificate image and verification
-                link. Update preview to show them on the Certificates page.
+                link. Publish website to show them on the Certificates page.
               </p>
             </>
           ) : mode === "content" ? (
@@ -1579,7 +1583,7 @@ function Editor({
               <div className="project-heading">
                 <span className="eyebrow">
                   {p.category} /{" "}
-                  {p.sample === false ? "CASE STUDY" : "SAMPLE PROJECT"}
+                  {p.sample === false ? "CASE STUDY" : "CONCEPT STUDY"}
                 </span>
                 <h1
                   contentEditable
@@ -1597,7 +1601,7 @@ function Editor({
                   <Art index={p.cover} />
                 )}
               </div>
-              <div className="canvas-insert" data-editor-ui><label>Square cover<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
+              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><label>Square cover<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
               <SortableGroup
                 as="div"
                 axis="y"
@@ -1817,7 +1821,7 @@ function App() {
               Desartly<span>®</span>
             </Link>
             <span className="header-name">
-              ALI KOMEILI
+              DESARTLY
               <br />
               DESIGN PORTFOLIO
             </span>
@@ -1896,8 +1900,8 @@ function App() {
     </PageContent.Provider>
   );
 }
-createRoot(document.getElementById("root")).render(
+bootstrapCloud().then(()=>createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <App />
   </BrowserRouter>,
-);
+));

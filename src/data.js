@@ -1,3 +1,4 @@
+import {cloud,uploadMedia} from './cloud.js';
 export const categories = ["Product & AI", "Branding", "Advertising"];
 export const categoryIds = ["product-ai", "branding", "advertising"];
 const names = [
@@ -275,6 +276,7 @@ export const addedJournalPosts = [
 ];
 initialBlogPosts.push(...addedJournalPosts);
 export function readJournalPosts() {
+ if(cloud.values["pol-blog-posts"])return structuredClone(cloud.values["pol-blog-posts"]);
  const saved = read("pol-blog-posts", initialBlogPosts);
  if (read("pol-journal-six-v1", false)) return saved;
  const merged = [...saved, ...addedJournalPosts.filter(post => !saved.some(item => item.id === post.id))];
@@ -301,6 +303,8 @@ export function safeLink(value) {
   }
 }
 export function read(key, fallback) {
+  if(Object.hasOwn(cloud.values,key))return structuredClone(cloud.values[key]);
+  if(cloud.ready&&!cloud.allowLocal)return fallback;
   try {
     return JSON.parse(localStorage.getItem(key)) || fallback;
   } catch {
@@ -320,5 +324,7 @@ export async function optimizeImage(file) {
   canvas.height = Math.round(bitmap.height * ratio);
   canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.82));
+  if(cloud.ready)return uploadMedia(blob,file.name.replace(/\.[^.]+$/,".webp"));
   return canvas.toDataURL("image/webp", 0.82);
 }

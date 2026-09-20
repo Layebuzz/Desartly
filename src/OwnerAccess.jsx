@@ -78,7 +78,7 @@ export function Login() {
             });
             const data = await response.json();
             if (!response.ok) throw Error(data.error || "Unable to sign in.");
-            navigate(next, { replace: true });
+            window.location.assign(next);
           } catch (err) {
             setError(err.message);
           } finally {

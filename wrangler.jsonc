@@ -29,5 +29,16 @@
       "binding": "DESARTLY_AUTH",
       "id": "dafc5eabe17841f184d67c9f7e6061d7"
     }
-  ]
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "desartly-content",
+      "database_id": "eb3a1934-e8ed-493b-a0f7-42fd6e16b7cb",
+      "migrations_dir": "server/migrations"
+    }
+  ],
+  "vars": {
+    "B2_BUCKET_ID": "fa243f3de5465324ab070112"
+  }
 }

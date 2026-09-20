@@ -11,13 +11,13 @@ export async function contentResponse(request,env,store,media,transform){
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  let state=await store.read();
  const save=async next=>{state=await store.write(next,state.revision);return state;};
- if(path==='/api/site'&&request.method==='GET')return json({site:publicSite(state.published),revision:state.revision});
- if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!env.B2_BUCKET_ID,images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
+ if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
+ if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!(env.B2_BUCKET_ID&&env.B2_KEY_ID&&env.B2_APP_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
  if(path==='/api/studio/upload'&&request.method==='POST'){
   const bytes=await bounded(request,12*1024*1024);const type=request.headers.get('Content-Type')||'';const id=crypto.randomUUID();const name=decodeURIComponent(request.headers.get('X-File-Name')||'Upload').slice(0,180);let variants=[];
   if(['image/png','image/jpeg','image/webp','image/gif','image/avif'].includes(type)){
-   if(!transform)throw Object.assign(Error('Image processing is not connected.'),{status:503});
-   variants=await transform(bytes);for(const v of variants){v.asset=await media.put(id+'-'+v.width+'.webp',v.bytes,'image/webp');v.size=v.bytes.byteLength;delete v.bytes;}
+   if(!transform){if(type!=='image/webp'||new TextDecoder().decode(bytes.slice(0,4))!=='RIFF'||new TextDecoder().decode(bytes.slice(8,12))!=='WEBP')throw Object.assign(Error('Upload an optimized WebP image.'),{status:415});variants=[{width:1920,bytes}];}else variants=await transform(bytes);for(const v of variants){v.asset=await media.put(id+'-'+v.width+'.webp',v.bytes,'image/webp');v.size=v.bytes.byteLength;delete v.bytes;}
+  }else if(type==='image/svg+xml'){const svg=new TextDecoder().decode(bytes);if(bytes.length>2000000||!/<svg[\s>]/i.test(svg)||/<(?:script|foreignObject|iframe|object|embed|style|animate|set)\b|<!|<\?|\bon[a-z]+\s*=|(?:href|src)\s*=\s*["'](?!#)|url\(\s*["']?(?!#)/i.test(svg))return json({error:'Use a self-contained SVG without scripts or external resources.'},415);variants=[{width:0,size:bytes.length,asset:await media.put(id+'.svg',bytes,type)}];
   }else if(type==='application/pdf'&&new TextDecoder().decode(bytes.slice(0,5))==='%PDF-')variants=[{width:0,size:bytes.length,asset:await media.put(id+'.pdf',bytes,type)}];
   else if((type==='video/mp4'&&new TextDecoder().decode(bytes.slice(4,8))==='ftyp')||(type==='video/webm'&&bytes[0]===0x1a&&bytes[1]===0x45&&bytes[2]===0xdf&&bytes[3]===0xa3))variants=[{width:0,size:bytes.length,asset:await media.put(id,bytes,type)}];
   else return json({error:'Choose a supported image, PDF, MP4 or WebM file.'},415);
@@ -25,7 +25,7 @@ export async function contentResponse(request,env,store,media,transform){
  }
  if(path.startsWith('/api/media/')&&request.method==='GET'){
   const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&!references(state.published,id)))return json({error:'Media not found.'},404);
-  const width=Number(url.searchParams.get('w'))||1920;const variant=item.variants.find(v=>v.width>=width)||item.variants.at(-1);const response=await media.get(variant.asset);return new Response(response.body,{headers:{'Content-Type':item.type,'X-Content-Type-Options':'nosniff','Cache-Control':owner?'private, no-store':'public, max-age=3600',...(item.type==='application/pdf'?{'Content-Disposition':'attachment; filename="resume.pdf"'}:{})}});
+  const width=Number(url.searchParams.get('w'))||1920;const variant=item.variants.find(v=>v.width>=width)||item.variants.at(-1);const response=await media.get(variant.asset);return new Response(response.body,{headers:{'Content-Type':item.type,'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; sandbox",'X-Content-Type-Options':'nosniff','Cache-Control':owner?'private, no-store':'public, max-age=3600',...(item.type==='application/pdf'?{'Content-Disposition':'attachment; filename="resume.pdf"'}:{})}});
  }
  if(path==='/api/config'&&request.method==='GET')return json({turnstileSiteKey:env.TURNSTILE_SITE_KEY||'',local:!!env.LOCAL});
  if(path==='/api/inquiry'&&request.method==='POST'){
@@ -50,7 +50,7 @@ export async function contentResponse(request,env,store,media,transform){
    const draft=validateSite(body.site);await save({...state,draft,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/publish'){
-   const draft=validateSite(body.site);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,20);await save({...state,draft,published:structuredClone(draft),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
+   const draft=validateSite(body.site);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,3);await save({...state,draft,published:structuredClone(draft),publishedAt:new Date().toISOString(),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/restore'){
    const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
