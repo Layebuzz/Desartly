@@ -315,16 +315,19 @@ export const presets = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   count: [2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6][i],
 }));
-export async function optimizeImage(file) {
+export async function optimizeImage(file, {purpose="detail", aspect=1} = {}) {
   if (!file.type.startsWith("image/")) throw Error("Please choose an image.");
   const bitmap = await createImageBitmap(file);
-  const ratio = Math.min(1, 2560 / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * ratio);
-  canvas.height = Math.round(bitmap.height * ratio);
-  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const cover=purpose==="cover";const quality=cover?0.82:0.92;
+  let sw=bitmap.width,sh=bitmap.height;
+  if(cover){if(sw/sh>aspect)sw=sh*aspect;else sh=sw/aspect;}
+  const ratio=Math.min(1,(cover?960:2560)/Math.max(sw,sh));
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(sw*ratio));canvas.height=Math.max(1,Math.round(sh*ratio));
+  canvas.getContext("2d").drawImage(bitmap,(bitmap.width-sw)/2,(bitmap.height-sh)/2,sw,sh,0,0,canvas.width,canvas.height);
   bitmap.close();
-  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.92));
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",quality));
+  if(!blob)throw Error("Image conversion failed. Please choose another image.");
   if(cloud.ready)return uploadMedia(blob,file.name.replace(/\.[^.]+$/,".webp"));
-  return canvas.toDataURL("image/webp", 0.92);
+  return canvas.toDataURL("image/webp", quality);
 }
