@@ -24,7 +24,7 @@ The editor includes inline copy, navigation and footer controls, section orderin
 - React and Vite; Manrope typography, white surfaces and blue/violet/rose accents.
 - Cloudflare Worker handles protected editor routes and content APIs.
 - D1 stores draft/published content, media metadata and three publication snapshots. A size guard protects the current single-row content store.
-- Backblaze B2 stores media under `desartly/` in the existing private bucket. Browser image uploads are resized to 1800px maximum and converted to WebP before upload. SVG logos remain vector and pass server validation.
+- Backblaze B2 stores media under `desartly/` in the existing private bucket. Browser image uploads are resized to 2560px maximum and converted to WebP before upload. SVG logos remain vector and pass server validation.
 - `src/cloud.js` loads public content or authenticated drafts and handles cloud saves/uploads.
 - `server/content-api.js` enforces owner access, request origin and draft versions.
 - Owner credentials use Worker secrets; password changes use salted PBKDF2 hashes in KV. Never commit `.env.local` or secret values.
@@ -44,3 +44,9 @@ Contact delivery still requires its production rate-limit/Turnstile configuratio
 ## Validation
 
 `npm test` covers authentication, protected routes, origin checks, layout geometry, link validation, private drafts, publication and stale-write conflicts. `npm run build` validates the production bundle. Responsive browser checks cover square heroes and horizontal overflow at desktop, tablet and mobile sizes.
+
+## Portfolio and credential update
+
+Contact uses a square black primary action. About and Resume share the About page; legacy `/resume` redirects to `/about#resume`. Certificate cards use four columns on desktop, two on tablet and one on phones; their accessible native dialog includes a description, verification link and optional Top 10% of class badge. The badge defaults off and must reflect a real distinction.
+
+Projects have independent `coverImage` (cards/home feature) and `heroImage` (case-study opening). The cover is used as a fallback only when the main image is absent. Recommended cover/main assets are 2400×2400 px; full-width content is 2400 px wide and grid images at least 1200 px wide. Uploads never upscale originals and use WebP quality 92 with a 2560 px maximum. The project editor now shares the public case-study container width.

@@ -25,6 +25,6 @@ export function VisualCopy({children, copy = {}, onChange, editable = false, sco
     if (editable && e.target.closest('[data-copy-key]')) { e.preventDefault(); e.stopPropagation(); }
   }} onBlurCapture={e => {
     const key = e.target.dataset.copyKey;
-    if (editable && key) onChange?.(key, e.target.textContent);
+    if (editable && key) onChange?.(key, e.target.innerText);
   }}>{children}</div>;
 }

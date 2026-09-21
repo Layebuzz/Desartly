@@ -29,9 +29,9 @@ export function ownerAccessPlugin() {
         if (!response && requestUrl.pathname.startsWith("/api/")) response = await contentResponse(request, env, store, store, async bytes => {
           const input = sharp(bytes, {limitInputPixels: 40000000}).rotate();
           const meta=await input.metadata();
-          const widths=[640,1280,1920].filter((w,i)=>i===0||w<(meta.width||1920));
-          if(meta.width>640)widths.push(Math.min(meta.width,1920));
-          return Promise.all([...new Set(widths)].sort((a,b)=>a-b).map(async width=>({width,bytes:await input.clone().resize({width,withoutEnlargement:true}).webp({quality:82}).toBuffer()})));
+          const widths=[640,1280,2560].filter((w,i)=>i===0||w<(meta.width||2560));
+          if(meta.width>640)widths.push(Math.min(meta.width,2560));
+          return Promise.all([...new Set(widths)].sort((a,b)=>a-b).map(async width=>({width,bytes:await input.clone().resize({width,withoutEnlargement:true}).webp({quality:92}).toBuffer()})));
         });
         if (
           !response &&

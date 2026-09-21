@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import {
   BrowserRouter,
+  Navigate,
   Routes,
   Route,
   Link,
@@ -40,6 +41,7 @@ import {
   optimizeImage,
 } from "./data";
 import "./style.css";
+import { CredentialGallery } from "./CredentialGallery";
 import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
@@ -80,13 +82,13 @@ const defaultNav = [
   { id: "work", label: "Work", to: "/work" },
   { id: "journal", label: "Journal", to: "/journal" },
   { id: "about", label: "About", to: "/about" },
-  { id: "resume", label: "Resume", to: "/resume" },
   { id: "certificates", label: "Certificates", to: "/certificates" },
   { id: "contact", label: "Contact", to: "/contact", arrow: true },
 ];
+function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url));}
 function SiteNavLink({ item, active }) {
   const to = safeLink(item.to) || "/";
-  const props = { className: active ? "active" : "" };
+  const props = { className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
   if (!to.startsWith("/")) {
     return <a href={to} {...props} target="_blank" rel="noopener noreferrer">{item.label}{item.arrow && <ArrowUpRight size={13} />}</a>;
   }
@@ -95,13 +97,13 @@ function SiteNavLink({ item, active }) {
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const [selected, setSelected] = useState(null);
   const dragIndex = React.useRef(null);
-  const items = Array.isArray(navItems) ? navItems : defaultNav;
+  const items = mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav);
   return <header className="editor-page-header">
     <span className="logo">Desartly<span>®</span></span>
     <span className="header-name">DESARTLY<br/>DESIGN PORTFOLIO</span>
-    <nav>{items.map((item, i) => <div className="inline-nav-item" key={item.id || i}>
+    <nav>{items.map((item, i) => <div className={"inline-nav-item"+(item.to==="/contact"?" editor-contact-primary":"")} key={item.id || i}>
       <button data-editor-ui className="nav-grip" draggable onDragStart={()=>{dragIndex.current=i;}} onDragEnd={()=>{dragIndex.current=null;}} aria-label={`Reorder ${item.label}`}><GripVertical size={13}/></button>
-      <span className="editor-nav-item" onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex.current!==null){const next=[...items];next.splice(i,0,next.splice(dragIndex.current,1)[0]);onReorder?.(next);dragIndex.current=null;}}} contentEditable suppressContentEditableWarning onBlur={e=>onNavChange?.(i,{label:e.currentTarget.textContent})}>{item.label}</span>
+      <span className="editor-nav-item" onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex.current!==null){const next=[...items];next.splice(i,0,next.splice(dragIndex.current,1)[0]);onReorder?.(next);dragIndex.current=null;}}} contentEditable suppressContentEditableWarning onBlur={e=>onNavChange?.(i,{label:e.currentTarget.innerText})}>{item.label}</span>
       <button data-editor-ui aria-label={`Link settings for ${item.label}`} onClick={()=>setSelected(selected===i?null:i)}><Settings2 size={12}/></button>
       {selected===i && <div className="inline-link-popover" data-editor-ui><label>Destination<input aria-label="Link destination" value={item.to} onChange={e=>onNavChange?.(i,{to:e.target.value})}/></label><div><button disabled={!i} onClick={()=>{const next=[...items];[next[i-1],next[i]]=[next[i],next[i-1]];onReorder?.(next);setSelected(i-1);}}>Move left</button><button disabled={i===items.length-1} onClick={()=>{const next=[...items];[next[i+1],next[i]]=[next[i],next[i+1]];onReorder?.(next);setSelected(i+1);}}>Move right</button><button onClick={()=>{onRemove?.(i);setSelected(null);}}>Remove</button></div></div>}
     </div>)}{onAdd && <button data-editor-ui onClick={onAdd} aria-label="Add menu link"><Plus size={16}/></button>}</nav>
@@ -116,7 +118,7 @@ function EditablePagePreview({ contextPath, pages, onPagePatch, navItems, onNavC
     "/contact": { eyebrow: "THE NEXT CONNECTION", title: "Your next idea. Let’s make it real.", intro: "Tell me what you are building, who it is for and where you need a design partner." },
     "/privacy": { eyebrow: "POL / PRIVACY", title: "Privacy, simply.", intro: "A clear note about how this portfolio handles information." },
   }[contextPath] || { eyebrow: "LIVE PAGE COPY", title: "Default page title", intro: "Add the page introduction here." };
-  const patch = field => e => onPagePatch?.({ [field]: e.currentTarget.textContent });
+  const patch = field => e => onPagePatch?.({ [field]: e.currentTarget.innerText });
   return <div className="page-edit-shell"><EditableHeader navItems={navItems} onNavChange={onNavChange}/><main className="page page-editable"><span className="eyebrow">{defaults.eyebrow}</span><h1 contentEditable suppressContentEditableWarning onBlur={patch("title")}>{copy.title || defaults.title}</h1><p className="lead" contentEditable suppressContentEditableWarning onBlur={patch("intro")}>{copy.intro || defaults.intro}</p><div className="page-edit-outline"><span className="eyebrow">CONTENT MODULES</span><p contentEditable suppressContentEditableWarning onBlur={patch("body")}>{copy.body || "Click any highlighted copy to edit it directly. Add your own sections and links from the workspace controls."}</p></div><Link className="button dark" to={contextPath}>Open public page <Arrow/></Link></main></div>;
 }
 function Art({ index = 0 }) {
@@ -208,7 +210,7 @@ function Card({ p, editable = false, onTitleChange }) {
         </span>
       </div>
       <div className="card-meta">
-        <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)onTitleChange?.(p.id,e.currentTarget.textContent)}}>{p.title}</h3>
+        <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)onTitleChange?.(p.id,e.currentTarget.innerText)}}>{p.title}</h3>
         <ArrowUpRight className="card-title-arrow" size={17} strokeWidth={1.4} aria-hidden="true" />
       </div>
       <p className="project-card-summary">{p.summary}</p><div className="card-sub">
@@ -224,8 +226,8 @@ function BlogCard({ post, editable = false, onChange }) {
     <Link className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
       <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt="" loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
       <div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
-      <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.textContent})}>{post.title}</h3>
-      <p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{excerpt:e.currentTarget.textContent})}>{post.excerpt}</p>
+      <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.innerText})}>{post.title}</h3>
+      <p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{excerpt:e.currentTarget.innerText})}>{post.excerpt}</p>
       <span className="blog-read"><span>Read note</span> <ArrowUpRight size={16} /></span>
     </Link>
   );
@@ -263,13 +265,13 @@ function AnimatedNumber({ value, editable = false, onBlur }) {
 }
 
 function StatsBand({ stats, editable = false, onChange }) {
-  const shown=editable?stats:stats.filter(stat=>Number.parseFloat(stat.value)>0&&!/replace|add the year/i.test(stat.detail||''));
+  const shown=editable?stats:stats.filter(stat=>Number.parseFloat(stat.value)>0);
   if(!shown.length)return null;
   return (
     <section className="stats-band" aria-label="Selected practice statistics">
       <div className="folio-section-label"><span>03 / A FEW NUMBERS</span><span>Updated as the practice grows</span></div>
       <div className="stats-grid">
-        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.textContent})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.textContent})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.textContent})}>{stat.detail}</p></div></article>)}
+        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.innerText})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.innerText})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.innerText})}>{editable||!/replace|add the year/i.test(stat.detail||'')?stat.detail:""}</p></div></article>)}
       </div>
     </section>
   );
@@ -360,11 +362,11 @@ function Footer() {
   const patchItem=(id,values)=>patch({items:footer.items.map(item=>item.id===id?{...item,...values}:item)});
   return <footer className="desartly-footer">
     <Link to="/" className="logo">Desartly<span>®</span></Link>
-    <p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({description:e.currentTarget.textContent})}>{footer.description}</p>
+    <p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({description:e.currentTarget.innerText})}>{footer.description}</p>
     <div className="footer-items">{footer.items.map((item,index)=><div className="footer-item" key={item.id}>
-      {editable?<><span contentEditable suppressContentEditableWarning onBlur={e=>patchItem(item.id,{label:e.currentTarget.textContent})}>{item.label}</span><div className="footer-item-tools" data-editor-ui><input aria-label="Footer link destination" placeholder="Link (optional)" value={item.url||""} onChange={e=>patchItem(item.id,{url:e.target.value})}/><button aria-label="Move footer item up" disabled={!index} onClick={()=>{const items=[...footer.items];[items[index-1],items[index]]=[items[index],items[index-1]];patch({items});}}>↑</button><button aria-label="Remove footer item" onClick={()=>patch({items:footer.items.filter(i=>i.id!==item.id)})}>×</button></div></>:safeLink(item.url)?<a href={safeLink(item.url)}>{item.label}</a>:<span>{item.label}</span>}
+      {editable?<><span contentEditable suppressContentEditableWarning onBlur={e=>patchItem(item.id,{label:e.currentTarget.innerText})}>{item.label}</span><div className="footer-item-tools" data-editor-ui><input aria-label="Footer link destination" placeholder="Link (optional)" value={item.url||""} onChange={e=>patchItem(item.id,{url:e.target.value})}/><button aria-label="Move footer item up" disabled={!index} onClick={()=>{const items=[...footer.items];[items[index-1],items[index]]=[items[index],items[index-1]];patch({items});}}>↑</button><button aria-label="Remove footer item" onClick={()=>patch({items:footer.items.filter(i=>i.id!==item.id)})}>×</button></div></>:safeLink(item.url)?<a href={safeLink(item.url)}>{item.label}</a>:<span>{item.label}</span>}
     </div>)}{editable&&<button data-editor-ui onClick={()=>patch({items:[...footer.items,{id:crypto.randomUUID(),label:"New item",url:""}]})}>+ Add footer item</button>}</div>
-    <small contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({copyright:e.currentTarget.textContent})}>{footer.copyright}</small>
+    <small contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({copyright:e.currentTarget.innerText})}>{footer.copyright}</small>
   </footer>;
 }
 function Home({ projects, stats = initialStats, clients = initialClients, blogPosts = initialBlogPosts, homeSections = initialHomeSections, editable = false, onPagePatch, onProjectTitleChange, onStatsChange, onClientChange, onClientsChange, onBlogChange, pageOverride, onSectionsChange, onCoverChange, onFeaturedChange, onFeaturedOrder }) {
@@ -399,7 +401,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     intro: <section className="folio-intro">
       <div className="folio-kicker"><span className="eyebrow">DESARTLY / INDEPENDENT DESIGNER</span><span>Portfolio · 2026</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.textContent})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet the designer</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><span>Independent mind.<br/>Connected practice.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
+        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet the designer</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><span>Independent mind.<br/>Connected practice.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
         {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{activeProject.category}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
         <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{project.category}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${activeProject.category}` : ""}</span></div>
       </div>
@@ -409,7 +411,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
       <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Advertising</p></div>
       {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p} editable onTitleChange={onProjectTitleChange}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
     </section>,
-    practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)setCategories(categories.map((v,j)=>j===i?e.currentTarget.textContent:v))}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.textContent})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","An idea expressed clearly, across campaigns and touchpoints."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
+    practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)setCategories(categories.map((v,j)=>j===i?e.currentTarget.innerText:v))}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.innerText})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","An idea expressed clearly, across campaigns and touchpoints."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
     clients: <ClientsStrip clients={clients} editable={editable} onChange={onClientChange} onCollectionChange={onClientsChange}/>,
     stats: <StatsBand stats={stats} editable={editable} onChange={onStatsChange}/>,
     journal: <section className="journal-preview"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post} editable={editable} onChange={onBlogChange}/>)}</div></section>,
@@ -417,7 +419,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   };
   const normalizedSections = (homeSections?.length ? homeSections : initialHomeSections).map(section => typeof section === "string" ? { id: section, visible: true } : section);
   const patchSection = (id, values) => onSectionsChange?.(normalizedSections.map(section=>section.id===id?{...section,...values}:section));
-  const renderSection = section => sectionMap[section.id] || (section.type === 'html' ? <HtmlPreview block={section} editable={editable} onChange={html=>patchSection(section.id,{html})} onTitleChange={title=>patchSection(section.id,{title})}/> : section.type === 'image' ? <figure className="custom-image"><img src={section.image || undefined} alt={section.title || ''}/>{editable && <input data-editor-ui type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])patchSection(section.id,{image:await optimizeImage(e.target.files[0])});}}/>}<figcaption contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.textContent})}>{section.title}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.textContent})}>{section.title}</h2><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{text:e.currentTarget.textContent})}>{section.text}</p></section>);
+  const renderSection = section => sectionMap[section.id] || (section.type === 'html' ? <HtmlPreview block={section} editable={editable} onChange={html=>patchSection(section.id,{html})} onTitleChange={title=>patchSection(section.id,{title})}/> : section.type === 'image' ? <figure className="custom-image"><img src={section.image || undefined} alt={section.title || ''}/>{editable && <input data-editor-ui type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])patchSection(section.id,{image:await optimizeImage(e.target.files[0])});}}/>}<figcaption contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</h2><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{text:e.currentTarget.innerText})}>{section.text}</p></section>);
   if (!editable) return <main className="folio-home">{normalizedSections.filter(s=>s.visible!==false).map(section=><React.Fragment key={section.id}>{renderSection(section)}</React.Fragment>)}</main>;
   return <main className="folio-home home-canvas"><SortableGroup axis="y" values={normalizedSections} onReorder={onSectionsChange}>{normalizedSections.map((section,index)=><SortableBlock key={section.id} value={section}>{controls=><div className={section.visible===false?'canvas-section is-hidden':'canvas-section'}><div className="canvas-section-tools" data-editor-ui><button className="drag-handle" aria-label={`Drag ${section.label || section.type}`} onPointerDown={e=>controls.start(e)}><GripVertical size={16}/></button><strong>{section.label || section.type}</strong><button disabled={index===0} onClick={()=>{const next=[...normalizedSections];[next[index-1],next[index]]=[next[index],next[index-1]];onSectionsChange(next);}}>↑</button><button disabled={index===normalizedSections.length-1} onClick={()=>{const next=[...normalizedSections];[next[index+1],next[index]]=[next[index],next[index+1]];onSectionsChange(next);}}>↓</button><button onClick={()=>patchSection(section.id,{visible:section.visible===false})}>{section.visible===false?'Show':'Hide'}</button>{section.type && <button onClick={()=>onSectionsChange(normalizedSections.filter(s=>s.id!==section.id))}>Remove</button>}</div>{renderSection(section)}{section.id==='intro' && activeProject && <div className="canvas-insert" data-editor-ui><label>Replace square cover<input type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])onCoverChange?.(activeProject.id,await optimizeImage(e.target.files[0]));}}/></label></div>}{section.id==='selected' && <div className="canvas-insert" data-editor-ui>{selected.map((project,i)=><label key={i}>Card {i+1}<select aria-label={`Featured card ${i+1}`} value={project.id} onChange={e=>onFeaturedChange?.(i,e.target.value)}>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}</div>}</SortableBlock>)}</SortableGroup><div className="canvas-insert" data-editor-ui><span>Add a section</span>{['text','image','html'].map(type=><button key={type} onClick={()=>onSectionsChange([...normalizedSections,{id:crypto.randomUUID(),type,visible:true,title:'New section',text:'Write here.'}])}><Plus size={14}/>{type === 'html'?'HTML prototype':type}</button>)}</div></main>;
 }
@@ -426,8 +428,8 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
   return <Tag className="unified-heading" contentEditable={editable} suppressContentEditableWarning role={editable?"textbox":undefined} aria-label={editable?label:undefined} aria-multiline={editable?true:undefined} onBlur={e=>{if(editable){const [first,...rest]=e.currentTarget.innerText.split("\n");onChange?.(first,rest.join("\n"));}}}>{value}</Tag>;
 }
 function ContactBand({ editable = false, page = {}, onPatch }) {
- const patch = field => e => onPatch?.({ [field]: e.currentTarget.textContent });
- return <section className="contact-band folio-contact"><span className="eyebrow">A GOOD PLACE TO START</span><EditableHeading as="h2" first={page.contactTitle ?? "Let’s make"} second={page.contactSubtitle ?? "something matter."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><div className="folio-contact-actions"><Link to="/contact?reason=hr" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Hire me</span> <Arrow/></Link><Link to="/contact?reason=client" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Start a project</span> <Arrow/></Link></div><div><span contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</span><Link to="/resume" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>View resume</span> <Arrow/></Link></div></section>;
+ const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
+ return <section className="contact-band folio-contact"><span className="eyebrow">A GOOD PLACE TO START</span><EditableHeading as="h2" first={page.contactTitle ?? "Let’s make"} second={page.contactSubtitle ?? "something matter."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><div className="folio-contact-actions"><Link to="/contact?reason=hr" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Hire me</span> <Arrow/></Link><Link to="/contact?reason=client" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Start a project</span> <Arrow/></Link></div><div><span contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</span><Link to="/about#resume" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>View resume</span> <Arrow/></Link></div></section>;
 }
 
 function Journal({ blogPosts }) {
@@ -461,7 +463,7 @@ function BlogPost({ blogPosts }) {
 function BlogEditorBlocks({ blocks = [], onPatch, onMove, onRemove, onUpload, onReorder }) {
   return <SortableGroup axis="y" values={blocks} onReorder={onReorder} className="blog-editor-blocks">{blocks.map((block, index) => <SortableBlock value={block} key={block.id}>{controls => <>
     <div className="blog-block-controls" data-editor-ui><button className="drag-handle" aria-label="Drag note block" onPointerDown={e=>controls.start(e)}><GripVertical size={16}/></button><span>{String(index + 1).padStart(2, "0")} / {block.type.toUpperCase()}</span><button type="button" aria-label="Move note block up" disabled={index === 0} onClick={() => onMove(index, -1)}>↑</button><button type="button" aria-label="Move note block down" disabled={index === blocks.length - 1} onClick={() => onMove(index, 1)}>↓</button><button type="button" aria-label="Delete note block" onClick={() => onRemove(block.id)}><Trash2 size={13}/></button></div>
-    {block.type === "markdown" ? <MarkdownEditor value={block.markdown||""} onChange={markdown=>onPatch(block.id,{markdown})}/> : block.type === "html" ? <HtmlPreview block={block} editable onChange={html=>onPatch(block.id,{html})} onTitleChange={title=>onPatch(block.id,{title})}/> : block.type === "image" ? <figure className="blog-image"><div className="blog-image-placeholder">{block.image ? <img src={block.image} alt={block.alt || ""}/> : <span>Image block</span>}<input type="file" accept="image/*" aria-label="Blog image" onChange={e=>onUpload(block.id,e)}/></div><input className="blog-image-alt" aria-label="Blog image alt text" value={block.alt || ""} onChange={e=>onPatch(block.id,{alt:e.target.value})} placeholder="Describe the image for accessibility"/><figcaption contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{caption:e.currentTarget.textContent})}>{block.caption}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{title:e.currentTarget.textContent})}>{block.title}</h2><p contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{text:e.currentTarget.textContent})}>{block.text}</p></section>}
+    {block.type === "markdown" ? <MarkdownEditor value={block.markdown||""} onChange={markdown=>onPatch(block.id,{markdown})}/> : block.type === "html" ? <HtmlPreview block={block} editable onChange={html=>onPatch(block.id,{html})} onTitleChange={title=>onPatch(block.id,{title})}/> : block.type === "image" ? <figure className="blog-image"><div className="blog-image-placeholder">{block.image ? <img src={block.image} alt={block.alt || ""}/> : <span>Image block</span>}<input type="file" accept="image/*" aria-label="Blog image" onChange={e=>onUpload(block.id,e)}/></div><input className="blog-image-alt" aria-label="Blog image alt text" value={block.alt || ""} onChange={e=>onPatch(block.id,{alt:e.target.value})} placeholder="Describe the image for accessibility"/><figcaption contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{caption:e.currentTarget.innerText})}>{block.caption}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{title:e.currentTarget.innerText})}>{block.title}</h2><p contentEditable suppressContentEditableWarning onBlur={e=>onPatch(block.id,{text:e.currentTarget.innerText})}>{block.text}</p></section>}
   </>}</SortableBlock>)}</SortableGroup>;
 }
 function PageModules({blocks = [], onChange}) {
@@ -535,8 +537,8 @@ function Project({ projects }) {
         <p>{p.summary}</p>
       </div>
       <CaseBrief project={p}/><div className="project-hero">
-        {p.coverImage ? (
-          <img src={p.coverImage} alt={p.title} loading="lazy" decoding="async" />
+        {(p.heroImage || p.coverImage) ? (
+          <img src={p.heroImage || p.coverImage} alt={p.title} loading="eager" decoding="async" />
         ) : (
           <Art index={p.cover} />
         )}
@@ -624,21 +626,22 @@ function About() {
             I’m open to joining thoughtful teams and collaborating on
             independent projects.
           </p>
-          <Link className="portfolio-action" to="/resume">
+          <Link className="portfolio-action" to="/about#resume">
             <span>View resume</span> <Arrow />
           </Link>
         </div>
       </div>
+      <Resume embedded/>
       <ContactBand />
     </main>
   );
 }
-function Resume() {
-  const page = usePage();
+function Resume({embedded=false}) {
+  const {pages}=React.useContext(PageContent);const page=pages["/resume"]||{};const Tag=embedded?"section":"main";const Heading=embedded?"h2":"h1";
   return (
-    <main className="page narrow">
+    <Tag id="resume" className={embedded?"embedded-resume":"page narrow"}>
       <span className="eyebrow">RÉSUMÉ / DESARTLY</span>
-      <h1>
+      <Heading>
         {page.title || (
           <>
             <span>Design across</span>
@@ -646,7 +649,7 @@ function Resume() {
             <span>disciplines.</span>
           </>
         )}
-      </h1>
+      </Heading>
       <p className="lead">Product & AI · Branding · Advertising</p>
       <div className="resume-row">
         <h2>Focus</h2>
@@ -663,7 +666,7 @@ function Resume() {
       <button className="button" onClick={() => window.print()}>
         Print resume
       </button>
-    </main>
+    </Tag>
   );
 }
 function Services() {
@@ -913,26 +916,7 @@ function Certificates({ certificates }) {
         A record of learning, practice and new perspectives.
       </p>
       {certificates.length ? (
-        <div className="certificate-grid">
-          {certificates.map((c) => (
-            <article key={c.id}>
-              {c.image && <img src={c.image} alt={c.title + " certificate"} />}
-              <span className="eyebrow">
-                {c.issuer} {c.date && " / " + c.date}
-              </span>
-              <h2>{c.title}</h2>
-              {safeLink(c.url) && (
-                <a
-                  href={safeLink(c.url)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Verify credential <Arrow />
-                </a>
-              )}
-            </article>
-          ))}
-        </div>
+        <CredentialGallery certificates={certificates}/>
       ) : (
         <div className="credential-empty">
           <span>01 / SPACE FOR WHAT’S NEXT</span>
@@ -969,7 +953,8 @@ function OwnerWorkspace(props) {
   const { categories, categoryIds } = React.useContext(Taxonomy);
   const started = React.useRef(false);
   const action = /\/new\/?$/.test(location.pathname) ? "new" : "edit";
-  const base = location.pathname.replace(/\/(edit|new)\/?$/, "") || "/";
+  const rawBase = location.pathname.replace(/\/(edit|new)\/?$/, "") || "/";
+  const base = rawBase === "/resume" ? "/about" : rawBase;
   const { pages, setPages } = React.useContext(PageContent);
   useEffect(() => {
     if (action !== "new" || started.current) return;
@@ -978,7 +963,7 @@ function OwnerWorkspace(props) {
     if (base === "/journal" || base.startsWith("/journal/")) {
       const posts = readJournalPosts();
       const post = { id: "note-" + crypto.randomUUID().slice(0, 8), title: "Untitled note", excerpt: "", date: new Date().toISOString().slice(0, 10), category: "Notes", cover: 0, blocks: [{ id: crypto.randomUUID(), type: "text", title: "A new note", text: "Write your note here." }] };
-      try { localStorage.setItem("pol-blog-posts", JSON.stringify([...posts, post])); navigate("/journal/" + post.id + "/edit", { replace: true }); } catch { setError("Browser storage is full. No note was created."); }
+      try { cloud.values["pol-blog-posts"]=[...posts,post]; localStorage.setItem("pol-blog-posts", JSON.stringify([...posts, post])); navigate("/journal/" + post.id + "/edit", { replace: true }); } catch { setError("Browser storage is full. No note was created."); }
       return;
     }
     const parent = draft.find((p) => "/work/" + p.id === base);
@@ -998,6 +983,7 @@ function OwnerWorkspace(props) {
       blocks: [],
     };
     try {
+      cloud.values["pol-draft"]=[...draft,post];
       localStorage.setItem("pol-draft", JSON.stringify([...draft, post]));
       navigate("/work/" + post.id + "/edit", { replace: true });
     } catch {
@@ -1054,7 +1040,7 @@ function Editor({
   const [blogDraft, setBlogDraft] = useState(() => read("pol-blog-posts", blogPosts)),
     [blogIndex, setBlogIndex] = useState(() => Math.max(0, read("pol-blog-posts", blogPosts).findIndex(post => "/journal/" + post.id === contextPath)));
   const blog = blogDraft[blogIndex];
-  const siteNav = Array.isArray(navItems) ? navItems : defaultNav;
+  const siteNav = mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav);
   const editableHomeSections = homeSections?.length ? homeSections : initialHomeSections;
   function addCategory() {
     const name = newCategory.trim(),
@@ -1283,7 +1269,7 @@ function Editor({
       <div className="save-notice" role="status">{notice||"Save changes keeps a private cloud draft. Publish website makes it public."}</div>
       <div className="editor-layout">
         <aside id="editor-inspector" aria-label="Editor map and settings">
-          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages & tools</h2><p>Choose a page, then edit directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Work"],["/about","About"],["/resume","Resume"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details><summary>Content</summary><button onClick={()=>{setMode("content");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
+          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages & tools</h2><p>Choose a page, then edit directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Work"],["/about","About"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details><summary>Content</summary><button onClick={()=>{setMode("content");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
             <button
               className={mode === "page" ? "active" : ""}
               onClick={() => setMode("page")}
@@ -1514,12 +1500,12 @@ function Editor({
             {notice}
           </p>
         </aside>
-        <div className="editor-canvas"><div className="canvas-context-bar" data-editor-ui><span>{mode==='page'?contextPath:mode==='content'?'Project':mode==='journal'?'Journal':'Site'}</span>{mode==='content' && <><select aria-label="Current project" value={index} onChange={e=>setIndex(+e.target.value)}>{draft.map((project,i)=><option key={project.id} value={i}>{project.title}</option>)}</select><button onClick={addPost}><Plus size={14}/> New project</button></>}{mode==='journal' && <><select aria-label="Current note" value={blogIndex} onChange={e=>setBlogIndex(+e.target.value)}>{blogDraft.map((post,i)=><option key={post.id} value={i}>{post.title}</option>)}</select><button onClick={addBlogPost}><Plus size={14}/> New note</button></>}<small>Click text to write · use handles to move modules</small></div><EditingPath.Provider value={contextPath}><VisualCopy editable copy={pages["/site"]?.copy || {}} scope="site" onChange={(key,value)=>setPages(current=>({...current,"/site":{...current["/site"],copy:{...current["/site"]?.copy,[key]:value}}}))}>{["content","journal","certificates"].includes(mode) && <EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>}
+        <div className={"editor-canvas"+(mode==="content"?" project-edit-canvas":"")}><div className="canvas-context-bar" data-editor-ui><span>{mode==='page'?contextPath:mode==='content'?'Project':mode==='journal'?'Journal':'Site'}</span>{mode==='content' && <><select aria-label="Current project" value={index} onChange={e=>setIndex(+e.target.value)}>{draft.map((project,i)=><option key={project.id} value={i}>{project.title}</option>)}</select><button onClick={addPost}><Plus size={14}/> New project</button></>}{mode==='journal' && <><select aria-label="Current note" value={blogIndex} onChange={e=>setBlogIndex(+e.target.value)}>{blogDraft.map((post,i)=><option key={post.id} value={i}>{post.title}</option>)}</select><button onClick={addBlogPost}><Plus size={14}/> New note</button></>}<small>Click text to write · use handles to move modules</small></div><EditingPath.Provider value={contextPath}><VisualCopy editable copy={pages["/site"]?.copy || {}} scope="site" onChange={(key,value)=>setPages(current=>({...current,"/site":{...current["/site"],copy:{...current["/site"]?.copy,[key]:value}}}))}>{["content","journal","certificates"].includes(mode) && <EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>}
           {mode === "settings" ? <SettingsPanel value={pages["/site"]?.settings||{}} onChange={settings=>setPages(current=>({...current,"/site":{...current["/site"],settings}}))}/> : mode === "journal" ? (
-            blog ? <div className="blog-editor-preview"><div className="canvas-insert" data-editor-ui><label>Topic<input value={blog.category||''} onChange={e=>patchBlogPostById(blog.id,{category:e.target.value})}/></label><label>Date<input type="date" value={blog.date||''} onChange={e=>patchBlogPostById(blog.id,{date:e.target.value})}/></label><label>Cover<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patchBlogPostById(blog.id,{coverImage}))}/></label></div><div className="blog-post-heading"><span className="eyebrow">{blog.category} / {blog.date}</span><h1 contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,title:e.currentTarget.textContent}:v))}>{blog.title}</h1><p contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,excerpt:e.currentTarget.textContent}:v))}>{blog.excerpt}</p></div><div className="blog-post-cover">{blog.coverImage ? <img src={blog.coverImage} alt="" /> : <Art index={blog.cover||0}/>}</div><div className="canvas-insert" data-editor-ui><span>Start with a template</span>{Object.entries(articleTemplates).map(([name,markdown])=><button key={name} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type:'markdown',markdown}]})}>{name}</button>)}<span>Or add a module</span>{['text','image','html','markdown'].map(type=><button key={type} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',html:'',image:'',caption:''}]})}><Plus size={14}/> {type === 'html' ? 'HTML file / prototype' : type}</button>)}</div><BlogEditorBlocks blocks={blog.blocks || []} onPatch={patchBlogBlock} onMove={moveBlogBlock} onRemove={removeBlogBlock} onUpload={uploadBlogImage} onReorder={blocks=>patchBlogPostById(blog.id,{blocks})}/></div> : null
+            blog ? <div className="blog-editor-preview"><div className="canvas-insert" data-editor-ui><label>Topic<input value={blog.category||''} onChange={e=>patchBlogPostById(blog.id,{category:e.target.value})}/></label><label>Date<input type="date" value={blog.date||''} onChange={e=>patchBlogPostById(blog.id,{date:e.target.value})}/></label><label>Cover<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patchBlogPostById(blog.id,{coverImage}))}/></label></div><div className="blog-post-heading"><span className="eyebrow">{blog.category} / {blog.date}</span><h1 contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,title:e.currentTarget.innerText}:v))}>{blog.title}</h1><p contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,excerpt:e.currentTarget.innerText}:v))}>{blog.excerpt}</p></div><div className="blog-post-cover">{blog.coverImage ? <img src={blog.coverImage} alt="" /> : <Art index={blog.cover||0}/>}</div><div className="canvas-insert" data-editor-ui><span>Start with a template</span>{Object.entries(articleTemplates).map(([name,markdown])=><button key={name} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type:'markdown',markdown}]})}>{name}</button>)}<span>Or add a module</span>{['text','image','html','markdown'].map(type=><button key={type} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',html:'',image:'',caption:''}]})}><Plus size={14}/> {type === 'html' ? 'HTML file / prototype' : type}</button>)}</div><BlogEditorBlocks blocks={blog.blocks || []} onPatch={patchBlogBlock} onMove={moveBlogBlock} onRemove={removeBlogBlock} onUpload={uploadBlogImage} onReorder={blocks=>patchBlogPostById(blog.id,{blocks})}/></div> : null
           ) : mode === "page" ? (
               contextPath === "/" ? <div className="home-edit-preview"><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/><Home projects={draft} stats={stats} clients={clients} blogPosts={blogDraft} homeSections={editableHomeSections} pageOverride={pages["/"] || {}} editable onPagePatch={values=>setPages(current=>({...current,"/":{...current["/"],...values}}))} onProjectTitleChange={(id,title)=>patchProjectById(id,{title})} onStatsChange={patchStatById} onClientChange={patchClientById} onClientsChange={setClients} onBlogChange={patchBlogPostById} onSectionsChange={setHomeSections} onFeaturedOrder={selectedProjects=>setPages(current=>({...current,"/":{...current["/"],selectedProjects}}))} onCoverChange={(id,coverImage)=>patchProjectById(id,{coverImage})} onFeaturedChange={(i,id)=>{const selectedProjects=[...(pages["/"]?.selectedProjects||[])];selectedProjects[i]=id;setPages({...pages,"/":{...pages["/"],selectedProjects}});}}/><Footer/></div> : (
-            <><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>{contextPath === '/about' ? <About/> : contextPath === '/resume' ? <Resume/> : contextPath === '/services' ? <Services/> : contextPath === '/contact' ? <Contact/> : contextPath === '/work' ? <Work projects={draft}/> : ['/journal','/blog'].includes(contextPath) ? <Journal blogPosts={blogDraft}/> : <EditablePagePreview contextPath={contextPath} pages={pages} navItems={siteNav} onNavChange={updateNav} onPagePatch={values=>setPages({...pages,[contextPath]:{...pages[contextPath],...values}})}/>}<PageModules blocks={pages[contextPath]?.blocks || []} onChange={blocks=>setPages({...pages,[contextPath]:{...pages[contextPath],blocks}})}/><Footer/></>
+            <><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>{contextPath === '/about' ? <About/> : contextPath === '/resume' ? <About/> : contextPath === '/services' ? <Services/> : contextPath === '/contact' ? <Contact/> : contextPath === '/work' ? <Work projects={draft}/> : ['/journal','/blog'].includes(contextPath) ? <Journal blogPosts={blogDraft}/> : <EditablePagePreview contextPath={contextPath} pages={pages} navItems={siteNav} onNavChange={updateNav} onPagePatch={values=>setPages({...pages,[contextPath]:{...pages[contextPath],...values}})}/>}<PageModules blocks={pages[contextPath]?.blocks || []} onChange={blocks=>setPages({...pages,[contextPath]:{...pages[contextPath],blocks}})}/><Footer/></>
             )
           ) : mode === "certificates" ? (
             <div className="credential-editor">
@@ -1563,6 +1549,7 @@ function Editor({
                       />
                     </label>
                   ))}
+                  <label>Description<textarea rows={4} value={c.description||""} onChange={e=>setCertificateDraft(current=>current.map(v=>v.id===c.id?{...v,description:e.target.value}:v))}/></label><label className="certificate-honour"><input type="checkbox" checked={!!c.topTenPercent} onChange={e=>setCertificateDraft(current=>current.map(v=>v.id===c.id?{...v,topTenPercent:e.target.checked}:v))}/> Top 10% of class</label><small>Enable the badge only for credentials where this distinction was awarded. Certificate image: 1600–2400 px wide; keep the full document visible.</small>
                   <label>
                     Certificate image
                     <input
@@ -1596,7 +1583,7 @@ function Editor({
           ) : mode === "site" ? (
             <div className="site-edit-preview"><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/><p data-editor-ui className="form-note">Edit menu labels in place. Use the grip to move a link and its settings button to change the destination.</p><Footer/></div>
           ) : (
-            <>
+            <main className="project-page project-editor-page">
               <div className="project-heading">
                 <span className="eyebrow">
                   {p.category} /{" "}
@@ -1605,21 +1592,22 @@ function Editor({
                 <h1
                   contentEditable
                   suppressContentEditableWarning
-                  onBlur={(e) => patch({ title: e.target.textContent })}
+                  onBlur={(e) => patch({ title: e.target.innerText })}
                 >
                   {p.title}
                 </h1>
-                <p contentEditable suppressContentEditableWarning onBlur={e=>patch({summary:e.currentTarget.textContent})}>{p.summary}</p>
+                <p contentEditable suppressContentEditableWarning onBlur={e=>patch({summary:e.currentTarget.innerText})}>{p.summary}</p>
               </div>
-              <section className="project-upload-guide" data-editor-ui><div><span>01 / PROJECT COVER</span><h2>Choose the image that introduces your project.</h2><p>This square image appears on project cards, the homepage feature and at the top of this case study. Upload it once here.</p></div><label className="upload-cover-button">{p.coverImage ? 'Replace project cover' : 'Upload project cover'}<input aria-label="Upload project cover" type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><small>PNG, JPG or WebP · automatically optimized to WebP · displayed as a square</small></section>
+              <section className="project-upload-guide" data-editor-ui><div><span>01 / PROJECT COVER</span><h2>Choose the image that introduces your project.</h2><p>This square cover appears on project cards and the homepage feature. Choose the main image for the case-study page separately below.</p></div><label className="upload-cover-button">{p.coverImage ? 'Replace project cover' : 'Upload project cover'}<input aria-label="Upload project cover" type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}))}/></label><small>Recommended: 2400 × 2400 px (1:1). PNG, JPG or WebP. High-quality WebP export; no upscaling. Keep the subject inside the centre 80%.</small></section>
+              <section className="project-upload-guide" data-editor-ui><div><span>02 / CASE-STUDY MAIN IMAGE</span><h2>A separate opening image for this project.</h2><p>Recommended: 2400 × 2400 px. This image opens the case study; it does not change the card cover. If empty, your cover is used as a fallback.</p></div><label>Upload main image<input aria-label="Upload main image" type="file" accept="image/*" onChange={e=>upload(e,heroImage=>patch({heroImage}))}/></label>{p.heroImage&&<button onClick={()=>patch({heroImage:""})}>Use cover as main image</button>}</section>
               <div className="project-hero">
-                {p.coverImage ? (
-                  <img src={p.coverImage} alt="Project cover" />
+                {(p.heroImage || p.coverImage) ? (
+                  <img src={p.heroImage || p.coverImage} alt="Project main image" />
                 ) : (
                   <Art index={p.cover} />
                 )}
               </div>
-              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>02 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover.</p></div><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
+              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>03 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover. Full-width: 2400 px wide, any aspect ratio. Two-column images: at least 1200 px wide each. Fine text and diagrams: export at 2× display size.</p></div><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
               <SortableGroup
                 as="div"
                 axis="y"
@@ -1631,7 +1619,7 @@ function Editor({
                   <SortableBlock key={b.id} value={b}>
                     {(controls) => (
                       <>
-                        <div className="block-controls">
+                        <div className="block-controls" data-editor-ui>
                           <button
                             onPointerDown={(e) => controls.start(e)}
                             className="drag-handle"
@@ -1703,7 +1691,7 @@ function Editor({
                               suppressContentEditableWarning
                               onBlur={(e) =>
                                 blockPatch(b.id, {
-                                  title: e.target.textContent,
+                                  title: e.target.innerText,
                                 })
                               }
                             >
@@ -1713,7 +1701,7 @@ function Editor({
                               contentEditable
                               suppressContentEditableWarning
                               onBlur={(e) =>
-                                blockPatch(b.id, { text: e.target.textContent })
+                                blockPatch(b.id, { text: e.target.innerText })
                               }
                             >
                               {b.text}
@@ -1725,7 +1713,7 @@ function Editor({
                           <HtmlPreview block={b} editable onChange={html=>blockPatch(b.id,{html})} onTitleChange={title=>blockPatch(b.id,{title})} />
                         ) : (
                           <>
-                            <div className="preset-picker">
+                            <div className="preset-picker" data-editor-ui>
                               {presets.map((preset) => (
                                 <button
                                   className={
@@ -1747,7 +1735,7 @@ function Editor({
                               ))}
                             </div>
                             <Grid block={b} cover={p.cover} />
-                            <div className="grid-uploads">
+                            <div className="grid-uploads" data-editor-ui>
                               {Array.from(
                                 { length: presets[Number(b.preset) - 1].count },
                                 (_, j) => (
@@ -1775,7 +1763,7 @@ function Editor({
                   </SortableBlock>
                 ))}
               </SortableGroup>
-            </>
+            </main>
           )}
         {["content","journal","certificates"].includes(mode) && <Footer/>}</VisualCopy></EditingPath.Provider></div>
       </div>
@@ -1815,8 +1803,8 @@ function App() {
   const [pages, setPages] = useState(() => read("pol-page-content", {}));
   const location = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    if(location.hash){requestAnimationFrame(()=>document.getElementById(location.hash.slice(1))?.scrollIntoView());}else window.scrollTo(0, 0);
+  }, [location.pathname,location.hash]);
   const isWorkspace =
     /\/(edit|new)\/?$/.test(location.pathname) ||
     location.pathname === "/admin" ||
@@ -1845,7 +1833,7 @@ function App() {
               <br />
               DESIGN PORTFOLIO
             </span>
-            <nav>{(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to} />)}</nav>
+            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to} />)}</nav>
           </header>
         )}
         <div id="main">
@@ -1887,7 +1875,7 @@ function App() {
                 element={<Project key={location.pathname} projects={projects} />}
               />
               <Route path="/about" element={<About />} />
-              <Route path="/resume" element={<Resume />} />
+              <Route path="/resume" element={<Navigate to="/about#resume" replace />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
               <Route

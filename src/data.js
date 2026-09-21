@@ -318,13 +318,13 @@ export const presets = Array.from({ length: 20 }, (_, i) => ({
 export async function optimizeImage(file) {
   if (!file.type.startsWith("image/")) throw Error("Please choose an image.");
   const bitmap = await createImageBitmap(file);
-  const ratio = Math.min(1, 1800 / Math.max(bitmap.width, bitmap.height));
+  const ratio = Math.min(1, 2560 / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(bitmap.width * ratio);
   canvas.height = Math.round(bitmap.height * ratio);
   canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
-  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.82));
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.92));
   if(cloud.ready)return uploadMedia(blob,file.name.replace(/\.[^.]+$/,".webp"));
-  return canvas.toDataURL("image/webp", 0.82);
+  return canvas.toDataURL("image/webp", 0.92);
 }

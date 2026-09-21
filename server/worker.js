@@ -7,7 +7,7 @@ export default {
     const auth = await authResponse(request, env);
     if (auth) return auth;
     const url = new URL(request.url);
-    if(url.pathname.startsWith("/api/")) return contentResponse(request,env,env.DB ? new D1Store(env.DB) : null,new B2Media(env),env.IMAGES ? async bytes => Promise.all([640,1280,1920].map(async width=>{const output=await env.IMAGES.input(new Blob([bytes]).stream()).transform({width,fit:"scale-down"}).output({format:"image/webp",quality:82});return {width,bytes:new Uint8Array(await output.response().arrayBuffer())};})) : null);
+    if(url.pathname.startsWith("/api/")) return contentResponse(request,env,env.DB ? new D1Store(env.DB) : null,new B2Media(env),env.IMAGES ? async bytes => Promise.all([640,1280,2560].map(async width=>{const output=await env.IMAGES.input(new Blob([bytes]).stream()).transform({width,fit:"scale-down"}).output({format:"image/webp",quality:92});return {width,bytes:new Uint8Array(await output.response().arrayBuffer())};})) : null);
     if (ownerPath(url.pathname) && !(await isOwner(request, env)))
       return new Response(null, {
         status: 302,
