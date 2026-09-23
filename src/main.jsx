@@ -526,8 +526,9 @@ function Project({ projects }) {
   const { slug } = useParams();
   const p = projects.find((p) => p.id === slug);
   if (!p) return <NotFound />;
+  const hasBrief = [p.challenge,p.role,p.deliverables,p.outcome,p.credits].some(value=>value?.trim());
   return (
-    <main className="project-page">
+    <main className={`project-page project-${p.id}`}>
       <Link className="back" to="/work">
         <ArrowLeft size={16} /> All work
       </Link>
@@ -538,8 +539,8 @@ function Project({ projects }) {
         <h1>{p.title}</h1>
         <p>{p.summary}</p>
       </div>
-      <CaseBrief project={p}/>{p.heroImage&&<div className="project-hero"><img src={p.heroImage} alt={p.title} loading="eager" decoding="async" /></div>}
-      <div className="project-facts">
+      {p.heroImage&&<div className="project-hero"><img src={p.heroImage} alt={p.title} loading="eager" decoding="async" /></div>}<CaseBrief project={p}/>
+      {!hasBrief&&<div className="project-facts">
         <div>
           <small>DISCIPLINE</small>
           <p>{p.category}</p>
@@ -552,7 +553,7 @@ function Project({ projects }) {
           <small>FORMAT</small>
           <p>Case study</p>
         </div>
-      </div>
+      </div>}
       {p.blocks.filter(b=>b.type!=='text'||(b.text?.trim()&&!/Use this space|Describe your role|Write here\./.test(b.text))).map((b) =>
         b.type === "text" ? (
           <section className="text-block" key={b.id}>
