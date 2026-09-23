@@ -42,6 +42,7 @@ import {
 } from "./data";
 import "./style.css";
 import { CoverManager } from "./CoverManager";
+import { CredentialEditor } from "./CredentialEditor";
 import { CredentialGallery } from "./CredentialGallery";
 import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
@@ -1063,14 +1064,14 @@ function Editor({
       sample: false,
       blocks: [],
     };
-    setDraft([...draft, post]);
+    setDraft(current => [...current, post]);
     setIndex(draft.length);
     setMode("content");
     setNotice("New post created. Add your title and content.");
   }
   function addBlogPost() {
     const post = { id: "note-" + crypto.randomUUID().slice(0, 8), title: "Untitled note", excerpt: "", date: new Date().toISOString().slice(0, 10), category: "Notes", cover: 0, blocks: [{ id: crypto.randomUUID(), type: "text", title: "A new note", text: "Write your note here." }] };
-    setBlogDraft([...blogDraft, post]); setBlogIndex(blogDraft.length); setMode("journal"); setNotice("New note created. Add your title and copy.");
+    setBlogDraft(current => [...current, post]); setBlogIndex(blogDraft.length); setMode("journal"); setNotice("New note created. Add your title and copy.");
   }
   function patchBlogBlock(blockId, values) {
     setBlogDraft(drafts => drafts.map((post, i) => i === blogIndex ? { ...post, blocks: (post.blocks || []).map(block => block.id === blockId ? { ...block, ...values } : block) } : post));
@@ -1151,6 +1152,11 @@ function Editor({
 
   useEffect(()=>{const warn=e=>{if(dirty){e.preventDefault();e.returnValue="";}};window.addEventListener("beforeunload",warn);return ()=>window.removeEventListener("beforeunload",warn);},[dirty]);
   useEffect(()=>{const shortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();document.activeElement?.blur();setTimeout(()=>document.querySelector(".save-changes")?.click(),0);}};window.addEventListener("keydown",shortcut);return()=>window.removeEventListener("keydown",shortcut);},[]);
+  useEffect(()=>{
+    if(!dirty||saving)return;
+    const timer=window.setTimeout(()=>latestSave.current?.save(),2000);
+    return()=>window.clearTimeout(timer);
+  },[snapshot,dirty,saving]);
   const p = draft[index];
   function patch(values) {
     setDraft((d) => d.map((v, i) => (i === index ? { ...v, ...values } : v)));
@@ -1246,7 +1252,7 @@ function Editor({
           <button className="inspector-toggle" onClick={() => setInspectorOpen(value => !value)} aria-expanded={inspectorOpen} aria-controls="editor-inspector">
             <Settings2 size={14} /> {inspectorOpen ? "Close pages" : "Pages & tools"}
           </button>
-          <span className="save-state" role="status">{dirty?"Unsaved changes":"All changes saved"}</span><button className="dark save-changes" disabled={saving} onClick={saveCurrent}>{saving?"Saving…":"Save changes"}</button>
+          <span className="save-state" role="status">{saving?"Saving draft…":dirty?"Autosave in 2 seconds":"Draft saved"}</span><button className="dark save-changes" disabled={saving||!dirty} onClick={saveCurrent}>{saving?"Saving…":"Save now"}</button>
           <button disabled={saving} onClick={publishCurrent}>
             Publish website
           </button>
@@ -1264,7 +1270,7 @@ function Editor({
       <div className="save-notice" role="status">{notice||"Save changes keeps a private cloud draft. Publish website makes it public."}</div>
       <div className="editor-layout">
         <aside id="editor-inspector" aria-label="Editor map and settings">
-          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages & tools</h2><p>Choose a page, then edit directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Work"],["/about","About"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details><summary>Content</summary><button onClick={()=>{setMode("project-covers");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal-covers");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
+          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages & tools</h2><p>Choose a page, then edit directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Work"],["/journal","Journal"],["/about","About"],["/certificates","Certificates"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a className={contextPath===path?"active":""} key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details><summary>Collections</summary><button onClick={()=>{setMode("project-covers");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal-covers");setInspectorOpen(false);}}>Journal <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");setInspectorOpen(false);}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
             <button
               className={mode === "page" ? "active" : ""}
               onClick={() => setMode("page")}
@@ -1288,14 +1294,14 @@ function Editor({
           </div>
           <div className="editor-context" aria-live="polite">
             <span className="eyebrow">EDITING</span>
-            <strong>{{page: "Page layout", content: "Projects", journal: "Journal", site: "Navigation", certificates: "Certificates"}[mode]}</strong>
-            <small>Canvas first · settings second</small>
+            <strong>{{page: "Page layout", content: "Project editor", "project-covers": "Project covers", journal: "Article editor", "journal-covers": "Article covers", site: "Navigation", certificates: "Certificates", settings: "Site settings"}[mode]}</strong>
+            <small>{dirty ? "Draft has unsaved changes" : "Draft is saved"}</small>
           </div>
-          <button className="add-block" onClick={addPost}>
+          {["content","project-covers"].includes(mode)&&<button className="add-block" onClick={addPost}>
             <Plus size={14} /> New post
-          </button>
-          <button className="add-block" onClick={addBlogPost}><Plus size={14}/> New note</button>
-          <div className="category-create">
+          </button>}
+          {["journal","journal-covers"].includes(mode)&&<button className="add-block" onClick={addBlogPost}><Plus size={14}/> New note</button>}
+          {["content","project-covers"].includes(mode)&&<div className="category-create">
             <label htmlFor="new-category">New category</label>
             <div>
               <input
@@ -1308,7 +1314,7 @@ function Editor({
                 <Plus size={15} />
               </button>
             </div>
-          </div>
+          </div>}
           {mode === "site" ? (
             <>
               <label>SITE NAVIGATION</label>
@@ -1372,8 +1378,8 @@ function Editor({
               <button
                 className="add-block"
                 onClick={() =>
-                  setCertificateDraft([
-                    ...certificateDraft,
+                  setCertificateDraft(current => [
+                    ...current,
                     {
                       id: crypto.randomUUID(),
                       title: "New certificate",
@@ -1503,78 +1509,7 @@ function Editor({
             <><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>{contextPath === '/about' ? <About/> : contextPath === '/resume' ? <About/> : contextPath === '/services' ? <Services/> : contextPath === '/contact' ? <Contact/> : contextPath === '/work' ? <Work projects={draft}/> : ['/journal','/blog'].includes(contextPath) ? <Journal blogPosts={blogDraft}/> : <EditablePagePreview contextPath={contextPath} pages={pages} navItems={siteNav} onNavChange={updateNav} onPagePatch={values=>setPages({...pages,[contextPath]:{...pages[contextPath],...values}})}/>}<PageModules blocks={pages[contextPath]?.blocks || []} onChange={blocks=>setPages({...pages,[contextPath]:{...pages[contextPath],blocks}})}/><Footer/></>
             )
           ) : mode === "certificates" ? (
-            <div className="credential-editor">
-              <span className="eyebrow">CREDENTIALS / EDIT MODE</span>
-              <h1>Certificates</h1><button data-editor-ui className="button" onClick={()=>setCertificateDraft([...certificateDraft,{id:crypto.randomUUID(),title:"New certificate",issuer:"",date:"",url:""}])}>Add certificate</button>
-              {certificateDraft.length === 0 && (
-                <p>Add a certificate to begin.</p>
-              )}
-              {certificateDraft.map((c, i) => (
-                <section key={c.id}>
-                  <label>
-                    Certificate title
-                    <input
-                      aria-label="Certificate title"
-                      value={c.title}
-                      onChange={(e) =>
-                        setCertificateDraft(
-                          certificateDraft.map((v, j) =>
-                            j === i ? { ...v, title: e.target.value } : v,
-                          ),
-                        )
-                      }
-                    />
-                  </label>
-                  {[
-                    ["issuer", "Issuer"],
-                    ["date", "Date"],
-                    ["url", "Verification URL"],
-                  ].map(([key, label]) => (
-                    <label key={key}>
-                      {label}
-                      <input
-                        value={c[key]}
-                        onChange={(e) =>
-                          setCertificateDraft(
-                            certificateDraft.map((v, j) =>
-                              j === i ? { ...v, [key]: e.target.value } : v,
-                            ),
-                          )
-                        }
-                      />
-                    </label>
-                  ))}
-                  <label>Description<textarea rows={4} value={c.description||""} onChange={e=>setCertificateDraft(current=>current.map(v=>v.id===c.id?{...v,description:e.target.value}:v))}/></label><label className="certificate-honour"><input type="checkbox" checked={!!c.topTenPercent} onChange={e=>setCertificateDraft(current=>current.map(v=>v.id===c.id?{...v,topTenPercent:e.target.checked}:v))}/> Top 10% of class</label><small>Enable the badge only for credentials where this distinction was awarded. Certificate image: 1600–2400 px wide; keep the full document visible.</small>
-                  <label>
-                    Certificate image
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        upload(e, (image) =>
-                          setCertificateDraft(
-                            certificateDraft.map((v, j) =>
-                              j === i ? { ...v, image } : v,
-                            ),
-                          ),
-                        )
-                      }
-                    />
-                  </label>
-                  {c.image && <img src={c.image} alt={c.title} />}
-                  <button
-                    className="add-block"
-                    onClick={() =>
-                      setCertificateDraft(
-                        certificateDraft.filter((v) => v.id !== c.id),
-                      )
-                    }
-                  >
-                    Remove certificate
-                  </button>
-                </section>
-              ))}
-            </div>
+            <CredentialEditor items={certificateDraft} onChange={setCertificateDraft} onUpload={file => optimizeImage(file)} onNotice={setNotice}/>
           ) : mode === "site" ? (
             <div className="site-edit-preview"><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/><p data-editor-ui className="form-note">Edit menu labels in place. Use the grip to move a link and its settings button to change the destination.</p><Footer/></div>
           ) : (
