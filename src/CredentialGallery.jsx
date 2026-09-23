@@ -1,8 +1,28 @@
-import React,{useRef,useState,useEffect} from 'react';
-import {safeLink} from './data';
-export function CredentialGallery({certificates}){
- const [selected,setSelected]=useState(null);const dialog=useRef(null);const trigger=useRef(null);
- useEffect(()=>{if(selected){dialog.current?.showModal();const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=old;};}},[selected]);
- const close=()=>{dialog.current?.close();setSelected(null);trigger.current?.focus();};
- return <><div className="credential-cards">{certificates.map(c=><button type="button" className="credential-card" key={c.id} onClick={e=>{trigger.current=e.currentTarget;setSelected(c);}} aria-label={'View certificate: '+c.title}><div className="credential-cover">{c.image?<img src={c.image} alt={c.title} loading="lazy"/>:<span>Certificate</span>}{c.topTenPercent&&<span className="credential-badge">Top 10% of class</span>}</div><div className="credential-meta"><small>{c.issuer}{c.date?' · '+c.date:''}</small><h2>{c.title}</h2><span>View details +</span></div></button>)}</div><dialog ref={dialog} className="credential-dialog" aria-labelledby="credential-title" onCancel={e=>{e.preventDefault();close();}} onClick={e=>{if(e.target===e.currentTarget)close();}}>{selected&&<div className="credential-dialog-body"><button type="button" className="credential-close" onClick={close} autoFocus aria-label="Close certificate">Close ×</button>{selected.image&&<img src={selected.image} alt={selected.title}/>}<div className="credential-dialog-copy"><small>{selected.issuer}{selected.date?' · '+selected.date:''}</small><h2 id="credential-title">{selected.title}</h2>{selected.topTenPercent&&<span className="credential-badge">Top 10% of class</span>}<p>{selected.description||'Further details about this credential will be added soon.'}</p>{safeLink(selected.url)&&<a className="portfolio-action" href={safeLink(selected.url)} target="_blank" rel="noopener noreferrer">Verify credential ↗</a>}</div></div>}</dialog></>;
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { safeLink } from "./data";
+
+export function CredentialGallery({ certificates }) {
+  const [selected, setSelected] = useState(null);
+  const dialog = useRef(null);
+  const trigger = useRef(null);
+  useEffect(() => {
+    if (!selected) return;
+    dialog.current?.showModal();
+    const old = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = old; };
+  }, [selected]);
+  const close = () => { dialog.current?.close(); setSelected(null); trigger.current?.focus(); };
+  return <>
+    <div className="credential-cards">
+      {certificates.map((credential, index) => <motion.button type="button" className="credential-card" key={credential.id} onClick={event => { trigger.current = event.currentTarget; setSelected(credential); }} aria-label={`View certificate: ${credential.title}`} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.5, delay: (index % 4) * 0.055, ease: [0.22, 1, 0.36, 1] }} whileHover={{ y: -4 }}>
+        <div className="credential-cover">{credential.image ? <img src={credential.image} alt={credential.title} loading="lazy" /> : <span>Certificate</span>}{credential.topTenPercent && <span className="credential-badge">Top 10% of class</span>}</div>
+        <div className="credential-meta"><small>{credential.issuer}{credential.date ? ` · ${credential.date}` : ""}</small><h2>{credential.title}</h2><span>View details +</span></div>
+      </motion.button>)}
+    </div>
+    <dialog ref={dialog} className="credential-dialog" aria-labelledby="credential-title" onCancel={event => { event.preventDefault(); close(); }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
+      {selected && <div className="credential-dialog-body"><button type="button" className="credential-close" onClick={close} autoFocus aria-label="Close certificate">Close ×</button>{selected.image && <img src={selected.image} alt={selected.title} />}<div className="credential-dialog-copy"><small>{selected.issuer}{selected.date ? ` · ${selected.date}` : ""}</small><h2 id="credential-title">{selected.title}</h2>{selected.topTenPercent && <span className="credential-badge">Top 10% of class</span>}<p>{selected.description || "Further details about this credential will be added soon."}</p>{safeLink(selected.url) && <a className="portfolio-action" href={safeLink(selected.url)} target="_blank" rel="noopener noreferrer">Verify credential ↗</a>}</div></div>}
+    </dialog>
+  </>;
 }
