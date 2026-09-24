@@ -528,6 +528,10 @@ function Project({ projects }) {
   const p = projects.find((p) => p.id === slug);
   if (!p) return <NotFound />;
   const hasBrief = [p.challenge,p.role,p.deliverables,p.outcome,p.credits].some(value=>value?.trim());
+  const suggestions = [
+    ...projects.filter(item=>item.id!==p.id&&item.category===p.category),
+    ...projects.filter(item=>item.id!==p.id&&item.category!==p.category),
+  ].slice(0,2);
   return (
     <main className={`project-page project-${p.id}`}>
       <Link className="back" to="/work">
@@ -540,7 +544,7 @@ function Project({ projects }) {
         <h1>{p.title}</h1>
         <p>{p.summary}</p>
       </div>
-      {p.heroImage&&<div className="project-hero"><img src={p.heroImage} alt={p.title} loading="eager" decoding="async" /></div>}<CaseBrief project={p}/>
+      <CaseBrief project={p} withCover/>
       {!hasBrief&&<div className="project-facts">
         <div>
           <small>DISCIPLINE</small>
@@ -571,17 +575,9 @@ function Project({ projects }) {
           </section>
         ),
       )}
-      {p.relatedNote&&<Link className="related-note" to={"/journal/"+p.relatedNote}>Read the thinking behind this work <Arrow/></Link>}<div className="next-project">
-        <small>KEEP EXPLORING</small>
-        <Link
-          to={
-            "/work/" + (projects.find(item=>item.id!==p.id&&item.category===p.category)||projects.find(item=>item.id!==p.id)||p).id
-          }
-        >
-          {(projects.find(item=>item.id!==p.id&&item.category===p.category)||projects.find(item=>item.id!==p.id)||p).title}
-          <Arrow />
-        </Link>
-      </div><ContactBand/>
+      {p.relatedNote&&<Link className="related-note" to={"/journal/"+p.relatedNote}>Read the thinking behind this work <Arrow/></Link>}
+      {suggestions.length>0&&<section className="project-suggestions" aria-label="More projects"><div className="project-suggestions-heading"><small>KEEP EXPLORING</small><span>{suggestions.length} SELECTED PROJECTS</span></div><div className="project-suggestion-grid">{suggestions.map(item=><Link className="project-suggestion-card" to={"/work/"+item.id} key={item.id}><div className="project-suggestion-cover">{item.coverImage?<img src={item.coverImage} alt="" loading="lazy" decoding="async"/>:<Art index={item.cover}/>}</div><div className="project-suggestion-copy"><small>{item.category}</small><div><h2>{item.title}</h2><ArrowUpRight size={22}/></div><p>{item.summary}</p></div></Link>)}</div></section>}
+      <ContactBand/>
     </main>
   );
 }
