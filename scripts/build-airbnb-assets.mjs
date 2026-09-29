@@ -68,6 +68,7 @@ await campaignImage(join(source,'arctic-bedroom.png'),'plaza-screen-art.webp',{w
 await campaignImage(join(source,'rainforest-bedroom.png'),'shelter-screen-art.webp',{width:430,height:638,crop:true,compact:true});
 
 await sharp(join(source,'kuwait-city-display.png')).composite([{input:join(target,'plaza-screen-art.webp'),left:420,top:68}]).webp({quality:88,effort:6}).toFile(join(target,'kuwait-plaza.webp'));
+await sharp(join(source,'kuwait-plaza-v2-base.png')).composite([{input:join(target,'plaza-screen-art.webp'),left:420,top:68}]).webp({quality:88,effort:6}).toFile(join(target,'kuwait-plaza-v2.webp'));
 await sharp(join(source,'kuwait-bus-shelter.png')).composite([{input:join(target,'shelter-screen-art.webp'),left:924,top:121}]).webp({quality:88,effort:6}).toFile(join(target,'kuwait-shelter.webp'));
 
 await outdoorPlacement('kuwait-blue-hour-streetboard.png','kuwait-blue-hour-streetboard.webp');

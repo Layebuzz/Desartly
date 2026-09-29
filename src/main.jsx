@@ -656,7 +656,7 @@ function Project({ projects }) {
       </div>}
       {p.blocks.filter(b=>b.type!=='text'||(b.text?.trim()&&!/Use this space|Describe your role|Write here\./.test(b.text))).map((b) =>
         b.type === "text" ? (
-          <section className={"text-block"+(b.layout==="chapter"?" case-chapter":b.layout==="statement"?" case-statement":b.layout==="interlude"?" case-interlude":"")} key={b.id}>
+          <section className={"text-block"+(b.layout==="chapter"?" case-chapter":b.layout==="statement"?" case-statement":b.layout==="interlude"?" case-interlude":b.layout==="note"?" case-note":"")} key={b.id}>
             <div>{b.chapter&&<span className="eyebrow">{b.chapter}</span>}<h2>{b.title}</h2></div>
             <p>{b.text}</p>
           </section>

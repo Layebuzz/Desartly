@@ -58,8 +58,16 @@
     {
       "id": "airbnb-plaza",
       "type": "image",
-      "image": "/projects/airbnb/kuwait-plaza.webp",
-      "alt": "Airbnb Unlock Adventure polar bear campaign visual on a digital display in a Kuwait City plaza"
+      "image": "/projects/airbnb/kuwait-plaza-v2.webp",
+      "alt": "Airbnb polar bear campaign in a reflective illuminated display in a Kuwait City plaza"
+    },
+    {
+      "id": "airbnb-streetboard-intro",
+      "type": "text",
+      "layout": "note",
+      "chapter": "OUTDOOR LANGUAGE",
+      "title": "The city becomes part of the frame.",
+      "text": "Printed streetboards bring the campaign into Kuwait City at road speed. The image stays quiet enough to read from a moving car, while the folds, tension points and changing light make the placement feel made for the street."
     },
     {
       "id": "airbnb-streetboards",
@@ -75,15 +83,29 @@
       ]
     },
     {
+      "id": "airbnb-streetboard-outro",
+      "type": "text",
+      "layout": "note",
+      "title": "A familiar room, under a different sky.",
+      "text": "The same lockup keeps the campaign recognizable across two very different vinyl surfaces. Wrinkles are treated as part of the image rather than hidden, giving the work a tactile, local presence."
+    },
+    {
       "id": "airbnb-giraffe-lightbox",
       "type": "image",
       "image": "/projects/airbnb/kuwait-giraffe-lightbox.webp",
       "alt": "Airbnb giraffe campaign in a reflective backlit Kuwait City bus shelter presentation mockup"
     },
     {
+      "id": "airbnb-transit-note",
+      "type": "text",
+      "layout": "note",
+      "chapter": "TRANSIT LIGHTBOXES",
+      "title": "Light does the last bit of storytelling.",
+      "text": "At the bus shelter, the artwork is printed on translucent stock and lit from behind. Cool fluorescent bands and passing headlights move across the glass, turning a still image into a quiet night-time signal."
+    },
+    {
       "id": "airbnb-penguin-lightbox",
       "type": "image",
-      "layout": "offset",
       "image": "/projects/airbnb/kuwait-penguin-lightbox.webp",
       "alt": "Airbnb penguin campaign in a Kuwait City bus shelter lightbox with visible fluorescent tube and glass reflections"
     }
