@@ -1,0 +1,60 @@
+{
+  "id": "mci-5g",
+  "title": "MCI · 5G",
+  "category": "Advertising",
+  "tags": ["Advertising", "Art Direction"],
+  "year": "2024",
+  "sample": false,
+  "coverImage": "/projects/mci/snail-top.webp",
+  "heroImage": "/projects/mci/snail-top.webp",
+  "summary": "An unexpected expression of speed: slow creatures become the stars of MCI’s 5G campaign.",
+  "clientName": "MCI · Hamrah Aval",
+  "clientLogo": "/projects/mci/client-logo.webp",
+  "clientDescription": "Mobile Communications of Iran (Hamrah Aval), a mobile network operator in Iran.",
+  "challenge": "Make the abstract promise of 5G speed instantly memorable across outdoor and digital media.",
+  "role": "Visual concept, key visual design, art direction and compositing.",
+  "deliverables": "Campaign key visuals and executions for outdoor and digital placements.",
+  "credits": "Campaign concept and design by Ali Komeili. Portfolio imagery newly recreated from the original project as presentation studies.",
+  "blocks": [
+    {
+      "id": "mci-prologue",
+      "type": "text",
+      "layout": "statement",
+      "title": "Speed, seen differently.",
+      "text": "A snail and a tortoise are the last things we expect to move fast. That contradiction gives the 5G message an immediate, memorable visual hook."
+    },
+    {
+      "id": "mci-hero",
+      "type": "image",
+      "image": "/projects/mci/snail-speed.webp",
+      "alt": "Snail speeding on a skateboard through a cyan light trail"
+    },
+    {
+      "id": "mci-key-visuals",
+      "type": "grid",
+      "preset": 1,
+      "layout": "pair",
+      "images": ["/projects/mci/tortoise-speed.webp", "/projects/mci/snail-top.webp"],
+      "alts": ["Tortoise riding a skateboard in a blue motion field", "Overhead view of a snail on a skateboard"]
+    },
+    {
+      "id": "mci-method",
+      "type": "text",
+      "layout": "interlude",
+      "title": "Still images with forward momentum.",
+      "text": "Precisely directed light, sharp subject detail and controlled motion cues create the sensation of acceleration. Each composition keeps the creature readable while the world around it moves."
+    },
+    {
+      "id": "mci-city",
+      "type": "image",
+      "image": "/projects/mci/tehran-billboard.webp",
+      "alt": "MCI 5G campaign on a wrinkled outdoor banner beside a Tehran road at dusk"
+    },
+    {
+      "id": "mci-digital",
+      "type": "image",
+      "image": "/projects/mci/digital-screens.webp",
+      "alt": "Snail and tortoise 5G key visuals adapted for two digital advertising screens"
+    }
+  ]
+}

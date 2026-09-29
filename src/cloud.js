@@ -1,8 +1,11 @@
 import photography from './project-photography.json' with { type: 'json' };
 import divarPresentation from './divar-project.json' with { type: 'json' };
+import mciPresentation from './mci-project.json' with { type: 'json' };
 export const cloud={ready:false,version:0,values:{},error:'',allowLocal:false};
 const fields={'pol-published':'projects','pol-draft':'projects','pol-categories':'categories','pol-certificates':'certificates','pol-certificates-draft':'certificates','pol-page-content':'pages','pol-nav':'nav','pol-stats':'stats','pol-clients':'clients','pol-blog-posts':'blogPosts','pol-home-sections':'homeSections'};
 function load(site){if(!site)return;
+ if(!Array.isArray(site.projects))site.projects=[];
+ if(!site.projects.some(project=>project.id===mciPresentation.id))site.projects.push(structuredClone(mciPresentation));
  for(const project of site.projects||[]){
   if(project.year===undefined||project.year===null){const years={divar:2025,toypet:2023,myom:2024,'cafe-de-la-corte':2022,noghteh:2021};project.year=String(years[project.id]||2021+[...project.id].reduce((sum,c)=>sum+c.charCodeAt(0),0)%5);}
   if(project.id==='divar'){

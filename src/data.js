@@ -1,4 +1,5 @@
 import divarProject from './divar-project.json' with { type: 'json' };
+import mciProject from './mci-project.json' with { type: 'json' };
 import {cloud,uploadMedia} from './cloud.js';
 export const categories = ["Product & AI", "Branding", "Advertising"];
 export const categoryIds = ["product-ai", "branding", "advertising"];
@@ -13,7 +14,7 @@ const names = [
   "Digital Campaign",
   "Integrated Campaign",
 ];
-export const initialProjects = [divarProject, ...names.map((title, i) => ({
+export const initialProjects = [divarProject, mciProject, ...names.map((title, i) => ({
   id: title.toLowerCase().replaceAll(" & ", "-").replaceAll(" ", "-"),
   title,
   category: categories[Math.floor(i / 3)],
