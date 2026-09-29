@@ -161,3 +161,11 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:800px){.desartly-footer{grid-template-columns:1fr}.desartly-footer>.logo{grid-row:2}.desartly-footer>.footer-items{grid-column:1;grid-row:3;justify-content:flex-start;flex-basis:auto}.desartly-footer>p{grid-row:4;flex-basis:auto}.desartly-footer>small{grid-column:1;grid-row:5;justify-self:start}.profile-section{grid-template-columns:1fr;gap:28px;padding:40px 0}.expertise-grid{grid-template-columns:1fr;gap:24px}.experience-heading{align-items:flex-start}.experience-heading>span{max-width:none}.training-list ul{columns:1}.folio-selected>.folio-section-label:after{right:94px;width:30px;bottom:32px}.resume-index{gap:18px}.profile-section-heading h3 br{display:none}}
 @media(prefers-reduced-motion:reduce){.samurai-peek{transition:none}.folio-selected:hover .samurai-peek{transform:none}}
 @media print{.resume-index,.resume-samurai,.samurai-peek,.desartly-footer,.contact-band{display:none!important}.profile-section{break-inside:avoid;padding:20px 0}.training-list ul{display:block}.experience-entry{break-inside:avoid}}
+/* About uses square cards and a shared width for its closing sections. */
+.resume-profile .resume-index a,.resume-profile .experience-entry,.resume-profile .expertise-grid article,.resume-profile .software-list,.resume-profile .impact-list li,.resume-profile .honours-card,.resume-profile .training-list,.resume-profile .software-list span,.about-certificates-card{border-radius:0}
+.about>.about-certificates-card{margin-bottom:48px;align-items:center}
+.about>.folio-contact{margin-inline:0;padding:40px;margin-top:0;border:1px solid #e3deee}
+.about>.folio-contact h2{font-size:clamp(34px,4.4vw,64px);line-height:1.15;margin:28px 0;max-width:760px}
+.about>.folio-contact .folio-contact-actions{margin-bottom:32px}
+.about>.folio-contact>div:last-child{padding-top:24px;justify-content:space-between}
+@media(max-width:800px){.about>.about-certificates-card{margin-bottom:32px}.about>.folio-contact{padding:28px}.about>.folio-contact h2{font-size:clamp(32px,7.5vw,48px)}.about>.folio-contact>div:last-child{align-items:flex-start}}
