@@ -500,7 +500,7 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
 function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
  return <section className="contact-band folio-contact compact-contact">
-   <div className="contact-sketch" aria-hidden="true"><img src="/brand/samurai/pencil.webp" alt="" width="100" height="100"/><svg viewBox="0 0 130 30" fill="none"><path d="M5 21C29 10 53 27 78 16S108 8 123 13M8 25C43 16 62 27 88 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg></div>
+   <div className="contact-sketch" aria-hidden="true"><img src="/brand/samurai/ready-stance.webp" alt="" width="100" height="100"/><svg viewBox="0 0 130 30" fill="none"><path d="M5 21C29 10 53 27 78 16S108 8 123 13M8 25C43 16 62 27 88 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg></div>
    <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "Good ideas start"} second={page.contactSubtitle ?? "with a conversation."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</p></div>
    <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Let’s talk</span><Arrow/></Link>
  </section>;
@@ -553,7 +553,8 @@ function Work({ projects }) {
   const visibleCategories = categories.filter(category => projects.some(project => project.category === category));
   return (
     <main className="page">
-      <div className="page-title">
+      <div className="page-title work-title-with-samurai">
+        <img className="samurai-edge" src="/brand/samurai/edge-hang.webp" alt="" width="140" height="140" aria-hidden="true"/>
         <span className="eyebrow">
           THE PORTFOLIO / {projects.length} PROJECTS
         </span>

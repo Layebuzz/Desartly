@@ -172,3 +172,10 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:700px){.folio-contact.compact-contact{grid-template-columns:64px minmax(0,1fr);gap:20px;padding:24px}.contact-sketch img{width:64px;height:80px}.contact-sketch svg{width:64px;left:-4px}.folio-contact.compact-contact h2{font-size:25px}.folio-contact.compact-contact>a.contact-primary{grid-column:2;justify-self:start;min-width:150px}.compact-contact .eyebrow{font-size:9px}.about>.about-certificates-card{margin-bottom:32px}}
 @media(max-width:380px){.folio-contact.compact-contact{grid-template-columns:48px minmax(0,1fr);padding:20px;gap:14px}.contact-sketch img{width:48px;height:68px}.folio-contact.compact-contact h2{font-size:23px}}
 @media print{.folio-contact.compact-contact{display:none!important}}
+
+/* Distinct character poses at unexpected edges, without obscuring content. */
+.work-title-with-samurai{position:relative;padding-right:170px}.samurai-edge{position:absolute;top:-82px;right:18px;width:140px;height:140px;object-fit:contain;transform:rotate(-7deg);transition:transform .35s ease;pointer-events:none}.work-title-with-samurai:hover .samurai-edge{transform:rotate(-2deg) translateY(4px)}
+.contact-sketch img{transition:transform .3s ease}.compact-contact:hover .contact-sketch img{transform:rotate(-4deg) translateY(-2px)}
+.resume-samurai{width:100px;height:100px;transform:rotate(-7deg)}
+@media(max-width:700px){.work-title-with-samurai{padding-right:76px}.samurai-edge{width:76px;height:76px;top:-52px;right:0}.resume-samurai{width:64px;height:64px}}
+@media(prefers-reduced-motion:reduce){.samurai-edge,.contact-sketch img{transition:none}.work-title-with-samurai:hover .samurai-edge{transform:rotate(-7deg)}.compact-contact:hover .contact-sketch img{transform:none}}
