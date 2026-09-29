@@ -93,7 +93,7 @@
     {
       "id": "divar-human-ai",
       "type": "image",
-      "image": "/projects/divar/human-ai.webp",
+      "image": "/projects/divar/human-ai-final.webp",
       "alt": "A person using a phone in a yellow chair, accompanied by Divar’s AI character"
     },
     {
@@ -103,5 +103,7 @@
       "component": "divar-categories",
       "componentVersion": 2
     }
-  ]
+  ],
+  "clientLogo": "/projects/divar/client-logo.webp",
+  "clientDescription": "An online classifieds marketplace in Iran, connecting people with new and second-hand goods, homes, vehicles and services."
 }
