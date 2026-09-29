@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { animate, inView } from "motion";
 import {
   BrowserRouter,
   Navigate,
@@ -61,6 +62,66 @@ const Taxonomy = React.createContext({
 const SortableBlock = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableBlock})));
 const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableGroup})));
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
+const publicProjectIds = new Set(["toypet", "myom", "cafe-de-la-corte", "noghteh"]);
+
+function SiteMotion({ disabled = false }) {
+  const location = useLocation();
+  useEffect(() => {
+    if (disabled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let cancelled = false;
+    const cleanups = [];
+    const frame = requestAnimationFrame(() => {
+      if (cancelled) return;
+      const revealTargets = document.querySelectorAll([
+        "#main main > .page-title",
+        "#main main > section",
+        "#main .cards > a",
+        "#main .home-project-grid > a",
+        "#main .blog-grid > a",
+        "#main .project-page > .project-heading",
+        "#main .project-page > .project-overview",
+        "#main .project-page > .text-block",
+        "#main .project-page > .case-single-image",
+        "#main .project-page > .composition-block",
+      ].join(","));
+      revealTargets.forEach((element, index) => {
+        element.style.opacity = "0";
+        element.style.transform = "translateY(22px)";
+        const stop = inView(element, () => {
+          animate(element, { opacity: 1, y: 0 }, { duration: .72, delay: Math.min(index % 4, 3) * .035, ease: [.22, 1, .36, 1] });
+        }, { margin: "0px 0px -7% 0px", amount: .08 });
+        cleanups.push(stop);
+      });
+
+      document.querySelectorAll("#main img").forEach(image => {
+        if (image.closest("[data-editor-ui]")) return;
+        const host = image.closest("figure,.cover,.intro-slide-visual,.blog-cover,.blog-post-cover,.credential-cover,.project-overview-cover,.project-suggestion-cover,.client-logo-row a");
+        if (!host) return;
+        host.classList.add("skeleton-host");
+        image.classList.add("motion-image");
+        const finish = () => {
+          host.classList.add("is-loaded");
+          if (host.classList.contains("is-in-view")) {
+            animate(image, { opacity: 1, scale: 1, filter: "blur(0px)" }, { duration: .68, ease: [.22, 1, .36, 1] });
+          }
+        };
+        image.addEventListener("load", finish, { once: true });
+        if (image.complete && image.naturalWidth) finish();
+        const stop = inView(host, () => {
+          host.classList.add("is-in-view");
+          if (host.classList.contains("is-loaded")) finish();
+        }, { margin: "120px 0px 120px 0px", amount: .01 });
+        cleanups.push(() => { image.removeEventListener("load", finish); stop(); });
+      });
+    });
+    return () => { cancelled = true; cancelAnimationFrame(frame); cleanups.forEach(stop => stop?.()); };
+  }, [location.pathname, location.search, disabled]);
+  return null;
+}
+
+function SiteBootSkeleton() {
+  return <div className="site-boot" aria-label="Loading website" aria-busy="true"><div className="site-boot-header"><i/><i/><i/></div><main><div className="site-boot-title skeleton-pulse"/><div className="site-boot-copy skeleton-pulse"/><div className="site-boot-grid"><i className="skeleton-pulse"/><i className="skeleton-pulse"/><i className="skeleton-pulse"/></div></main></div>;
+}
 function GridPreview({ id }) {
   const { width, height, boxes } = composition(id);
   return (
@@ -376,7 +437,11 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   const routedPage = usePage();
   const page = pageOverride || routedPage;
   const { categories, categoryIds, setCategories } = React.useContext(Taxonomy);
-  const selected = categories.slice(0, 3).map((c, i) => projects.find(p => p.id === page.selectedProjects?.[i]) || projects.find(p => p.category === c)).filter(Boolean);
+  const selected = [...new Map([
+    ...(page.selectedProjects || []).map(id => projects.find(project => project.id === id)).filter(Boolean),
+    ...categories.map(category => projects.find(project => project.category === category)).filter(Boolean),
+    ...projects,
+  ].map(project => [project.id, project])).values()].slice(0, 3);
   const [slideIndex, setSlideIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [hovered, setHovered] = useState(false);
@@ -483,7 +548,7 @@ function Work({ projects }) {
     <main className="page">
       <div className="page-title">
         <span className="eyebrow">
-          THE PORTFOLIO / {projects.length} EXPLORATIONS
+          THE PORTFOLIO / {projects.length} PROJECTS
         </span>
         <h1>{page.title || "Work, connected."}</h1>
         <p>
@@ -518,7 +583,7 @@ function Work({ projects }) {
           ))}
       </div>
       <div className="collection-share"><button onClick={async e=>{const button=e.currentTarget;try{await navigator.clipboard.writeText(window.location.href);button.textContent='Link copied';}catch{button.textContent='Copy this page URL from your browser';}}}>Copy collection link</button><span>Share a focused selection of work.</span></div><p className="sample-note">
-        Concept studies across product, identity and communication.
+        Selected case studies across identity, packaging and visual systems.
       </p>
     </main>
   );
@@ -1738,6 +1803,8 @@ function App() {
     location.pathname === "/admin" ||
     location.pathname.startsWith("/edit/");
   const edit = isWorkspace || location.pathname === "/login";
+  const curatedProjects = projects.filter(project => publicProjectIds.has(project.id));
+  const publicProjects = curatedProjects.length ? curatedProjects : projects;
   return (
     <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings}/>
       <Taxonomy.Provider
@@ -1748,6 +1815,7 @@ function App() {
         }}
       >
         <VisualCopy copy={pages["/site"]?.copy || {}} scope="site">
+        <SiteMotion disabled={edit}/>
         <a className="skip" href="#main">
           Skip to content
         </a>
@@ -1791,16 +1859,16 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route
                 path="/"
-                element={<Home projects={projects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
+                element={<Home projects={publicProjects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
               />
-              <Route path="/work" element={<Work projects={projects} />} />
+              <Route path="/work" element={<Work projects={publicProjects} />} />
               <Route path="/journal" element={<Journal blogPosts={blogPosts} />} />
               <Route path="/blog" element={<Journal blogPosts={blogPosts} />} />
               <Route path="/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route path="/blog/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route
                 path="/work/:slug"
-                element={<Project key={location.pathname} projects={projects} />}
+                element={<Project key={location.pathname} projects={publicProjects} />}
               />
               <Route path="/about" element={<About />} />
               <Route path="/resume" element={<Navigate to="/about#resume" replace />} />
@@ -1828,7 +1896,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           )}
-          {!edit && <PagePosts projects={projects} />}{!edit && <PageModules blocks={pages[location.pathname]?.blocks || []}/>}
+          {!edit && <PagePosts projects={publicProjects} />}{!edit && <PageModules blocks={pages[location.pathname]?.blocks || []}/>} 
         </div>
         {!edit && <Footer />}
         </VisualCopy>
@@ -1836,8 +1904,6 @@ function App() {
     </PageContent.Provider>
   );
 }
-bootstrapCloud().then(()=>createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-));
+const root = createRoot(document.getElementById("root"));
+root.render(<SiteBootSkeleton/>);
+bootstrapCloud().finally(() => root.render(<BrowserRouter><App /></BrowserRouter>));
