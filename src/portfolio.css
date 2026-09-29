@@ -67,8 +67,8 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
    portrait sheets keep their native vertical footprint. */
 .credential-cards{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row;align-items:start;gap:46px 24px}
 .credential-card{display:block;height:auto}.credential-card.is-landscape,.credential-card.is-portrait{grid-column:span 1}
-.credential-card .credential-cover{aspect-ratio:auto;display:block;background:transparent;overflow:visible}
-.credential-card .credential-cover>img{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;padding:0;object-fit:contain;transform:none!important}.credential-card:hover img{transform:none}.credential-meta{display:block}.credential-meta h2{min-height:0}
+.credential-card .credential-cover{aspect-ratio:1.4;display:block;background:transparent;overflow:hidden}
+.credential-card .credential-cover>img{display:block;width:100%;height:100%;max-height:none;aspect-ratio:auto;padding:0;object-fit:contain;transform:none!important}.credential-card:hover img{transform:none}.credential-meta{display:block}.credential-meta h2{min-height:0}
 .credential-dialog{width:min(1400px,calc(100% - 24px));max-width:none;max-height:calc(100dvh - 24px);overflow:auto}
 .credential-dialog-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);min-height:min(760px,calc(100dvh - 24px));padding:0;background:#fff}
 .credential-dialog-media{display:grid;place-items:center;min-width:0;background:#f1f2f4;overflow:hidden}
@@ -113,3 +113,5 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:700px){.project-overview.has-cover{grid-template-columns:1fr;gap:30px}.project-overview-cover{max-width:460px}.project-overview .case-brief-data dl{grid-template-columns:1fr;gap:24px}.project-overview .project-client-card{grid-template-columns:76px minmax(0,1fr);gap:18px;padding:17px}.project-overview .project-client-card img{width:76px}.project-suggestions-heading span{display:none}.project-suggestion-card{grid-template-columns:116px minmax(0,1fr);min-height:166px}.project-suggestion-copy{padding:18px}.project-suggestion-copy>div{margin:15px 0 8px}.project-suggestion-copy h2{font-size:20px}.project-suggestion-copy p{font-size:11px;-webkit-line-clamp:2}}
 @media(max-width:430px){.project-suggestion-card{grid-template-columns:1fr}.project-suggestion-cover{aspect-ratio:1.6}.project-suggestion-copy p{display:none}}
 @media(prefers-reduced-motion:reduce){.project-suggestion-card,.project-suggestion-cover>img,.project-suggestion-cover>.art{transition:none}.project-suggestion-card:hover{transform:none}.project-suggestion-card:hover .project-suggestion-cover>img,.project-suggestion-card:hover .project-suggestion-cover>.art{transform:none}}
+
+.credential-card.is-portrait .credential-cover>img{object-fit:cover;object-position:top}

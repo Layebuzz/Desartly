@@ -1,0 +1,1 @@
+Built-in imagegen. Reference: approved Noghteh embossed identity. Three new photographic compositions: material library with oak/concrete/smoked glass; studio entrance with oak/ribbed glass/concrete; print cards in glass holder. Exact small mark, monochrome, natural daylight, full opaque backgrounds, no sketches or invented patterns.

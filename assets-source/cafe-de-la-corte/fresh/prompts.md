@@ -1,0 +1,1 @@
+Built-in imagegen; exact rectangular bottle, cork, gold bird-shield label, black shield burlap sleeve and jute bow from reference. Full opaque backgrounds. New walnut café hospitality shot and packaging craftsmanship still life.
