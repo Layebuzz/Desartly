@@ -541,9 +541,10 @@ function PageModules({blocks = [], onChange}) {
 }
 function Work({ projects }) {
   const page = usePage();
-  const { categories, categoryIds } = React.useContext(Taxonomy);
+  const { categories } = React.useContext(Taxonomy);
   const [params, setParams] = useSearchParams();
   const active = params.get("category");
+  const visibleCategories = categories.filter(category => projects.some(project => project.category === category));
   return (
     <main className="page">
       <div className="page-title">
@@ -557,11 +558,11 @@ function Work({ projects }) {
         </p>
       </div>
       <div className="filters">
-        {["All work", ...categories].map((c, i) => (
+        {["All work", ...visibleCategories].map((c, i) => (
           <button
             key={c}
-            className={active === (categoryIds[i - 1] || null) ? "active" : ""}
-            onClick={() => setParams(i ? { category: categoryIds[i - 1] } : {})}
+            className={active === (i ? slugify(c) : null) ? "active" : ""}
+            onClick={() => setParams(i ? { category: slugify(c) } : {})}
           >
             {c}
             <span className="filter-count">
@@ -576,7 +577,7 @@ function Work({ projects }) {
         {projects
           .filter(
             (p) =>
-              !active || categoryIds[categories.indexOf(p.category)] === active,
+              !active || slugify(p.category) === active,
           )
           .map((p) => (
             <Card key={p.id} p={p} />
