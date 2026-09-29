@@ -583,9 +583,6 @@ function Work({ projects }) {
             <Card key={p.id} p={p} />
           ))}
       </div>
-      <div className="collection-share"><button onClick={async e=>{const button=e.currentTarget;try{await navigator.clipboard.writeText(window.location.href);button.textContent='Link copied';}catch{button.textContent='Copy this page URL from your browser';}}}>Copy collection link</button><span>Share a focused selection of work.</span></div><p className="sample-note">
-        Selected case studies across identity, packaging and visual systems.
-      </p>
     </main>
   );
 }
