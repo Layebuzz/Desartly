@@ -125,3 +125,14 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-page .case-single-image{height:auto!important;min-height:0!important;aspect-ratio:auto!important;padding:0;background:transparent}
 .project-page .case-single-image.is-loaded{background:transparent}
 .project-page .case-single-image>img{height:auto!important;max-height:none!important;aspect-ratio:auto;object-fit:contain}
+
+/* Ali's scribbled samurai: small personal signatures around the portfolio. */
+.hero-signature{display:flex;gap:18px;margin-top:24px;color:var(--ink)}
+.hero-signature svg{display:none}.samurai-signature{display:block;width:96px;height:96px;object-fit:contain}
+.folio-selected>.folio-section-label{position:relative;margin-top:28px}
+.samurai-peek{position:absolute;right:150px;bottom:30px;width:84px;height:84px;object-fit:contain;pointer-events:none}
+.personal-colophon{grid-column:1/-1;display:flex;align-items:center;gap:20px;padding:0 0 24px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+.personal-colophon>img{width:76px;height:76px;object-fit:contain}.personal-colophon>span{font-size:14px;line-height:1.8}.personal-colophon a{font-weight:600}.personal-colophon small{display:block;font-size:11px;color:var(--muted)}
+.about .portrait-art{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;min-height:380px;padding:20px}
+.about .portrait-art>img{display:block;position:relative;width:min(100%,380px);height:auto;object-fit:contain}.about .portrait-art>small{position:static;color:var(--ink);margin-top:12px;font-size:12px;line-height:1.8}
+@media(max-width:700px){.hero-signature{display:flex;margin-top:20px}.samurai-signature{width:72px;height:72px}.samurai-peek{right:112px;bottom:28px;width:64px;height:64px}.personal-colophon{gap:12px}.personal-colophon>img{width:60px;height:60px}.personal-colophon>span{font-size:12px}.about .portrait-art{min-height:0}}

@@ -1,0 +1,1 @@
+Built-in imagegen. Video frames reference the same faceless black ink samurai, angular robe, topknot and loose scribbled strokes. Three variants: drawing at low desk; peeking over horizontal rule with pencil; standing with pencil on shoulder. Opaque white backgrounds, no text, no anime, no realistic shading.

@@ -164,7 +164,7 @@ function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const items = mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav);
   return <header className="editor-page-header">
     <span className="logo">Desartly<span>®</span></span>
-    <span className="header-name">DESARTLY<br/>DESIGN PORTFOLIO</span>
+    <span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span>
     <nav>{items.map((item, i) => <div className={"inline-nav-item"+(item.to==="/contact"?" editor-contact-primary":"")} key={item.id || i}>
       <button data-editor-ui className="nav-grip" draggable onDragStart={()=>{dragIndex.current=i;}} onDragEnd={()=>{dragIndex.current=null;}} aria-label={`Reorder ${item.label}`}><GripVertical size={13}/></button>
       <span className="editor-nav-item" onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex.current!==null){const next=[...items];next.splice(i,0,next.splice(dragIndex.current,1)[0]);onReorder?.(next);dragIndex.current=null;}}} contentEditable suppressContentEditableWarning onBlur={e=>onNavChange?.(i,{label:e.currentTarget.innerText})}>{item.label}</span>
@@ -425,6 +425,7 @@ function Footer() {
   const patch=values=>setPages(current=>({...current,"/site":{...current["/site"],footer:{...footer,...values}}}));
   const patchItem=(id,values)=>patch({items:footer.items.map(item=>item.id===id?{...item,...values}:item)});
   return <footer className="desartly-footer">
+    <div className="personal-colophon"><img src="/brand/samurai/pencil.webp" alt="" width="96" height="96"/><span>Selected work by <Link to="/about">Ali Komeili</Link><small>Desartly is my independent design portfolio.</small></span></div>
     <Link to="/" className="logo">Desartly<span>®</span></Link>
     <p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({description:e.currentTarget.innerText})}>{footer.description}</p>
     <div className="footer-items">{footer.items.map((item,index)=><div className="footer-item" key={item.id}>
@@ -467,15 +468,15 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   const moveSlide = delta => setSlideIndex(current => (current + delta + selected.length) % Math.max(1, selected.length));
   const sectionMap = {
     intro: <section className="folio-intro">
-      <div className="folio-kicker"><span className="eyebrow">DESARTLY / INDEPENDENT DESIGNER</span><span>Portfolio · 2026</span></div>
+      <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Desartly · Portfolio</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet the designer</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><span>Independent mind.<br/>Connected practice.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
+        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet Ali Komeili</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>The mind behind Desartly.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
         {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{activeProject.category}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
         <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{project.category}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${activeProject.category}` : ""}</span></div>
       </div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
-      <div className="folio-section-label"><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
+      <div className="folio-section-label"><img className="samurai-peek" src="/brand/samurai/peek.webp" alt="" width="100" height="100"/><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
       <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Advertising</p></div>
       {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p} editable onTitleChange={onProjectTitleChange}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
     </section>,
@@ -497,7 +498,7 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
 }
 function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
- return <section className="contact-band folio-contact"><span className="eyebrow">A GOOD PLACE TO START</span><EditableHeading as="h2" first={page.contactTitle ?? "Let’s make"} second={page.contactSubtitle ?? "something matter."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><div className="folio-contact-actions"><Link to="/contact?reason=hr" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Hire me</span> <Arrow/></Link><Link to="/contact?reason=client" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Start a project</span> <Arrow/></Link></div><div><span contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</span><Link to="/about#resume" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>View resume</span> <Arrow/></Link></div></section>;
+ return <section className="contact-band folio-contact"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "Let’s make"} second={page.contactSubtitle ?? "something matter."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><div className="folio-contact-actions"><Link to="/contact?reason=hr" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Hire me</span> <Arrow/></Link><Link to="/contact?reason=client" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>Start a project</span> <Arrow/></Link></div><div><span contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</span><Link to="/about#resume" className="portfolio-action" onClick={e=>{if(editable)e.preventDefault();}}><span>View resume</span> <Arrow/></Link></div></section>;
 }
 
 function Journal({ blogPosts }) {
@@ -648,7 +649,7 @@ function About() {
   const page = usePage();
   return (
     <main className="page about">
-      <span className="eyebrow">THE PRACTICE / DESARTLY</span>
+      <span className="eyebrow">ALI KOMEILI / THE PRACTICE</span>
       <h1>
         {page.title || (
           <>
@@ -660,17 +661,11 @@ function About() {
       </h1>
       <div className="about-grid">
         <div className="portrait-art">
-          <span>D.</span>
-          <small>
-            Desartly
-            <br />
-            Designer across disciplines
-          </small>
-          <div />
+          <img src="/brand/samurai/drawing.webp" alt="The scribbled samurai, Ali Komeili’s personal design character" width="400" height="400"/><small>Ali Komeili<br/>Designer · Desartly</small>
         </div>
         <div>
           <h2>
-            <span>This is Desartly.</span>
+            <span>I’m Ali Komeili.</span>
             <br /><span>I think in systems.</span>
             <br /><span>I care about the details.</span>
           </h2>
