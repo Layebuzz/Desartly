@@ -78,26 +78,44 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:720px){.credential-dialog{width:calc(100% - 12px);max-height:calc(100dvh - 12px)}.credential-dialog-body{display:block;min-height:0}.credential-dialog-media>img{width:100%;height:auto;max-height:68dvh}.credential-dialog-copy{padding:28px 20px 24px}.credential-close{position:fixed;right:12px;top:12px}}
 @media(max-width:560px){.credential-cards{grid-template-columns:1fr}.credential-card.is-landscape,.credential-card.is-portrait{grid-column:span 1}}
 
+/* Digikala: a compact symbol-to-city rhythm, distinct from the other case studies. */
+.project-digikala-smile-arrives-home .project-heading{max-width:920px}
+.project-digikala-smile-arrives-home .case-statement{margin-block:clamp(72px,10vw,148px);padding-block:0;border:0;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);align-items:end}
+.project-digikala-smile-arrives-home .case-statement h2{max-width:12ch;font-size:clamp(44px,6.6vw,96px);line-height:.94;letter-spacing:-.055em}
+.project-digikala-smile-arrives-home .case-statement p{max-width:48ch;padding-bottom:8px}
+.project-digikala-smile-arrives-home .case-image-pair{grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:clamp(10px,1.4vw,22px);align-items:end}
+.project-digikala-smile-arrives-home .case-image-pair figure:first-child{margin-bottom:clamp(42px,7vw,110px)}
+.project-digikala-smile-arrives-home .case-image-pair img{height:auto;object-fit:cover}
+.project-digikala-smile-arrives-home .case-interlude{background:#ef4056;color:#fff;border:0;padding:clamp(42px,6vw,86px);margin-block:clamp(80px,11vw,160px)}
+.project-digikala-smile-arrives-home .case-interlude h2{max-width:10ch;color:#fff;font-size:clamp(40px,5vw,72px);line-height:.98}
+.project-digikala-smile-arrives-home .case-interlude p{color:rgba(255,255,255,.83);align-self:end}
+.project-digikala-smile-arrives-home .case-offset{width:min(82%,1160px);margin-left:auto}
+.project-digikala-smile-arrives-home .case-chapter{margin-top:clamp(92px,13vw,190px);background:#f0f2ed;border-color:#d6ddcf}
+.project-digikala-smile-arrives-home .case-chapter .eyebrow{color:#697080}
+.project-digikala-smile-arrives-home .case-note{max-width:1040px;margin-inline:auto}
+.project-digikala-smile-arrives-home .case-note h2{max-width:15ch}
+@media(max-width:760px){.project-digikala-smile-arrives-home .case-statement{grid-template-columns:1fr;gap:24px}.project-digikala-smile-arrives-home .case-image-pair{grid-template-columns:1fr}.project-digikala-smile-arrives-home .case-image-pair figure:first-child{margin:0 12vw 0 0}.project-digikala-smile-arrives-home .case-interlude{margin-block:72px}.project-digikala-smile-arrives-home .case-offset{width:100%;margin-left:0}}
+
 /* Project opening: a restrained two-panel system with one square visual. */
 .project-overview{display:grid;grid-template-columns:1fr;margin:0 0 clamp(54px,7vw,96px);gap:16px;background:#fff}
 .project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
 .project-overview-cover{width:100%;min-width:0;aspect-ratio:1;margin:0;background:#ece9e3;overflow:hidden}
 .project-overview-cover img{display:block;width:100%;height:100%;aspect-ratio:1;object-fit:cover}
-.project-overview-copy{min-width:0;aspect-ratio:1;display:flex;flex-direction:column;padding:clamp(26px,3vw,42px);box-sizing:border-box;background:#191c23;color:#fff}
-.project-overview .case-brief-data>.eyebrow{display:block;font:600 18px/1.3 Manrope,Arial,sans-serif;letter-spacing:-.02em;color:#fff}
+.project-overview-copy{min-width:0;aspect-ratio:1;display:flex;flex-direction:column;padding:clamp(26px,3vw,42px);box-sizing:border-box;background:#f0f2ed;color:#202632;border:1px solid #d6ddcf}
+.project-overview .case-brief-data>.eyebrow{display:block;font:600 18px/1.3 Manrope,Arial,sans-serif;letter-spacing:-.02em;color:#202632}
 .project-overview .case-brief-data dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(24px,3vw,44px);margin:22px 0 0}
-.project-overview .case-brief-data dl>div{padding:14px 0 16px;border-top:1px solid rgba(255,255,255,.18);box-sizing:border-box}
+.project-overview .case-brief-data dl>div{padding:14px 0 16px;border-top:1px solid #d6ddcf;box-sizing:border-box}
 .project-overview .case-brief-data dl>div:last-child:nth-child(odd){grid-column:1/-1;display:grid;grid-template-columns:minmax(90px,.28fr) minmax(0,1fr);gap:24px}
-.project-overview .case-brief-data dt{font:600 11px/1.4 Manrope,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#aeb4bf;margin-bottom:8px}
-.project-overview .case-brief-data dd{margin:0;font-size:13px;line-height:1.62;letter-spacing:-.006em;color:#f5f6f8;white-space:pre-line;overflow-wrap:anywhere}
-.project-overview .project-overview-copy>.client-profile{margin-top:auto;border:0;border-top:1px solid rgba(255,255,255,.22);background:transparent;padding:20px 0 0;color:#fff}
+.project-overview .case-brief-data dt{font:600 11px/1.4 Manrope,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#697080;margin-bottom:8px}
+.project-overview .case-brief-data dd{margin:0;font-size:13px;line-height:1.62;letter-spacing:-.006em;color:#202632;white-space:pre-line;overflow-wrap:anywhere}
+.project-overview .project-overview-copy>.client-profile{margin-top:auto;border:0;border-top:1px solid #d6ddcf;background:transparent;padding:20px 0 0;color:#202632}
 .project-overview .project-overview-copy>.client-profile .client-profile-heading{margin:0 0 16px}
-.project-overview .project-overview-copy>.client-profile .client-profile-label{font:600 11px/1.4 Manrope,Arial,sans-serif;letter-spacing:0;text-transform:none;color:#aeb4bf}
-.project-overview .project-overview-copy>.client-profile .client-profile-line{background:rgba(255,255,255,.16)}
+.project-overview .project-overview-copy>.client-profile .client-profile-label{font:600 11px/1.4 Manrope,Arial,sans-serif;letter-spacing:0;text-transform:none;color:#697080}
+.project-overview .project-overview-copy>.client-profile .client-profile-line{background:#d6ddcf}
 .project-overview .project-overview-copy>.client-profile .client-profile-body{grid-template-columns:minmax(150px,.48fr) minmax(0,1fr);gap:24px;align-items:center}
 .project-overview .project-overview-copy>.client-profile .client-profile-logo{flex-basis:52px;width:52px;height:52px}
-.project-overview .project-overview-copy>.client-profile .client-profile-name{font-size:21px;color:#fff}
-.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:0 0 0 24px;border-top:0;border-left:1px solid rgba(255,255,255,.18);font-size:11px;line-height:1.65;color:#c6cad1}
+.project-overview .project-overview-copy>.client-profile .client-profile-name{font-size:21px;color:#202632}
+.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:0 0 0 24px;border-top:0;border-left:1px solid #d6ddcf;font-size:11px;line-height:1.65;color:#4e5661}
 
 
 
@@ -120,7 +138,7 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-suggestion-copy h2{font-size:clamp(21px,2vw,30px);line-height:1.18;letter-spacing:-.025em;margin:0;overflow-wrap:anywhere}
 .project-suggestion-copy svg{flex:0 0 auto}
 .project-suggestion-copy p{margin:auto 0 0;font-size:12px;line-height:1.7;color:#6d7480;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-@media(max-width:1050px){.project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr))}.project-overview-copy{aspect-ratio:auto;min-height:100%}.project-overview .case-brief-data dl{grid-template-columns:1fr}.project-overview .case-brief-data dl>div:last-child:nth-child(odd){grid-column:auto;display:block}.project-overview .project-overview-copy>.client-profile .client-profile-body{grid-template-columns:1fr}.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:16px 0 0;border-left:0;border-top:1px solid rgba(255,255,255,.18)}.project-suggestion-grid{grid-template-columns:1fr}.project-suggestion-card{grid-template-columns:minmax(190px,.65fr) minmax(0,1.35fr)}}
+@media(max-width:1050px){.project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr))}.project-overview-copy{aspect-ratio:auto;min-height:100%}.project-overview .case-brief-data dl{grid-template-columns:1fr}.project-overview .case-brief-data dl>div:last-child:nth-child(odd){grid-column:auto;display:block}.project-overview .project-overview-copy>.client-profile .client-profile-body{grid-template-columns:1fr}.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:16px 0 0;border-left:0;border-top:1px solid #d6ddcf}.project-suggestion-grid{grid-template-columns:1fr}.project-suggestion-card{grid-template-columns:minmax(190px,.65fr) minmax(0,1.35fr)}}
 @media(max-width:700px){.project-overview.has-cover{grid-template-columns:1fr}.project-overview-cover,.project-overview-cover img{width:100%;height:auto;aspect-ratio:1}.project-overview-copy{aspect-ratio:auto;padding:26px 22px}.project-overview .case-brief-data dl{grid-template-columns:1fr}.project-overview .project-overview-copy>.client-profile{margin-top:22px}.project-suggestions-heading span{display:none}.project-suggestion-card{grid-template-columns:116px minmax(0,1fr);min-height:166px}.project-suggestion-copy{padding:18px}.project-suggestion-copy>div{margin:15px 0 8px}.project-suggestion-copy h2{font-size:20px}.project-suggestion-copy p{font-size:11px;-webkit-line-clamp:2}}
 @media(max-width:430px){.project-suggestion-card{grid-template-columns:1fr}.project-suggestion-cover{aspect-ratio:1.6}.project-suggestion-copy p{display:none}}
 @media(prefers-reduced-motion:reduce){.project-suggestion-card,.project-suggestion-cover>img,.project-suggestion-cover>.art{transition:none}.project-suggestion-card:hover{transform:none}.project-suggestion-card:hover .project-suggestion-cover>img,.project-suggestion-card:hover .project-suggestion-cover>.art{transform:none}}

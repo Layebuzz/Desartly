@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Digikala smile symbol">
+  <rect width="160" height="160" rx="18" fill="#ef4056"/>
+  <path fill="#fff" d="M38 34h47c25 0 43 18 43 46s-18 46-43 46H38a8 8 0 0 1-8-8V42a8 8 0 0 1 8-8Zm10 18v56h36c15 0 25-11 25-28S99 52 84 52H48Z"/>
+  <path fill="#ef4056" d="M61 77c5 8 12 12 20 12s15-4 20-12l9 7c-7 12-17 18-29 18S59 96 52 84l9-7Z"/>
+</svg>

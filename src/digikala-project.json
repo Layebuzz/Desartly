@@ -1,0 +1,89 @@
+{
+  "id": "digikala-smile-arrives-home",
+  "title": "Digikala · A Smile Arrives Home",
+  "category": "Advertising",
+  "tags": ["Advertising", "Art Direction", "Campaign"],
+  "year": "2025",
+  "presentationVersion": 1,
+  "sample": false,
+  "coverImage": "/projects/digikala/cover.webp",
+  "heroImage": "/projects/digikala/cover.webp",
+  "summary": "A new brand promise turns every Digikala delivery into a small moment of joy.",
+  "clientName": "Digikala",
+  "clientLogo": "/projects/digikala/client-logo.svg",
+  "clientDescription": "Iran’s leading online marketplace, presented through the launch campaign for its new brand slogan.",
+  "challenge": "Introduce a new slogan with an image system that feels immediate, human and unmistakably Digikala at city scale.",
+  "role": "Campaign concept, art direction, key visual development and outdoor adaptation.",
+  "deliverables": "Campaign key visuals, billboard system, transit lightboxes and launch presentation.",
+  "credits": "Visual concept and campaign art direction by Ali Komeili. Portfolio scenes were newly reconstructed from the original campaign references.",
+  "blocks": [
+    {
+      "id": "digikala-opening-statement",
+      "type": "text",
+      "layout": "statement",
+      "title": "A package becomes a promise.",
+      "text": "The new slogan reframes delivery as an emotional arrival. A familiar box, Digikala’s smile and one red balloon turn an ordinary handover into a simple sign of anticipation and delight."
+    },
+    {
+      "id": "digikala-symbol-pair",
+      "type": "grid",
+      "layout": "pair",
+      "images": [
+        "/projects/digikala/balloon-box.webp",
+        "/projects/digikala/cover.webp"
+      ],
+      "alts": [
+        "A Digikala smile box floating beneath a red balloon over Shiraz",
+        "Iranian woman holding a Digikala smile box beneath a red balloon in Shiraz"
+      ]
+    },
+    {
+      "id": "digikala-human-chapter",
+      "type": "text",
+      "layout": "interlude",
+      "title": "Joy arrives with the order.",
+      "text": "The system stays deliberately compact: one gesture, one object and one accent colour. That restraint leaves room for real Iranian faces and gives the campaign enough warmth to live beyond a product message."
+    },
+    {
+      "id": "digikala-delivery-moment",
+      "type": "image",
+      "layout": "offset",
+      "image": "/projects/digikala/delivery-at-home.webp",
+      "alt": "An Iranian courier delivers the Digikala smile box to a father and daughter at home in Shiraz"
+    },
+    {
+      "id": "digikala-city-chapter",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "SHIRAZ LAUNCH",
+      "title": "One message, carried through the city.",
+      "text": "For the Shiraz launch, the photographic scene remains continuous. The rounded red lockup sits over the image as one controlled unit, keeping the slogan, separator and Digikala signature aligned without cutting the key visual into artificial panels."
+    },
+    {
+      "id": "digikala-billboard",
+      "type": "image",
+      "image": "/projects/digikala/shiraz-billboard.webp",
+      "alt": "Digikala A Smile Arrives Home campaign on a large billboard in Shiraz at dusk"
+    },
+    {
+      "id": "digikala-transit-note",
+      "type": "text",
+      "layout": "note",
+      "title": "From road speed to a closer encounter.",
+      "text": "The same hierarchy adapts to transit scale. At the shelter, backlighting brings the red balloon forward while reflections, fluorescent bands and the wet street make the placement feel present in Shiraz rather than pasted onto it."
+    },
+    {
+      "id": "digikala-bus-shelter",
+      "type": "image",
+      "image": "/projects/digikala/shiraz-bus-shelter.webp",
+      "alt": "Backlit Digikala campaign lightbox with glass reflections at a bus shelter in Shiraz"
+    },
+    {
+      "id": "digikala-closing",
+      "type": "text",
+      "layout": "statement",
+      "title": "More than a delivery.",
+      "text": "Every order carries a product. The campaign gives it one more thing to carry: the feeling that a smile is already on its way home."
+    }
+  ]
+}
