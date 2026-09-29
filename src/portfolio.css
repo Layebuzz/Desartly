@@ -164,8 +164,11 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 /* About uses square cards and a shared width for its closing sections. */
 .resume-profile .resume-index a,.resume-profile .experience-entry,.resume-profile .expertise-grid article,.resume-profile .software-list,.resume-profile .impact-list li,.resume-profile .honours-card,.resume-profile .training-list,.resume-profile .software-list span,.about-certificates-card{border-radius:0}
 .about>.about-certificates-card{margin-bottom:48px;align-items:center}
-.about>.folio-contact{margin-inline:0;padding:40px;margin-top:0;border:1px solid #e3deee}
-.about>.folio-contact h2{font-size:clamp(34px,4.4vw,64px);line-height:1.15;margin:28px 0;max-width:760px}
-.about>.folio-contact .folio-contact-actions{margin-bottom:32px}
-.about>.folio-contact>div:last-child{padding-top:24px;justify-content:space-between}
-@media(max-width:800px){.about>.about-certificates-card{margin-bottom:32px}.about>.folio-contact{padding:28px}.about>.folio-contact h2{font-size:clamp(32px,7.5vw,48px)}.about>.folio-contact>div:last-child{align-items:flex-start}}
+/* One compact, shared contact invitation across the portfolio. */
+.folio-contact.compact-contact{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:28px;align-items:center;margin-inline:0;padding:32px;border:1px solid var(--line);background:#fff;overflow:visible}
+.folio-contact.compact-contact>.contact-sketch{display:block;position:relative;color:var(--ink)}.contact-sketch img{display:block;width:100px;height:100px;object-fit:contain}.contact-sketch svg{position:absolute;width:130px;height:30px;left:-14px;bottom:-9px;pointer-events:none}
+.folio-contact.compact-contact>.contact-invitation{display:block;padding:0;border:0;color:var(--ink)}.compact-contact .eyebrow{font-size:10px;letter-spacing:.07em}.folio-contact.compact-contact h2{font-size:clamp(26px,2.8vw,36px);line-height:1.25;letter-spacing:-.025em;font-weight:400;white-space:normal;max-width:32ch;margin:10px 0}.compact-contact .contact-invitation p{font-size:13px;line-height:1.7;color:var(--muted);margin:0;max-width:60ch}
+.folio-contact.compact-contact>a.contact-primary{font:500 14px/1.4 Manrope,sans-serif;letter-spacing:0;margin:0;min-width:150px;min-height:52px;padding:14px 20px;align-self:center;border-radius:0}.folio-contact.compact-contact>a.contact-primary svg{width:18px;height:18px;stroke-width:1.5}
+@media(max-width:700px){.folio-contact.compact-contact{grid-template-columns:64px minmax(0,1fr);gap:20px;padding:24px}.contact-sketch img{width:64px;height:80px}.contact-sketch svg{width:64px;left:-4px}.folio-contact.compact-contact h2{font-size:25px}.folio-contact.compact-contact>a.contact-primary{grid-column:2;justify-self:start;min-width:150px}.compact-contact .eyebrow{font-size:9px}.about>.about-certificates-card{margin-bottom:32px}}
+@media(max-width:380px){.folio-contact.compact-contact{grid-template-columns:48px minmax(0,1fr);padding:20px;gap:14px}.contact-sketch img{width:48px;height:68px}.folio-contact.compact-contact h2{font-size:23px}}
+@media print{.folio-contact.compact-contact{display:none!important}}
