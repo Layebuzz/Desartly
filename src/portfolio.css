@@ -120,3 +120,8 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:700px){.project-cafe-de-la-corte .composition-layout{grid-template-columns:1fr}}
 
 .project-cafe-de-la-corte .composition-layout{align-items:start}.project-cafe-de-la-corte .composition-layout>div{background:transparent}
+
+/* A loaded case photograph owns its frame; the loading surface must not remain below it. */
+.project-page .case-single-image{height:auto!important;min-height:0!important;aspect-ratio:auto!important;padding:0;background:transparent}
+.project-page .case-single-image.is-loaded{background:transparent}
+.project-page .case-single-image>img{height:auto!important;max-height:none!important;aspect-ratio:auto;object-fit:contain}
