@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ResumeProfile } from "./ResumeProfile";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { animate, inView } from "motion";
@@ -177,7 +178,7 @@ function EditablePagePreview({ contextPath, pages, onPagePatch, navItems, onNavC
   const copy = pages[contextPath] || {};
   const defaults = {
     "/about": { eyebrow: "THE PRACTICE / DESARTLY", title: "Curiosity connects everything I do.", intro: "My practice brings together product design, AI agents, branding and advertising." },
-    "/resume": { eyebrow: "RÉSUMÉ / DESARTLY", title: "Design across disciplines.", intro: "Product & AI · Branding · Advertising" },
+    "/resume": { eyebrow: "RÉSUMÉ / ALI KOMEILI", title: "Design across disciplines.", intro: "Product & AI · Branding · Advertising" },
     "/services": { eyebrow: "WAYS TO WORK TOGETHER", title: "From a first thought to a considered result.", intro: "Choose a starting point and shape the scope together." },
     "/contact": { eyebrow: "THE NEXT CONNECTION", title: "Your next idea. Let’s make it real.", intro: "Tell me what you are building, who it is for and where you need a design partner." },
     "/privacy": { eyebrow: "POL / PRIVACY", title: "Privacy, simply.", intro: "A clear note about how this portfolio handles information." },
@@ -692,29 +693,18 @@ function Resume({embedded=false}) {
   const {pages}=React.useContext(PageContent);const page=pages["/resume"]||{};const Tag=embedded?"section":"main";const Heading=embedded?"h2":"h1";
   return (
     <Tag id="resume" className={embedded?"embedded-resume":"page narrow"}>
-      <span className="eyebrow">RÉSUMÉ / DESARTLY</span>
+      <span className="eyebrow">RÉSUMÉ / ALI KOMEILI</span>
       <Heading>
         {page.title || (
           <>
-            <span>Design across</span>
+            <span>Experience meets</span>
             <br />
-            <span>disciplines.</span>
+            <span>curiosity.</span>
           </>
         )}
       </Heading>
       <p className="lead">Product & AI · Branding · Advertising</p>
-      <div className="resume-row">
-        <h2>Focus</h2>
-        <p>
-          Product experience, interface design, agent workflows, visual identity
-          and creative campaigns.
-        </p>
-      </div>
-
-      <div className="resume-row">
-        <h2>Let’s talk</h2>
-        <Link to="/contact">Start a conversation ↗</Link>
-      </div>
+      <ResumeProfile profile={page.resumeProfile}/>
       <button className="button" onClick={() => window.print()}>
         Print resume
       </button>
