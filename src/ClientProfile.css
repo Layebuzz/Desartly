@@ -1,6 +1,6 @@
 .client-profile{padding:28px;border:1px solid #dedfe2;border-radius:0;background:#fff;min-width:0;width:100%;box-sizing:border-box;text-align:left;container-type:inline-size}
 .client-profile-heading{display:flex;align-items:center;gap:20px;margin-bottom:24px}
-.client-profile-label{white-space:nowrap;font:10px/1.4 ui-monospace,monospace;letter-spacing:.13em;color:#727780}
+.client-profile-label{white-space:nowrap;font:10px/1.4 Manrope,Arial,sans-serif;letter-spacing:.13em;color:#727780}
 .client-profile-line{height:1px;background:#e7e8ea;flex:1}
 .client-profile-body{display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 .client-profile-identity{display:flex;align-items:center;gap:20px;min-width:0}

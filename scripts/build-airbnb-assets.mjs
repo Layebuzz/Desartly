@@ -76,6 +76,7 @@ await outdoorPlacement('kuwait-blue-hour-streetboard.png','kuwait-blue-hour-stre
 await outdoorPlacement('kuwait-rhino-streetboard-base.png','kuwait-rhino-streetboard.webp',{left:1250,width:116,baseline:678});
 await outdoorPlacement('kuwait-giraffe-lightbox-base.png','kuwait-giraffe-lightbox.webp',{left:883,width:96,baseline:788});
 await outdoorPlacement('kuwait-penguin-lightbox-base.png','kuwait-penguin-lightbox.webp',{left:1159,width:90,baseline:747});
+await sharp(join(source,'kuwait-penguin-lightbox-v2.png')).webp({quality:89,effort:6}).toFile(join(target,'kuwait-penguin-lightbox-v2.webp'));
 
 const tile = await sharp({create:{width:600,height:600,channels:3,background:coral}}).composite([{input:await sharp(logo).resize({width:270}).png().toBuffer(),left:165,top:147}]).webp({quality:90,effort:6}).toFile(join(target,'client-logo.webp'));
 const coverPhoto = await sharp(join(source,'coastal-bedroom.png')).resize(1200,800,{fit:'cover',position:'centre'}).toBuffer();

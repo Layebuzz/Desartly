@@ -4,7 +4,7 @@
   "category": "Advertising",
   "tags": ["Advertising", "Art Direction"],
   "year": "2024",
-  "presentationVersion": 4,
+  "presentationVersion": 5,
   "sample": false,
   "coverImage": "/projects/airbnb/cover-clean.webp",
   "heroImage": "/projects/airbnb/cover-clean.webp",
@@ -105,8 +105,8 @@
     {
       "id": "airbnb-penguin-lightbox",
       "type": "image",
-      "image": "/projects/airbnb/kuwait-penguin-lightbox.webp",
-      "alt": "Airbnb penguin campaign in a Kuwait City bus shelter lightbox with visible fluorescent tube and glass reflections"
+      "image": "/projects/airbnb/kuwait-penguin-lightbox-v2.webp",
+      "alt": "Airbnb penguin campaign in an illuminated Kuwait City bus shelter with Kuwait Towers, fluorescent light bands and glass reflections"
     }
   ]
 }
