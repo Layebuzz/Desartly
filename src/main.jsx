@@ -1818,7 +1818,7 @@ function App() {
               Desartly<span>®</span>
             </Link>
             <span className="header-name">
-              DESARTLY
+              ALI KOMEILI
               <br />
               DESIGN PORTFOLIO
             </span>
