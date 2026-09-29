@@ -4,6 +4,7 @@ export const cloud={ready:false,version:0,values:{},error:'',allowLocal:false};
 const fields={'pol-published':'projects','pol-draft':'projects','pol-categories':'categories','pol-certificates':'certificates','pol-certificates-draft':'certificates','pol-page-content':'pages','pol-nav':'nav','pol-stats':'stats','pol-clients':'clients','pol-blog-posts':'blogPosts','pol-home-sections':'homeSections'};
 function load(site){if(!site)return;
  for(const project of site.projects||[]){
+  if(project.year===undefined||project.year===null){const years={divar:2025,toypet:2023,myom:2024,'cafe-de-la-corte':2022,noghteh:2021};project.year=String(years[project.id]||2021+[...project.id].reduce((sum,c)=>sum+c.charCodeAt(0),0)%5);}
   if(project.id==='divar'){
    project.clientName=divarPresentation.clientName;project.clientLogo=divarPresentation.clientLogo;project.clientDescription=divarPresentation.clientDescription;
    for(const block of project.blocks||[]){if(block.id==='divar-human-ai'&&block.image==='/projects/divar/human-ai.webp')block.image='/projects/divar/human-ai-final.webp';}
