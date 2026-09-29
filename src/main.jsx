@@ -67,7 +67,7 @@ const Taxonomy = React.createContext({
 const SortableBlock = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableBlock})));
 const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableGroup})));
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
-const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g"]);
+const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure"]);
 
 function SiteMotion({ disabled = false }) {
   const location = useLocation();
@@ -390,6 +390,7 @@ function ClientsStrip({ clients, editable = false, onChange, onCollectionChange 
 }
 function Grid({ block, cover = 0 }) {
   if (block.layout === "pair") return <div className="case-image-pair">{block.images?.map((src,i)=><figure key={src}><img src={src} alt={block.alts?.[i]||"Project visual"} loading="lazy" decoding="async"/></figure>)}</div>;
+  if (block.layout === "quartet") return <div className="case-image-quartet">{block.images?.map((src,i)=><figure key={src}><img src={src} alt={block.alts?.[i]||"Project visual"} loading="lazy" decoding="async"/></figure>)}</div>;
   const { width, height, boxes } = composition(Number(block.preset));
   return (
     <div
@@ -660,7 +661,7 @@ function Project({ projects }) {
             <p>{b.text}</p>
           </section>
         ) : b.type === "image" ? (
-          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
+          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
         ) : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (

@@ -1,0 +1,72 @@
+{
+  "id": "airbnb-unlock-adventure",
+  "title": "Airbnb · Unlock Adventure",
+  "category": "Advertising",
+  "tags": ["Advertising", "Art Direction"],
+  "year": "2024",
+  "sample": false,
+  "coverImage": "/projects/airbnb/cover-square.webp",
+  "heroImage": "/projects/airbnb/cover-square.webp",
+  "summary": "Familiar rooms open onto extraordinary destinations in a cinematic travel campaign.",
+  "clientName": "Airbnb",
+  "clientLogo": "/projects/airbnb/client-logo.webp",
+  "clientDescription": "A global platform for places to stay and experiences, presented here through a campaign developed with a Kuwait-based creative studio.",
+  "challenge": "Turn the promise of travel into an immediate visual surprise without losing the comfort of a familiar room.",
+  "role": "Visual development, key visual design, photomontage and lighting direction.",
+  "deliverables": "Campaign key visuals adapted for outdoor and digital placements.",
+  "credits": "Visual development and key visuals by Ali Komeili in collaboration with a Kuwait-based creative studio. Portfolio scenes recreated from original project references; outdoor settings are presentation mockups.",
+  "blocks": [
+    {
+      "id": "airbnb-premise",
+      "type": "text",
+      "layout": "statement",
+      "title": "A room can take you further.",
+      "text": "The idea behind “Unlock Adventure” was to let extraordinary destinations enter the most familiar interior. Wildlife, weather and landscape change around a comfortable room, turning the ordinary threshold into the start of a journey."
+    },
+    {
+      "id": "airbnb-worlds",
+      "type": "grid",
+      "layout": "quartet",
+      "images": [
+        "/projects/airbnb/arctic-poster.webp",
+        "/projects/airbnb/rainforest-poster.webp",
+        "/projects/airbnb/savannah-poster.webp",
+        "/projects/airbnb/antarctic-poster.webp"
+      ],
+      "alts": [
+        "Airbnb Unlock Adventure visual: a polar bear in a bedroom overlooking an Arctic landscape",
+        "Airbnb Unlock Adventure visual: a rhinoceros at the edge of a rainforest bedroom",
+        "Airbnb Unlock Adventure visual: a giraffe beside a savannah bedroom",
+        "Airbnb Unlock Adventure visual: a penguin by a bedroom window overlooking Antarctica"
+      ]
+    },
+    {
+      "id": "airbnb-making",
+      "type": "text",
+      "layout": "interlude",
+      "title": "One invitation. Many worlds.",
+      "text": "Each scene pairs a credible interior with an impossible arrival. Consistent headline placement and the Airbnb mark hold the series together while the light, palette and destination shift from one execution to the next."
+    },
+    {
+      "id": "airbnb-placements",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "CAMPAIGN APPLICATIONS",
+      "title": "The adventure leaves the room.",
+      "text": "The same visual system was considered for street-level and digital display formats. These recreated placement studies show how the images hold their message at a distance and within a busy city setting."
+    },
+    {
+      "id": "airbnb-plaza",
+      "type": "image",
+      "image": "/projects/airbnb/kuwait-plaza.webp",
+      "alt": "Airbnb Unlock Adventure polar bear campaign visual on a digital display in a Kuwait City plaza"
+    },
+    {
+      "id": "airbnb-shelter",
+      "type": "image",
+      "layout": "offset",
+      "image": "/projects/airbnb/kuwait-shelter.webp",
+      "alt": "Airbnb Unlock Adventure rhinoceros campaign visual displayed in a Kuwait City bus shelter"
+    }
+  ]
+}
