@@ -1,1 +1,2 @@
 Built-in imagegen; exact rectangular bottle, cork, gold bird-shield label, black shield burlap sleeve and jute bow from reference. Full opaque backgrounds. New walnut café hospitality shot and packaging craftsmanship still life.
+Serving ritual replacement: exact rectangular reference bottle and identity on a sunlit travertine café terrace table with crystal iced-coffee glass, linen and brass teaspoon; no hand or pouring; full opaque photograph, wide 3:2. Built-in imagegen.
