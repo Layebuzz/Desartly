@@ -79,7 +79,7 @@ function SiteMotion({ disabled = false }) {
       const revealTargets = document.querySelectorAll([
         "#main main > .page-title",
         "#main main > section",
-        "#main .cards > a",
+        "#main .cards:not(.work-results) > a",
         "#main .home-project-grid > a",
         "#main .blog-grid > a",
         "#main .project-page > .project-heading",
@@ -99,6 +99,7 @@ function SiteMotion({ disabled = false }) {
 
       document.querySelectorAll("#main img").forEach(image => {
         if (image.closest("[data-editor-ui]")) return;
+        if (image.closest(".work-results")) return;
         const host = image.closest("figure,.cover,.intro-slide-visual,.blog-cover,.blog-post-cover,.credential-cover,.project-overview-cover,.project-suggestion-cover,.client-logo-row a");
         if (!host) return;
         host.classList.add("skeleton-host");
@@ -119,7 +120,7 @@ function SiteMotion({ disabled = false }) {
       });
     });
     return () => { cancelled = true; cancelAnimationFrame(frame); cleanups.forEach(stop => stop?.()); };
-  }, [location.pathname, location.search, disabled]);
+  }, [location.pathname, disabled]);
   return null;
 }
 
@@ -599,7 +600,7 @@ function Work({ projects }) {
           </button>
         ))}
       </div>
-      <div className="cards">
+      <div className="cards work-results">
         {projects
           .filter(
             (p) =>
