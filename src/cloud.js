@@ -3,6 +3,7 @@ export const cloud={ready:false,version:0,values:{},error:'',allowLocal:false};
 const fields={'pol-published':'projects','pol-draft':'projects','pol-categories':'categories','pol-certificates':'certificates','pol-certificates-draft':'certificates','pol-page-content':'pages','pol-nav':'nav','pol-stats':'stats','pol-clients':'clients','pol-blog-posts':'blogPosts','pol-home-sections':'homeSections'};
 function load(site){if(!site)return;
  for(const project of site.projects||[]){
+  if(project.id==='cafe-de-la-corte'){for(const block of project.blocks||[]){if(block.id==='cafe-application-pair' && block.images?.[0]==='/api/media/9e2a8590-c970-4a93-8922-0447d927d91e')block.images[0]='/projects/cafe-de-la-corte/pour-full.webp';}}
   if(project.id==='noghteh' && project.blocks?.some(b=>b.id==='noghteh-env-left'))project.blocks=structuredClone(photography.noghteh);
   if(project.id==='cafe-de-la-corte' && !project.blocks?.some(b=>b.id==='cafe-fresh-hospitality'))project.blocks=[...(project.blocks||[]),...structuredClone(photography['cafe-de-la-corte'].filter(b=>b.id.startsWith('cafe-fresh-')))];
  }

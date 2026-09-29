@@ -29,7 +29,7 @@
 .project-client-card img{display:block;width:112px;aspect-ratio:1;object-fit:contain;background:#202224}
 .project-client-card div{display:grid;gap:8px}.project-client-card small{font:9px/1.3 ui-monospace,monospace;letter-spacing:.08em;color:#747b87}.project-client-card strong{font-size:16px;line-height:1.35}.project-client-card p{margin:0;font-size:12px;line-height:1.7;color:#5e6673}
 .client-logo-field{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:18px;align-items:center;margin:22px 0;padding:18px;border:1px solid #d5dbe7;background:#fff}.client-logo-field>div{display:grid;place-items:center;aspect-ratio:1;background:#202224;color:#fff;font-size:10px}.client-logo-field img{width:100%;height:100%;object-fit:contain}.client-logo-field label{display:grid;gap:7px;font-size:12px}.client-logo-field small{font-weight:400;color:#657080}
-.project-cafe-de-la-corte .case-single-image img{max-height:920px;object-fit:cover}.project-cafe-de-la-corte .text-block{border-top:1px solid #dfe2e8;padding-top:clamp(28px,5vw,72px)}
+.project-cafe-de-la-corte .case-single-image img{max-height:none;object-fit:contain}.project-cafe-de-la-corte .text-block{border-top:1px solid #dfe2e8;padding-top:clamp(28px,5vw,72px)}
 @media(max-width:760px){.case-brief.has-client{grid-template-columns:1fr}.project-client-card{grid-template-columns:88px 1fr}.project-client-card img{width:88px}.client-logo-field{grid-template-columns:72px 1fr}.client-logo-field>button{grid-column:2}}
 /* Consolidated portfolio direction: one sans-serif family. */
 :root{--folio-serif:Manrope,Arial,sans-serif}
@@ -115,3 +115,6 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(prefers-reduced-motion:reduce){.project-suggestion-card,.project-suggestion-cover>img,.project-suggestion-cover>.art{transition:none}.project-suggestion-card:hover{transform:none}.project-suggestion-card:hover .project-suggestion-cover>img,.project-suggestion-card:hover .project-suggestion-cover>.art{transform:none}}
 
 .credential-card.is-portrait .credential-cover>img{object-fit:cover;object-position:top}
+
+.project-cafe-de-la-corte .composition-layout{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));height:auto!important;aspect-ratio:auto!important;gap:24px}.project-cafe-de-la-corte .composition-layout>div{position:relative!important;inset:auto!important;width:auto!important;height:auto!important;aspect-ratio:auto!important}.project-cafe-de-la-corte .composition-layout img{display:block;width:100%;height:auto;object-fit:contain}.project-page figcaption{display:none}
+@media(max-width:700px){.project-cafe-de-la-corte .composition-layout{grid-template-columns:1fr}}
