@@ -53,7 +53,7 @@
       "layout": "chapter",
       "chapter": "CAMPAIGN APPLICATIONS",
       "title": "The adventure leaves the room.",
-      "text": "The same visual system was considered for street-level and digital display formats. These recreated placement studies show how the images hold their message at a distance and within a busy city setting."
+      "text": "The visual system moves from printed streetboards to illuminated transit displays. In these Kuwait City presentation mockups, folds in the vinyl, fluorescent backlighting and quiet glass reflections make each format feel physical while keeping the message clear."
     },
     {
       "id": "airbnb-plaza",
@@ -62,11 +62,30 @@
       "alt": "Airbnb Unlock Adventure polar bear campaign visual on a digital display in a Kuwait City plaza"
     },
     {
-      "id": "airbnb-shelter",
+      "id": "airbnb-streetboards",
+      "type": "grid",
+      "layout": "pair",
+      "images": [
+        "/projects/airbnb/kuwait-blue-hour-streetboard.webp",
+        "/projects/airbnb/kuwait-rhino-streetboard.webp"
+      ],
+      "alts": [
+        "Airbnb polar bear campaign on a wrinkled printed streetboard in a Kuwait City presentation mockup",
+        "Airbnb rhinoceros campaign on a folded vinyl streetboard in a Kuwait City presentation mockup"
+      ]
+    },
+    {
+      "id": "airbnb-giraffe-lightbox",
+      "type": "image",
+      "image": "/projects/airbnb/kuwait-giraffe-lightbox.webp",
+      "alt": "Airbnb giraffe campaign in a reflective backlit Kuwait City bus shelter presentation mockup"
+    },
+    {
+      "id": "airbnb-penguin-lightbox",
       "type": "image",
       "layout": "offset",
-      "image": "/projects/airbnb/kuwait-shelter.webp",
-      "alt": "Airbnb Unlock Adventure rhinoceros campaign visual displayed in a Kuwait City bus shelter"
+      "image": "/projects/airbnb/kuwait-penguin-lightbox.webp",
+      "alt": "Airbnb penguin campaign in a Kuwait City bus shelter lightbox with visible fluorescent tube and glass reflections"
     }
   ]
 }

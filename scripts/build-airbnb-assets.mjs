@@ -41,8 +41,20 @@ async function campaignImage(input, output, {width, height, crop = false, compac
   let base = sharp(input).resize(width,height,{fit:crop?'cover':'fill',position:'centre'});
   await base.composite([
     {input:overlay,top:0,left:0},
-    {input:logoBuffer,top:height-logoHeight-Math.round(height*.067),left:width-logoWidth-Math.round(width*.065)},
+    {input:logoBuffer,top:Math.round(baseline-logoHeight),left:width-logoWidth-Math.round(width*.065)},
   ]).flatten({background:'#151515'}).webp({quality:88,effort:6}).toFile(join(target,output));
+}
+
+// Generated placement photographs have physical folds, glass and lighting already
+// built into the scene. The final lockup is placed against the headline baseline.
+async function outdoorPlacement(input, output, lockup) {
+  const layers = [];
+  if (lockup) {
+    const logoBuffer = await sharp(logo).resize({width:lockup.width}).png().toBuffer();
+    const logoHeight = Math.round(lockup.width * 930 / 820);
+    layers.push({input:logoBuffer,left:lockup.left,top:Math.round(lockup.baseline-logoHeight)});
+  }
+  await sharp(join(source,input)).composite(layers).webp({quality:89,effort:6}).toFile(join(target,output));
 }
 
 for (const [name,out] of [
@@ -58,12 +70,17 @@ await campaignImage(join(source,'rainforest-bedroom.png'),'shelter-screen-art.we
 await sharp(join(source,'kuwait-city-display.png')).composite([{input:join(target,'plaza-screen-art.webp'),left:420,top:68}]).webp({quality:88,effort:6}).toFile(join(target,'kuwait-plaza.webp'));
 await sharp(join(source,'kuwait-bus-shelter.png')).composite([{input:join(target,'shelter-screen-art.webp'),left:924,top:121}]).webp({quality:88,effort:6}).toFile(join(target,'kuwait-shelter.webp'));
 
+await outdoorPlacement('kuwait-blue-hour-streetboard.png','kuwait-blue-hour-streetboard.webp');
+await outdoorPlacement('kuwait-rhino-streetboard-base.png','kuwait-rhino-streetboard.webp',{left:1250,width:116,baseline:678});
+await outdoorPlacement('kuwait-giraffe-lightbox-base.png','kuwait-giraffe-lightbox.webp',{left:883,width:96,baseline:788});
+await outdoorPlacement('kuwait-penguin-lightbox-base.png','kuwait-penguin-lightbox.webp',{left:1159,width:90,baseline:747});
+
 const tile = await sharp({create:{width:600,height:600,channels:3,background:coral}}).composite([{input:await sharp(logo).resize({width:270}).png().toBuffer(),left:165,top:147}]).webp({quality:90,effort:6}).toFile(join(target,'client-logo.webp'));
 const coverPhoto = await sharp(join(source,'coastal-bedroom.png')).resize(1200,800,{fit:'cover',position:'centre'}).toBuffer();
 const coverType = Buffer.from('<svg width="1200" height="400" xmlns="http://www.w3.org/2000/svg"><text x="60" y="163" fill="white" font-family="Arial,Helvetica,sans-serif" font-size="88" font-weight="700" letter-spacing="-3">Unlock</text><text x="60" y="266" fill="white" font-family="Arial,Helvetica,sans-serif" font-size="88" font-weight="700" letter-spacing="-3">adventure.</text></svg>');
 await sharp({create:{width:1200,height:1200,channels:3,background:coral}}).composite([
   {input:coverPhoto,left:0,top:0},
   {input:coverType,left:0,top:800},
-  {input:await sharp(logo).resize({width:182}).png().toBuffer(),left:942,top:891},
+  {input:await sharp(logo).resize({width:182}).png().toBuffer(),left:942,top:862},
 ]).webp({quality:90,effort:6}).toFile(join(target,'cover-square.webp'));
 console.log('Airbnb campaign assets built',tile.width,tile.height);
