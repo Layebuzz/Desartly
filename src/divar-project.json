@@ -106,5 +106,10 @@
   ],
   "clientLogo": "/projects/divar/client-logo.webp",
   "clientDescription": "An online classifieds marketplace in Iran, connecting people with new and second-hand goods, homes, vehicles and services.",
-  "year": "2025"
+  "year": "2025",
+  "tags": [
+    "Advertising",
+    "Branding",
+    "Product Design"
+  ]
 }

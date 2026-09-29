@@ -194,3 +194,14 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:700px){.project-divar .case-chapter{grid-template-columns:1fr;gap:0}.project-divar .case-chapter p{margin-top:24px}.project-divar .case-single-image.case-portrait{width:100%}.case-image-pair{grid-template-columns:1fr;gap:16px}}
 .project-divar .html-block{max-width:none;margin:40px 0}
 .project-divar .html-block .auto-height-preview{border:0;display:block;width:100%;background:#c9141e;max-height:none}
+
+/* Consistent card reading order and aligned discipline tags. */
+.project-card{display:flex;flex-direction:column;min-width:0}
+.project-card .cover{flex-shrink:0}
+.project-card .card-meta{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:20px}
+.project-card .card-meta h3{margin:0;font-size:20px;line-height:1.35;font-weight:600;letter-spacing:-.035em}
+.project-card .card-title-arrow{flex-shrink:0}
+.project-card .project-card-summary{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;font-size:13px;line-height:1.75;color:#737984;max-width:46ch;min-height:5.25em;margin:12px 0 18px}
+.project-card .card-sub{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:6px;margin-top:auto;font:11px/1.4 Manrope,Arial,sans-serif}
+.project-card .project-tag{display:inline-flex;align-items:center;padding:5px 9px;border:1px solid #e2e4e8;background:#fafafa;color:#626975;white-space:nowrap}
+@media(max-width:700px){.project-card .card-meta h3{font-size:18px}.project-card .project-card-summary{font-size:12px}.project-card .card-sub{font-size:10px}}

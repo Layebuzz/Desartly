@@ -51,6 +51,8 @@ import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
+import { projectTags, matchesCategory } from "./project-tags.js";
+import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
 import {CaseFields, CaseBrief} from "./PortfolioTools";
 import { MarkdownContent, MarkdownEditor, articleTemplates, SettingsPanel, SiteMetadata } from "./StudioTools";
 import { OwnerGate, Login } from "./OwnerAccess";
@@ -280,8 +282,7 @@ function Card({ p, editable = false, onTitleChange }) {
         <ArrowUpRight className="card-title-arrow" size={17} strokeWidth={1.4} aria-hidden="true" />
       </div>
       <p className="project-card-summary">{p.summary}</p><div className="card-sub">
-        <span>{p.category}</span>
-        <span>{p.sample === false ? "Case study" : "Concept"}</span>
+        {projectTags(p).map(tag=><span className="project-tag" key={tag}>{tag}</span>)}
       </div>
     </Link>
   );
@@ -459,7 +460,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   const { categories, categoryIds, setCategories } = React.useContext(Taxonomy);
   const selected = [...new Map([
     ...(page.selectedProjects || []).map(id => projects.find(project => project.id === id)).filter(Boolean),
-    ...categories.map(category => projects.find(project => project.category === category)).filter(Boolean),
+    ...categories.map(category => projects.find(project => matchesCategory(project, category))).filter(Boolean),
     ...projects,
   ].map(project => [project.id, project])).values()].slice(0, 3);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -568,7 +569,7 @@ function Work({ projects }) {
   const { categories } = React.useContext(Taxonomy);
   const [params, setParams] = useSearchParams();
   const active = params.get("category");
-  const visibleCategories = categories.filter(category => projects.some(project => project.category === category));
+  const visibleCategories = [...new Set([...categories, ...projects.flatMap(projectTags)])].filter(category => projects.some(project => matchesCategory(project, category)));
   return (
     <main className="page">
       <div className="page-title work-title-with-samurai">
@@ -592,7 +593,7 @@ function Work({ projects }) {
             {c}
             <span className="filter-count">
               {i
-                ? projects.filter((p) => p.category === c).length
+                ? projects.filter((p) => matchesCategory(p, c)).length
                 : projects.length}
             </span>
           </button>
@@ -602,7 +603,7 @@ function Work({ projects }) {
         {projects
           .filter(
             (p) =>
-              !active || slugify(p.category) === active,
+              !active || projectTags(p).some(tag => slugify(tag) === active),
           )
           .map((p) => (
             <Card key={p.id} p={p} />
@@ -617,8 +618,8 @@ function Project({ projects }) {
   if (!p) return <NotFound />;
   const hasBrief = [p.challenge,p.role,p.deliverables,p.outcome,p.credits].some(value=>value?.trim());
   const suggestions = [
-    ...projects.filter(item=>item.id!==p.id&&item.category===p.category),
-    ...projects.filter(item=>item.id!==p.id&&item.category!==p.category),
+    ...projects.filter(item=>item.id!==p.id&&projectTags(item).some(tag=>projectTags(p).includes(tag))),
+    ...projects.filter(item=>item.id!==p.id&&!projectTags(item).some(tag=>projectTags(p).includes(tag))),
   ].slice(0,2);
   return (
     <main className={`project-page project-${p.id}`}>
@@ -627,7 +628,7 @@ function Project({ projects }) {
       </Link>
       <div className="project-heading">
         <span className="eyebrow">
-          {p.category} / {p.sample === false ? "CASE STUDY" : "CONCEPT STUDY"}
+          {projectTags(p).join(" / ")}
         </span>
         <h1>{p.title}</h1>
         <p>{p.summary}</p>
@@ -636,16 +637,13 @@ function Project({ projects }) {
       {!hasBrief&&<div className="project-facts">
         <div>
           <small>DISCIPLINE</small>
-          <p>{p.category}</p>
+          <p>{projectTags(p).join(" / ")}</p>
         </div>
         <div>
           <small>STATUS</small>
           <p>{p.sample === false ? "Real project" : "Concept study"}</p>
         </div>
-        <div>
-          <small>FORMAT</small>
-          <p>Case study</p>
-        </div>
+
       </div>}
       {p.blocks.filter(b=>b.type!=='text'||(b.text?.trim()&&!/Use this space|Describe your role|Write here\./.test(b.text))).map((b) =>
         b.type === "text" ? (
@@ -1480,15 +1478,7 @@ function Editor({
                   </option>
                 ))}
               </select>
-              <label>Category</label>
-              <select
-                value={p.category}
-                onChange={(e) => patch({ category: e.target.value })}
-              >
-                {categories.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
+              <ProjectTagsEditor project={p} onChange={patch}/>
               <label>Title</label>
               <input
                 value={p.title}
@@ -1610,7 +1600,7 @@ function Editor({
                   <div className="main-image-empty" data-editor-ui>No main image selected. This space is hidden on the public project.</div>
                 )}
               </div>
-              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>03 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover. Full-width: 2400 px wide, any aspect ratio. Two-column images: at least 1200 px wide each. Fine text and diagrams: export at 2× display size.</p></div><label>Category<select value={p.category} onChange={e=>patch({category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></label>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
+              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>03 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover. Full-width: 2400 px wide, any aspect ratio. Two-column images: at least 1200 px wide each. Fine text and diagrams: export at 2× display size.</p></div><ProjectTagsEditor project={p} onChange={patch}/>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
               <SortableGroup
                 as="div"
                 axis="y"
