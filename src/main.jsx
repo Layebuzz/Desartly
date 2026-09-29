@@ -660,7 +660,7 @@ function Project({ projects }) {
             <p>{b.text}</p>
           </section>
         ) : b.type === "image" ? (
-          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":"")} key={b.id}><img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
+          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
         ) : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (

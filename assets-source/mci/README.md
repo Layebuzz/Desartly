@@ -1,6 +1,6 @@
 # MCI 5G presentation assets
 
-All six opaque PNG source assets in this folder were created with the built-in ImageGen tool from the client's project material as visual reference. The optimized WebP versions used by the site are in `public/projects/mci/`. The supplied collage, billboard photograph, and logo screenshots are not embedded directly in the project page.
+The generated source assets in this folder were created with the built-in ImageGen tool from the client's project material as visual reference. The supplied ad-network banner is included as `ad-network.png` at the user's request. Optimized WebP versions used by the site are in `public/projects/mci/`.
 
 Prompt set (normalized):
 
@@ -9,6 +9,7 @@ Prompt set (normalized):
 - `snail-top.png`: Square overhead snail on an elongated black skateboard with four turquoise wheels and one cyan speed wake; spacious navy composition.
 - `tehran-billboard-v2.png`: Nighttime Tehran outdoor photograph with Azadi Tower, a nearly square printed-PVC billboard, MCI / 5G / Persian-slogan header above a rocket-powered snail, a delicate cyan rounded-corner portal behind the creature, and floodlit fabric wrinkles and fixing points.
 - `digital-screens-v2.png`: Two portrait digital advertising screens in a restrained dark concourse, each carrying the MCI / 5G / Persian-slogan header and a cyan portal behind its snail or tortoise visual.
+- `ad-network.png`: User-supplied wide campaign banner for the Ad network placement.
 - `client-logo.png`: Clean opaque cyan client tile reconstructing the bilingual MCI / Hamrah Aval lockup from the supplied brand reference.
 
 References informed the story and palette, not the final pixels. Final asset placement is designed to preserve each subject's entire silhouette rather than crop the photography into a mismatched container.
@@ -20,4 +21,4 @@ References informed the story and palette, not the final pixels. Final asset pla
 - [COLLINS / San Francisco Symphony](https://wearecollins.com/case-studies/san-francisco-symphony/): Large gallery imagery is supported by concise rationale and a broader system view. Here, two short editorial pauses are set between image groups.
 - [Studio Dumbar / Adidas Futurenatural](https://studiodumbar.com/work/adidas-futurenatural): Motion cues and static applications reinforce one another. This presentation contrasts sharp creatures with motion-blurred environments without adding unnecessary animation.
 
-MCI's final order is deliberately different from the Divar project: editorial statement → immersive single key visual → asymmetric creature pair → method note → Tehran outdoor banner → digital deployment. No sketch section and no text captions under the images.
+MCI's final order is deliberately different from the Divar project: editorial statement → immersive single key visual → asymmetric creature pair → method note → Tehran outdoor banner → digital deployment → Ad network banner. No sketch section and no text captions under the images.

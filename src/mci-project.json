@@ -55,6 +55,13 @@
       "type": "image",
       "image": "/projects/mci/digital-screens-v2.webp",
       "alt": "Two digital MCI 5G posters with campaign header, cyan portal motif, a snail and a tortoise on skateboards"
+    },
+    {
+      "id": "mci-ad-network",
+      "type": "image",
+      "title": "Ad network",
+      "image": "/projects/mci/ad-network.webp",
+      "alt": "Wide MCI 5G ad network banner with campaign slogan and a snail riding a skateboard"
     }
   ]
 }

@@ -201,6 +201,7 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-mci-5g .case-statement p{margin:0 0 5px;max-width:36ch;font-size:clamp(16px,1.3vw,21px);line-height:1.55;color:#4e5c6c}
 .project-mci-5g .case-single-image{margin:0 0 clamp(26px,5vw,76px)}
 .project-mci-5g .case-single-image img{width:100%;height:auto;display:block}
+.project-mci-5g .case-image-heading{font-size:clamp(24px,3vw,42px);line-height:1.1;letter-spacing:-.035em;margin:0 0 clamp(20px,3vw,40px);font-weight:600}
 .project-mci-5g .composition-block{margin:0 0 clamp(48px,10vw,150px)}
 .project-mci-5g .case-image-pair{gap:clamp(14px,2vw,28px)}
 .project-mci-5g .case-image-pair figure:last-child{transform:translateY(clamp(24px,6vw,88px))}
