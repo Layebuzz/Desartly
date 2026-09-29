@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DivarCategories } from "./DivarCategories";
 import { ResumeProfile } from "./ResumeProfile";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
@@ -412,7 +413,11 @@ function Grid({ block, cover = 0 }) {
     </div>
   );
 }
-function HtmlPreview({ block, editable = false, onChange, onTitleChange }) {
+function HtmlPreview(props) {
+  if (props.block.component === "divar-categories") return <DivarCategories />;
+  return <HtmlFrame {...props} />;
+}
+function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
   const frameRef = React.useRef(null);
   const [frameHeight, setFrameHeight] = useState(640);
   useEffect(() => {

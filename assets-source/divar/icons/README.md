@@ -1,0 +1,1 @@
+Eight original opaque 3D category icons generated with the built-in image generation tool. Full prompts and original paths are recorded in generation.json. Originals are preserved as PNG; site copies use 320px WebP at quality 88. No transparent backgrounds.
