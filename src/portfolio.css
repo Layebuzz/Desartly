@@ -65,10 +65,10 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 
 /* Certificates follow the document itself: landscape sheets span two columns,
    portrait sheets keep their native vertical footprint. */
-.credential-cards{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:dense;align-items:start;gap:46px 24px}
-.credential-card{display:block;height:auto}.credential-card.is-landscape{grid-column:span 2}.credential-card.is-portrait{grid-column:span 1}
-.credential-cover{aspect-ratio:1;background:#f2f3f6}.credential-card.is-landscape .credential-cover{aspect-ratio:1.48}.credential-card.is-portrait .credential-cover{aspect-ratio:.72}.credential-card.is-square .credential-cover{aspect-ratio:1}
-.credential-cover>img{padding:0;object-fit:contain}.credential-meta{display:block}.credential-meta h2{min-height:0}
+.credential-cards{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row;align-items:start;gap:46px 24px}
+.credential-card{display:block;height:auto}.credential-card.is-landscape,.credential-card.is-portrait{grid-column:span 1}
+.credential-card .credential-cover{aspect-ratio:auto;display:block;background:transparent;overflow:visible}
+.credential-card .credential-cover>img{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;padding:0;object-fit:contain;transform:none!important}.credential-card:hover img{transform:none}.credential-meta{display:block}.credential-meta h2{min-height:0}
 .credential-dialog{width:min(1400px,calc(100% - 24px));max-width:none;max-height:calc(100dvh - 24px);overflow:auto}
 .credential-dialog-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);min-height:min(760px,calc(100dvh - 24px));padding:0;background:#fff}
 .credential-dialog-media{display:grid;place-items:center;min-width:0;background:#f1f2f4;overflow:hidden}
@@ -76,7 +76,7 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .credential-dialog-copy{align-self:center;padding:72px 36px 36px}.credential-dialog-copy h2{font-size:clamp(24px,2.4vw,38px);line-height:1.2}.credential-close{z-index:3;right:14px;top:14px;margin:0;background:rgba(255,255,255,.94);backdrop-filter:blur(10px)}
 @media(max-width:1000px){.credential-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.credential-dialog-body{grid-template-columns:minmax(0,1fr) 300px}}
 @media(max-width:720px){.credential-dialog{width:calc(100% - 12px);max-height:calc(100dvh - 12px)}.credential-dialog-body{display:block;min-height:0}.credential-dialog-media>img{width:100%;height:auto;max-height:68dvh}.credential-dialog-copy{padding:28px 20px 24px}.credential-close{position:fixed;right:12px;top:12px}}
-@media(max-width:560px){.credential-cards{grid-template-columns:1fr}.credential-card.is-landscape,.credential-card.is-portrait{grid-column:span 1}.credential-card.is-landscape .credential-cover{aspect-ratio:1.48}.credential-card.is-portrait .credential-cover{aspect-ratio:.72}}
+@media(max-width:560px){.credential-cards{grid-template-columns:1fr}.credential-card.is-landscape,.credential-card.is-portrait{grid-column:span 1}}
 
 /* Project opening: keep the square artwork crisp and let long client profiles breathe. */
 .project-overview{margin:0 0 clamp(54px,7vw,96px);padding-top:clamp(22px,3vw,38px);border-top:1px solid var(--folio-rule)}
