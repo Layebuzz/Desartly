@@ -4,6 +4,7 @@
   "category": "Advertising",
   "tags": ["Advertising", "Art Direction"],
   "year": "2024",
+  "presentationVersion": 3,
   "sample": false,
   "coverImage": "/projects/airbnb/cover-square.webp",
   "heroImage": "/projects/airbnb/cover-square.webp",
@@ -58,14 +59,13 @@
     {
       "id": "airbnb-plaza",
       "type": "image",
-      "image": "/projects/airbnb/kuwait-plaza-v2.webp",
+      "image": "/projects/airbnb/kuwait-plaza-reflection.webp",
       "alt": "Airbnb polar bear campaign in a reflective illuminated display in a Kuwait City plaza"
     },
     {
       "id": "airbnb-streetboard-intro",
       "type": "text",
       "layout": "note",
-      "chapter": "OUTDOOR LANGUAGE",
       "title": "The city becomes part of the frame.",
       "text": "Printed streetboards bring the campaign into Kuwait City at road speed. The image stays quiet enough to read from a moving car, while the folds, tension points and changing light make the placement feel made for the street."
     },
@@ -99,7 +99,6 @@
       "id": "airbnb-transit-note",
       "type": "text",
       "layout": "note",
-      "chapter": "TRANSIT LIGHTBOXES",
       "title": "Light does the last bit of storytelling.",
       "text": "At the bus shelter, the artwork is printed on translucent stock and lit from behind. Cool fluorescent bands and passing headlights move across the glass, turning a still image into a quiet night-time signal."
     },

@@ -9,7 +9,7 @@ function load(site){if(!site)return;
  if(!site.projects.some(project=>project.id===mciPresentation.id))site.projects.push(structuredClone(mciPresentation));
  const existingAirbnb=site.projects.find(project=>project.id===airbnbPresentation.id);
  if(!existingAirbnb)site.projects.push(structuredClone(airbnbPresentation));
- else if(!existingAirbnb.blocks?.some(block=>block.id==='airbnb-transit-note'))Object.assign(existingAirbnb,structuredClone(airbnbPresentation));
+ else if(existingAirbnb.presentationVersion!==airbnbPresentation.presentationVersion)Object.assign(existingAirbnb,structuredClone(airbnbPresentation));
  for(const project of site.projects||[]){
   if(project.year===undefined||project.year===null){const years={divar:2025,toypet:2023,myom:2024,'cafe-de-la-corte':2022,noghteh:2021};project.year=String(years[project.id]||2021+[...project.id].reduce((sum,c)=>sum+c.charCodeAt(0),0)%5);}
   if(project.id==='divar'){
