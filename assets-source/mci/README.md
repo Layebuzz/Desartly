@@ -7,7 +7,7 @@ Prompt set (normalized):
 - `snail-speed.png`: Premium wide telecom campaign visual: realistic snail riding a physically plausible skateboard, from shadow into cyan light on a deep-navy stage; sharp subject and controlled motion trails, no logo or text.
 - `tortoise-speed.png`: Square alternative campaign visual: lifelike tortoise riding a navy skateboard across a diagonal cyan light beam; realistic anatomy, no text.
 - `snail-top.png`: Square overhead snail on an elongated black skateboard with four turquoise wheels and one cyan speed wake; spacious navy composition.
-- `tehran-billboard.png`: Photographic printed-PVC outdoor billboard on a Tehran road at dusk, with Milad Tower, Alborz Mountains, MCI / 5G / Persian-slogan header above the rocket-snail visual, floodlit banner wrinkles, fixing points and edge tension.
+- `tehran-billboard-v2.png`: Nighttime Tehran outdoor photograph with Azadi Tower, a nearly square printed-PVC billboard, MCI / 5G / Persian-slogan header above a rocket-powered snail, a delicate cyan rounded-corner portal behind the creature, and floodlit fabric wrinkles and fixing points.
 - `digital-screens.png`: Two realistic digital advertising screens in a restrained dark transit concourse, showing separate snail and tortoise campaign visuals.
 - `client-logo.png`: Clean opaque cyan client tile reconstructing the bilingual MCI / Hamrah Aval lockup from the supplied brand reference.
 
