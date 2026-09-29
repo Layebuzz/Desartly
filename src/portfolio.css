@@ -192,3 +192,5 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-divar .composition-block{margin:clamp(16px,3vw,40px) 0}
 .project-divar .case-single-image.case-portrait{width:55%;margin:0 auto clamp(16px,3vw,40px)}
 @media(max-width:700px){.project-divar .case-chapter{grid-template-columns:1fr;gap:0}.project-divar .case-chapter p{margin-top:24px}.project-divar .case-single-image.case-portrait{width:100%}.case-image-pair{grid-template-columns:1fr;gap:16px}}
+.project-divar .html-block{max-width:none;margin:40px 0}
+.project-divar .html-block .auto-height-preview{border:0;display:block;width:100%;background:#c9141e;max-height:none}
