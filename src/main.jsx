@@ -685,6 +685,10 @@ function About() {
         </div>
       </div>
       <Resume embedded/>
+      <Link className="about-certificates-card" to="/certificates">
+        <div><span className="eyebrow">CONTINUING THE PRACTICE</span><h2>Learning, with proof.</h2><p>Explore my certificates in design, creative technology and human-centred experiences.</p><span className="certificate-card-action">View my certificates <Arrow /></span></div>
+        <div className="certificate-card-art" aria-hidden="true"><span>AK</span><span>DESIGN / LEARNING</span><span>↗</span></div>
+      </Link>
       <ContactBand />
     </main>
   );
