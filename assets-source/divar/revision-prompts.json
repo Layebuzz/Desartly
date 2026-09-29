@@ -1,0 +1,45 @@
+{
+  "method": "Built-in image_gen imagegen; five reference edits and three new campaign visuals",
+  "prompts": [
+    {
+      "key": "hero-v2",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/hero.png",
+      "prompt": "Use case: precise-object-edit. Edit the supplied Divar landscape campaign visual. REMOVE the entire white curved slide/track/ribbon from the foreground, REMOVE the yellow ball, REMOVE all glowing connecting streaks and decorative lines. Replace removed space with uninterrupted vivid red studio floor/background and subtle natural shadows. Keep the same cube robot on left, same two floating listing cards on right, same red lighting, proportions, camera, 16:9 landscape framing. Robot must have EXACTLY TWO arms total, each originating at one side shoulder; natural unambiguous five-finger robotic hands. Keep existing identity and cards. No new objects, no white lines, no white platforms, no slides, no text, no watermark. Fully opaque red background."
+    },
+    {
+      "key": "boost-v2",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/boost.png",
+      "prompt": "Use case: precise-object-edit. Correct this Divar square ladder campaign image. Robot currently has THREE arms: remove the EXTRA arm reaching from its left side to the card. Final robot has EXACTLY TWO arms: one arm attached to EACH side shoulder, one elbow and one wrist per arm. Left-on-image arm reaches toward the card with a clearly formed five-finger hand, other arm relaxed open palm. No floating hands, duplicated fingers or ambiguous connections. Preserve cube robot identity, ivory materials, amber ladder screen, red ladder, floating listing card, red background, square framing. REMOVE all glowing arrow and looping connecting lines; only subtle thruster glow is allowed. No white decorative lines, slides or tracks. Polished clear anatomy, crisp joints. Opaque red backdrop, no text."
+    },
+    {
+      "key": "mascot-red",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/mascot.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY this robot portrait's white studio backdrop and white floor to a rich vivid Divar RED seamless studio backdrop and red floor with soft grounding shadow. Preserve exact cube robot identity, ivory body, pencil, two arms, happy amber eyes, complete silhouette, proportions and square camera framing. Red light may subtly reflect on underside. No white background areas, no lines, no platforms, no new objects, no text. Fully opaque."
+    },
+    {
+      "key": "mascot-family-red",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/mascot-family.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the white studio backdrop and floor of this three-character system image into vivid Divar RED seamless studio backdrop and floor. Keep three identical ivory cube robot characters in the same clear horizontal lineup, same two-arm anatomy, displays ladder/chat/happy eyes, gestures and card. Preserve full subjects and wide 16:9 composition. Soft grounding shadows on red. No white background, decorative lines, platforms or slides. No text or watermark. Fully opaque."
+    },
+    {
+      "key": "home-discovery",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/car-music.png",
+      "prompt": "Use case: ads-marketing. Create a new polished Divar campaign key visual, using reference only for material, lighting and palette. NO ROBOT, NO MASCOT, NO PEOPLE. Rich vivid Divar red opaque seamless studio background and floor, warm yellow accents, ivory and charcoal details. Premium stylised dimensional CGI, minimalist clear composition and believable object materials. All objects fully in frame with safe margins. No typography, logos, watermark, sketch, decorative connecting lines, ribbons, tracks or slides. Never transparent. LANDSCAPE 16:9. A sculptural red lounge armchair with warm yellow cushion, small ivory side table and yellow desk lamp at centre-left; a single floating ivory classified listing card with yellow photo placeholder and short grey bars at right. A small house-key with red fob placed on floor in foreground. Visual metaphor for finding objects for a new home. Refined restrained scene with large red breathing space, varied height hierarchy, soft studio shadows."
+    },
+    {
+      "key": "digital-discovery",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/car-music.png",
+      "prompt": "Use case: ads-marketing. Create a new polished Divar campaign key visual, using reference only for material, lighting and palette. NO ROBOT, NO MASCOT, NO PEOPLE. Rich vivid Divar red opaque seamless studio background and floor, warm yellow accents, ivory and charcoal details. Premium stylised dimensional CGI, minimalist clear composition and believable object materials. All objects fully in frame with safe margins. No typography, logos, watermark, sketch, decorative connecting lines, ribbons, tracks or slides. Never transparent. SQUARE. A silver open laptop on a low RED rectangular plinth, warm-yellow over-ear headphones hanging on one corner of screen. A dark smartphone upright beside laptop, screen showing simple ivory and yellow listing shapes without text. One smaller ivory listing card with yellow thumbnail floats behind laptop, subtle composition, no clutter. Marketplace electronics campaign, crisp plausible hardware and warm red studio lighting."
+    },
+    {
+      "key": "listing-promotion",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/car-music.png",
+      "prompt": "Use case: ads-marketing. Create a new polished Divar campaign key visual, using reference only for material, lighting and palette. NO ROBOT, NO MASCOT, NO PEOPLE. Rich vivid Divar red opaque seamless studio background and floor, warm yellow accents, ivory and charcoal details. Premium stylised dimensional CGI, minimalist clear composition and believable object materials. All objects fully in frame with safe margins. No typography, logos, watermark, sketch, decorative connecting lines, ribbons, tracks or slides. Never transparent. SQUARE. One sculptural red ladder with three ivory rungs stands diagonally near centre. A single ivory listing card with yellow photo placeholder and short grey bars floats just above its top; two smaller ivory listing cards stand lower on red floor behind. Listing elevation metaphor, no robot, no human, no hands, no arrows or glowing lines. Carefully ordered hierarchy and dramatic soft studio light, all objects safely inside frame."
+    },
+    {
+      "key": "category-panel",
+      "ref": "/Users/ali/Documents/Codex/2026-09-12/new-chat/outputs/pol-frontend/assets-source/divar/generated/category-world.png",
+      "prompt": "Use case: compositing. Edit supplied eight-category asset sheet into a premium application component presentation. Keep the same eight miniature category groups, same materials and 4 columns by 2 rows spacing: house, car, laptop, sofa, coat with handbag, beauty, sports, megaphone. Their warm WHITE backdrop must become ONE large WHITE rounded-corner UI CARD entirely inset within a rich vivid Divar RED seamless background. Show clear red margins on all four sides, about 10% of frame, large smooth rounded card corners and subtle shadow. The white exists ONLY INSIDE this app-component card. All objects comfortably inside card, scaled consistently, none touch edges. Landscape 16:9, straight-on, no robot, text, labels, logos, line decoration, transparent areas or watermark."
+    }
+  ]
+}

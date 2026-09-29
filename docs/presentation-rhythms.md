@@ -24,6 +24,6 @@ These are structural references, not layouts to copy. Each project needs a diffe
 3. Small component → larger composition → actual interface → user context → design system.
 
 ## Divar: selected rhythm
-The campaign sequence uses three numbered chapters. Red campaign scenes begin the case; a natural-ratio square pair contrasts promotion and automotive messages. A narrower white character portrait introduces a quieter tempo, followed by the wide expression family. Human context returns the red world before a white category library closes the story. The square cover remains compact within the existing project brief.
+The case now opens with a broader mascot-free campaign chapter: a home discovery scene, paired electronics and listing-promotion visuals, then a smaller automotive visual. The AI chapter follows with a clear hero, paired character applications and an expression family. Human context and a category component close the case. All image backgrounds are red; white is reserved for the rounded application-component card. No decorative connecting tracks or slides. The ladder character has two arms with clear shoulder-to-wrist connections.
 
-All eight assets are new reference-based recreations. Original user boards are not displayed. No image captions, fake metrics or invented results. Natural image proportions preserve complete subjects; review desktop and mobile after each presentation, including loaded image height and skeleton removal.
+All presentation imagery is recreated from references. User boards are not displayed directly. No captions, fabricated metrics or invented results. Natural proportions preserve complete subjects. Check desktop and mobile, loaded image height and skeleton removal after every presentation.

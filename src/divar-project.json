@@ -13,14 +13,94 @@
   "deliverables": "Campaign imagery, a character system and a family of category assets for digital touchpoints.",
   "credits": "Design by Ali Komeili. Presentation imagery recreated from the original project references.",
   "blocks": [
-    {"id":"divar-chapter-01","type":"text","layout":"chapter","chapter":"01 / CAMPAIGN WORLD","title":"One world. Different stories.","text":"A vivid red stage connects the work. Ivory objects and warm yellow accents give each campaign its own focus: promoting a listing, finding a car or discovering something new. The composition changes with the message; the visual language stays familiar."},
-    {"id":"divar-hero","type":"image","image":"/projects/divar/hero.webp","alt":"Divar AI character guiding listing cards through a sculptural red campaign world"},
-    {"id":"divar-campaign-pair","type":"grid","preset":1,"layout":"pair","images":["/projects/divar/boost.webp","/projects/divar/car-music.webp"],"alts":["AI character helping a listing rise beside a red ladder","Red compact car hovering above a yellow turntable"]},
-    {"id":"divar-chapter-02","type":"text","layout":"chapter","chapter":"02 / AI CHARACTER","title":"A helpful presence.","text":"The mascot gives AI a visible personality. A compact body, articulated hands and an amber display form a simple, repeatable character. Gestures and screen expressions introduce different functions without changing its identity."},
-    {"id":"divar-character-portrait","type":"image","layout":"portrait","image":"/projects/divar/mascot.webp","alt":"Ivory cube AI mascot holding a yellow pencil on a warm white background"},
-    {"id":"divar-character-family","type":"image","image":"/projects/divar/mascot-family.webp","alt":"Three expressions of the same AI character: promotion, conversation and discovery"},
-    {"id":"divar-chapter-03","type":"text","layout":"chapter","chapter":"03 / DIGITAL TOUCHPOINTS","title":"From a visual to an experience.","text":"The same language moves from a campaign scene to the smaller assets around a digital experience. The character brings a human point of connection, while a restrained family of category objects makes the wider marketplace feel coherent."},
-    {"id":"divar-human-ai","type":"image","image":"/projects/divar/human-ai.webp","alt":"A person using a phone in a yellow chair, accompanied by Divar’s AI character"},
-    {"id":"divar-category-world","type":"image","image":"/projects/divar/category-world.webp","alt":"Eight coordinated marketplace category illustrations on a warm white background"}
+    {
+      "id": "divar-chapter-01",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "01 / CAMPAIGN KEY VISUALS",
+      "title": "The message leads.",
+      "text": "The campaign language works beyond the mascot. Furniture, electronics and cars each become a focused scene, while listing cards connect the imagery to the marketplace. Red creates continuity; changes in composition, scale and subject give each message its own rhythm."
+    },
+    {
+      "id": "divar-home-discovery",
+      "type": "image",
+      "image": "/projects/divar/home-discovery.webp",
+      "alt": "Home furnishings and a listing card in a red campaign setting"
+    },
+    {
+      "id": "divar-campaign-pair",
+      "type": "grid",
+      "preset": 1,
+      "layout": "pair",
+      "images": [
+        "/projects/divar/digital-discovery.webp",
+        "/projects/divar/listing-promotion.webp"
+      ],
+      "alts": [
+        "Electronics and a listing card on a red campaign stage",
+        "A listing rising above a red ladder, without a mascot"
+      ]
+    },
+    {
+      "id": "divar-car-music",
+      "type": "image",
+      "image": "/projects/divar/car-music.webp",
+      "alt": "Red compact car hovering above a yellow turntable",
+      "layout": "portrait"
+    },
+    {
+      "id": "divar-chapter-02",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "02 / AI CHARACTER",
+      "title": "A helpful presence.",
+      "text": "The AI character introduces a different layer of the visual language. A compact ivory body, two articulated arms and an amber display make it recognisable. Expressions and gestures adapt to promotion, conversation and discovery, within the same red campaign world."
+    },
+    {
+      "id": "divar-hero",
+      "type": "image",
+      "image": "/projects/divar/hero-v2.webp",
+      "alt": "Divar AI character accompanying two floating listing cards on red"
+    },
+    {
+      "id": "divar-character-pair",
+      "type": "grid",
+      "preset": 1,
+      "layout": "pair",
+      "images": [
+        "/projects/divar/boost-v2.webp",
+        "/projects/divar/mascot-red.webp"
+      ],
+      "alts": [
+        "Two-armed AI character assisting a listing beside a ladder",
+        "AI character holding a pencil against a red backdrop"
+      ]
+    },
+    {
+      "id": "divar-character-family",
+      "type": "image",
+      "image": "/projects/divar/mascot-family-red.webp",
+      "alt": "Three expressions of the same AI character against red"
+    },
+    {
+      "id": "divar-chapter-03",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "03 / DIGITAL TOUCHPOINTS",
+      "title": "From a visual to an experience.",
+      "text": "The visual language moves between a human campaign scene and smaller components for digital touchpoints. Category objects become a coordinated family inside a white application card, presented against the same red background."
+    },
+    {
+      "id": "divar-human-ai",
+      "type": "image",
+      "image": "/projects/divar/human-ai.webp",
+      "alt": "A person using a phone in a yellow chair, accompanied by Divar’s AI character"
+    },
+    {
+      "id": "divar-category-world",
+      "type": "image",
+      "image": "/projects/divar/category-panel.webp",
+      "alt": "Eight marketplace category assets inside a rounded white application card on red"
+    }
   ]
 }
