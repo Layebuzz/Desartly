@@ -85,4 +85,5 @@ await sharp({create:{width:1200,height:1200,channels:3,background:coral}}).compo
   {input:coverType,left:0,top:800},
   {input:await sharp(logo).resize({width:182}).png().toBuffer(),left:942,top:862},
 ]).webp({quality:90,effort:6}).toFile(join(target,'cover-square.webp'));
+await sharp(join(source,'cover-clean.png')).resize(1200,1200,{fit:'cover',position:'centre'}).webp({quality:91,effort:6}).toFile(join(target,'cover-clean.webp'));
 console.log('Airbnb campaign assets built',tile.width,tile.height);
