@@ -118,3 +118,5 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 
 .project-cafe-de-la-corte .composition-layout{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));height:auto!important;aspect-ratio:auto!important;gap:24px}.project-cafe-de-la-corte .composition-layout>div{position:relative!important;inset:auto!important;width:auto!important;height:auto!important;aspect-ratio:auto!important}.project-cafe-de-la-corte .composition-layout img{display:block;width:100%;height:auto;object-fit:contain}.project-page figcaption{display:none}
 @media(max-width:700px){.project-cafe-de-la-corte .composition-layout{grid-template-columns:1fr}}
+
+.project-cafe-de-la-corte .composition-layout{align-items:start}.project-cafe-de-la-corte .composition-layout>div{background:transparent}
