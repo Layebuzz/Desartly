@@ -1,0 +1,115 @@
+{
+  "cafe-de-la-corte": [
+    {
+      "id": "cafe-overview",
+      "type": "text",
+      "title": "Craft translated into a packaging system",
+      "text": "Café De La Corte is positioned around craftsmanship, richness and refined taste. The design task was to carry an established identity into a physical system that felt premium at first glance and remained believable at close range. Every decision—from the glass treatment to the label hierarchy and sleeve construction—was shaped by how the product would be held, poured, displayed and produced."
+    },
+    {
+      "id": "cafe-product-focus",
+      "type": "image",
+      "image": "/api/media/bb03892c-0b95-4d52-8518-8eacd53c7cbf",
+      "alt": "Café De La Corte bottle with the original transparent shield label and hand-tied burlap sleeve",
+      "caption": "The original bottle, label and textile sleeve shown as one coherent packaging object."
+    },
+    {
+      "id": "cafe-material-story",
+      "type": "text",
+      "title": "Luxury with raw materiality",
+      "text": "The packaging pairs warm glass tones and restrained metallic details with coarse burlap and hand-tied twine. That contrast gives the product a distinctive tension: polished enough for a premium shelf, yet tactile enough to signal craft and authenticity. The material palette also keeps the identity recognisable when the bottle is viewed from different distances and angles."
+    },
+    {
+      "id": "cafe-material-pair",
+      "type": "grid",
+      "preset": 1,
+      "images": [
+        "/api/media/c7630dc9-7ea3-45d5-aa38-ac5bec6786f2",
+        "/api/media/85d4f08b-596d-470f-82d4-2712b0b11947"
+      ]
+    },
+    {
+      "id": "cafe-system",
+      "type": "text",
+      "title": "A system designed around the bottle",
+      "text": "The bottle’s proportions informed the scale and placement of every element. The transparent label preserves the visual richness of the coffee, while the burlap sleeve introduces warmth, grip and shelf presence. Repeating the shield mark across glass and textile keeps the touchpoints connected without making the package feel over-branded."
+    },
+    {
+      "id": "cafe-application-pair",
+      "type": "grid",
+      "preset": 2,
+      "images": [
+        "/api/media/9e2a8590-c970-4a93-8922-0447d927d91e",
+        "/api/media/62a3e7a6-529f-4a9e-a757-11d2f63bdb52"
+      ]
+    },
+    {
+      "id": "cafe-close",
+      "type": "text",
+      "title": "A tactile premium experience",
+      "text": "The result is a packaging language built on contrast: clarity and texture, refinement and craft, glass and fibre. Rather than adding decorative complexity, the system gives each material a clear role—making the product feel richer while keeping the brand legible and coherent."
+    },
+    {
+      "id": "cafe-fresh-craftsmanship",
+      "type": "image",
+      "image": "/projects/cafe-de-la-corte/craftsmanship.webp",
+      "alt": "Café De La Corte craftsmanship",
+      "caption": "A coherent system of glass, fibre and cord."
+    },
+    {
+      "id": "cafe-fresh-hospitality",
+      "type": "image",
+      "image": "/projects/cafe-de-la-corte/hospitality.webp",
+      "alt": "Café De La Corte hospitality",
+      "caption": "The packaging in a warm hospitality setting."
+    }
+  ],
+  "noghteh": [
+    {
+      "id": "noghteh-opening",
+      "type": "text",
+      "title": "A quiet identity with physical presence",
+      "text": "Noghteh is presented through material, proportion and space. The mark stays deliberately restrained while paper, embossing, shadow and architectural scale carry the visual rhythm."
+    },
+    {
+      "id": "fresh-material-library",
+      "type": "image",
+      "image": "/projects/noghteh/material-library.webp",
+      "alt": "Noghteh material-library",
+      "caption": "Material language · oak, concrete and glass."
+    },
+    {
+      "id": "fresh-print-and-glass",
+      "type": "image",
+      "image": "/projects/noghteh/print-and-glass.webp",
+      "alt": "Noghteh print-and-glass",
+      "caption": "A quiet signature on tactile paper."
+    },
+    {
+      "id": "noghteh-space-text",
+      "type": "text",
+      "title": "From object to environment",
+      "text": "The same restrained palette expands into a spatial identity. Large fields of charcoal frame the work, translucent banners create a lighter middle layer and small identity moments guide attention through the space."
+    },
+    {
+      "id": "fresh-studio-entrance",
+      "type": "image",
+      "image": "/projects/noghteh/studio-entrance.webp",
+      "alt": "Noghteh studio-entrance",
+      "caption": "A restrained architectural signature."
+    },
+    {
+      "id": "noghteh-env-full",
+      "type": "image",
+      "image": "/api/media/4fc5e82d-32ed-4c0d-9600-9dd5804d144b",
+      "alt": "Full Noghteh exhibition environment",
+      "caption": "A modular exhibition space where the identity supports the architecture."
+    },
+    {
+      "id": "noghteh-close",
+      "type": "text",
+      "title": "Minimal, measured, repeatable",
+      "text": "The presentation avoids showing every possible application. A limited set of carefully framed moments demonstrates how the identity behaves across print and space while preserving clarity and restraint."
+    }
+  ]
+}
