@@ -1,4 +1,4 @@
-import photography from './project-photography.json';
+import photography from './project-photography.json' with { type: 'json' };
 export const cloud={ready:false,version:0,values:{},error:'',allowLocal:false};
 const fields={'pol-published':'projects','pol-draft':'projects','pol-categories':'categories','pol-certificates':'certificates','pol-certificates-draft':'certificates','pol-page-content':'pages','pol-nav':'nav','pol-stats':'stats','pol-clients':'clients','pol-blog-posts':'blogPosts','pol-home-sections':'homeSections'};
 function load(site){if(!site)return;

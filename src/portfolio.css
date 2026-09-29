@@ -179,3 +179,16 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .resume-samurai{width:100px;height:100px;transform:rotate(-7deg)}
 @media(max-width:700px){.work-title-with-samurai{padding-right:76px}.samurai-edge{width:76px;height:76px;top:-52px;right:0}.resume-samurai{width:64px;height:64px}}
 @media(prefers-reduced-motion:reduce){.samurai-edge,.contact-sketch img{transition:none}.work-title-with-samurai:hover .samurai-edge{transform:rotate(-7deg)}.compact-contact:hover .contact-sketch img{transform:none}}
+
+/* Campaign storytelling: natural image proportions and a quieter character interlude. */
+.case-image-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,28px);align-items:start}
+.case-image-pair figure{margin:0;min-width:0}
+.case-image-pair img{display:block;width:100%;height:auto;object-fit:contain}
+.project-divar .case-chapter{border-top:1px solid #dfe2e8;margin-top:clamp(40px,7vw,100px);padding:clamp(32px,5vw,64px) 0;align-items:start;grid-template-columns:1fr 1fr}
+.project-divar .case-chapter .eyebrow{font-size:10px;letter-spacing:.12em;color:#757781}
+.project-divar .case-chapter h2{font-size:clamp(28px,3.5vw,48px);max-width:15ch;margin:20px 0 0;line-height:1.12}
+.project-divar .case-chapter p{max-width:54ch;margin:30px 0 0;color:#59616e}
+.project-divar .case-single-image{margin:clamp(16px,3vw,40px) 0}
+.project-divar .composition-block{margin:clamp(16px,3vw,40px) 0}
+.project-divar .case-single-image.case-portrait{width:55%;margin:0 auto clamp(16px,3vw,40px)}
+@media(max-width:700px){.project-divar .case-chapter{grid-template-columns:1fr;gap:0}.project-divar .case-chapter p{margin-top:24px}.project-divar .case-single-image.case-portrait{width:100%}.case-image-pair{grid-template-columns:1fr;gap:16px}}

@@ -1,3 +1,4 @@
+import divarProject from './divar-project.json' with { type: 'json' };
 import {cloud,uploadMedia} from './cloud.js';
 export const categories = ["Product & AI", "Branding", "Advertising"];
 export const categoryIds = ["product-ai", "branding", "advertising"];
@@ -12,7 +13,7 @@ const names = [
   "Digital Campaign",
   "Integrated Campaign",
 ];
-export const initialProjects = names.map((title, i) => ({
+export const initialProjects = [divarProject, ...names.map((title, i) => ({
   id: title.toLowerCase().replaceAll(" & ", "-").replaceAll(" ", "-"),
   title,
   category: categories[Math.floor(i / 3)],
@@ -43,7 +44,7 @@ export const initialProjects = names.map((title, i) => ({
       html: "<main style='font-family:system-ui;padding:32px;background:#f5f6fa;color:#202632'><p style='font-size:12px;letter-spacing:.08em;text-transform:uppercase'>Prototype preview</p><h1 style='font-size:36px;margin:18px 0'>Make room for what’s next.</h1><button style='padding:12px 16px;border:1px solid #202632;background:white'>Continue</button></main>",
     }] : []),
   ],
-}));
+}))];
 
 export const initialStats = [
   { id: "projects", value: "00", label: "Projects shipped", detail: "Replace with your verified total" },
