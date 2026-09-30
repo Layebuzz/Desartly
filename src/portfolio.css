@@ -126,10 +126,16 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-flightio-ota .case-interlude{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(32px,8vw,132px);align-items:center;margin:0 0 clamp(34px,5vw,72px);padding:clamp(40px,6vw,92px);color:#fff;background:radial-gradient(circle at 88% 20%,rgba(193,122,235,.72),transparent 31%),linear-gradient(135deg,var(--flightio-deep),var(--flightio-night))}
 .project-flightio-ota .case-interlude h2{font-size:clamp(36px,5vw,72px);line-height:1.02;letter-spacing:-.055em;max-width:10ch;margin:0}
 .project-flightio-ota .case-interlude p{font-size:clamp(15px,1.2vw,19px);line-height:1.72;max-width:51ch;margin:0;color:#dedbea}
+.project-flightio-ota .composition-block{margin:0 0 clamp(58px,9vw,132px)}
+.project-flightio-ota .case-image-quartet{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.2vw,20px)}
+.project-flightio-ota .case-image-quartet figure{overflow:hidden;background:var(--flightio-deep)}
+.project-flightio-ota .case-image-quartet img{aspect-ratio:16/9;object-fit:cover}
+.project-flightio-ota .case-image-pair{gap:clamp(12px,1.6vw,26px);align-items:start}
+.project-flightio-ota .case-image-pair img{aspect-ratio:16/9;object-fit:cover}
 .project-flightio-ota .html-block{max-width:none;margin:0 0 clamp(54px,8vw,124px)}
 .project-flightio-ota .html-block .auto-height-preview{display:block;width:100%;max-height:none;border:0;background:var(--flightio-deep)}
 .project-flightio-ota .html-block+.case-note{background:#fff;border-top:1px solid #dfe3eb;border-bottom:1px solid #dfe3eb;padding-left:0;padding-right:0;margin-top:0}
-@media(max-width:700px){.project-flightio-ota .case-statement,.project-flightio-ota .case-note,.project-flightio-ota .case-chapter,.project-flightio-ota .case-interlude{grid-template-columns:1fr}.project-flightio-ota .case-statement{margin-top:58px}.project-flightio-ota .case-statement h2{font-size:clamp(45px,13vw,66px)}.project-flightio-ota .case-note p,.project-flightio-ota .case-chapter p{margin-top:18px}.project-flightio-ota .case-single-image.case-portrait{width:100%;padding:10px}.project-flightio-ota .case-interlude{padding:38px 24px}.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-logo{border-radius:8px}}
+@media(max-width:700px){.project-flightio-ota .case-statement,.project-flightio-ota .case-note,.project-flightio-ota .case-chapter,.project-flightio-ota .case-interlude{grid-template-columns:1fr}.project-flightio-ota .case-statement{margin-top:58px}.project-flightio-ota .case-statement h2{font-size:clamp(45px,13vw,66px)}.project-flightio-ota .case-note p,.project-flightio-ota .case-chapter p{margin-top:18px}.project-flightio-ota .case-single-image.case-portrait{width:100%;padding:10px}.project-flightio-ota .case-interlude{padding:38px 24px}.project-flightio-ota .case-image-quartet,.project-flightio-ota .case-image-pair{grid-template-columns:1fr;gap:12px}.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-logo{border-radius:8px}}
 
 /* Project opening: a restrained two-panel system with one square visual. */
 .project-overview{display:grid;grid-template-columns:1fr;margin:0 0 clamp(54px,7vw,96px);gap:16px;background:#fff}

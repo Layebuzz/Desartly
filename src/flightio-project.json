@@ -8,17 +8,17 @@
     "Campaign"
   ],
   "year": "2022",
-  "presentationVersion": 2,
+  "presentationVersion": 3,
   "sample": false,
   "coverImage": "/projects/flightio/cover.webp",
   "heroImage": "/projects/flightio/cover.webp",
-  "summary": "Brand, campaign and product direction for an online travel agency built around clarity, movement and measurable action.",
+  "summary": "Visual direction for a travel platform where every booking opens a vivid path between places.",
   "clientName": "Flightio",
   "clientLogo": "/projects/flightio/client-logo.svg",
   "clientDescription": "An online travel agency focused on digital booking for flights, trains and intercity travel.",
-  "challenge": "Unify high-volume performance marketing, seasonal campaigns and product landing pages without losing a coherent brand signal.",
+  "challenge": "Unify travel products, performance marketing and a destination campaign through one recognizable brand signal.",
   "role": "Visual direction, campaign key visuals, hero imagery and landing-page design across brand, marketing and product.",
-  "deliverables": "Product hero-image system, portal campaign key visuals, performance assets, environmental advertising and the Flightio Aurora landing page.",
+  "deliverables": "Product hero-image system, portal campaign key visuals, digital and environmental applications, and the Flightio Aurora landing page.",
   "credits": "Visual direction and design by Ali Komeili. Portfolio imagery was newly reconstructed at high resolution from original project references.",
   "blocks": [
     {
@@ -46,28 +46,45 @@
       "type": "text",
       "layout": "chapter",
       "chapter": "CAMPAIGN DIRECTION",
-      "title": "A portal between planning and experience.",
-      "text": "Campaign imagery treated booking as the threshold to a different place. A luminous ring became the recurring device: clear enough for performance media, cinematic enough for brand campaigns, and flexible across Iran-focused travel stories."
+      "title": "One circular threshold. Many different journeys.",
+      "text": "A perfectly circular electric fissure translates Flightio’s multicolor loop into a real travel threshold. Every frame holds the same rear-view composition while origin, destination and daylight shift around the traveler."
     },
     {
-      "id": "flightio-portal",
-      "type": "image",
-      "layout": "portrait",
-      "image": "/projects/flightio/portal-campaign.webp",
-      "alt": "Iranian woman traveler approaching a luminous portal from Arg of Karim Khan in Shiraz to the Colosseum in Rome"
+      "id": "flightio-portal-series",
+      "type": "composition",
+      "layout": "quartet",
+      "images": [
+        "/projects/flightio/persepolis-rome.webp",
+        "/projects/flightio/hormuz-alps.webp",
+        "/projects/flightio/shiraz-paris.webp",
+        "/projects/flightio/caravanserai-petra.webp"
+      ],
+      "alts": [
+        "Flightio portal campaign from Persepolis to Rome",
+        "Flightio portal campaign from Hormuz Island to the Alps",
+        "Flightio portal campaign from Shiraz to Paris",
+        "Flightio portal campaign from a night caravanserai to daytime Petra"
+      ]
     },
     {
       "id": "flightio-environmental-chapter",
       "type": "text",
       "layout": "interlude",
-      "title": "The portal becomes the campaign frame.",
-      "text": "The same circular threshold connected the hero artwork, performance formats and outdoor placements. In every execution, the traveler remains on the edge of departure while the destination opens directly in front of them."
+      "title": "A printed surface by day. An illuminated portal by night.",
+      "text": "The campaign adapts to its physical medium. Printed billboards keep the folds, tension and material texture of outdoor vinyl; glass lightboxes carry fluorescent reflections while a segmented neon circle makes the portal tangible in the street."
     },
     {
-      "id": "flightio-environmental",
-      "type": "image",
-      "image": "/projects/flightio/portal-billboard.webp",
-      "alt": "Flightio portal campaign on a large roadside billboard in Tehran with the Persian campaign layout"
+      "id": "flightio-environmental-pair",
+      "type": "composition",
+      "layout": "pair",
+      "images": [
+        "/projects/flightio/environment-day.webp",
+        "/projects/flightio/environment-night.webp"
+      ],
+      "alts": [
+        "Daytime Flightio campaign billboard in Shiraz with visible print texture and creases",
+        "Night Flightio lightbox with glass reflections and a multicolor circular neon installation"
+      ]
     },
     {
       "id": "flightio-product-chapter",
