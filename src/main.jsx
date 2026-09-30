@@ -302,15 +302,14 @@ function Card({ p, editable = false, onTitleChange, priority = false }) {
   );
 }
 
-function BlogCard({ post, locale = "en", editable = false, onChange }) {
-  const destination = `/${locale}/journal/${post.id}`;
+function BlogCard({ post, editable = false, onChange }) {
   return (
-    <Link className={"blog-card" + (editable ? " is-editable" : "")} to={destination} lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} onClick={e=>{if(editable)e.preventDefault();}}>
-      <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt={post.imageAlt || ""} loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
+    <Link className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
+      <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt="" loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
       <div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
       <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.innerText})}>{post.title}</h3>
       <p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{excerpt:e.currentTarget.innerText})}>{post.excerpt}</p>
-      <span className="blog-read"><span>{locale === "fa" ? "خواندن مقاله" : "Read article"}</span> <ArrowUpRight size={16} /></span>
+      <span className="blog-read"><span>Read note</span> <ArrowUpRight size={16} /></span>
     </Link>
   );
 }
@@ -541,93 +540,33 @@ function ContactBand({ editable = false, page = {}, onPatch }) {
  </section>;
 }
 
-const journalCopy = {
-  en: { eyebrow: "THE JOURNAL", unit: "ARTICLES", title: "Ideas, tested against evidence.", intro: "Research-led writing on product design, visual systems and the decisions between them.", search: "Search articles", topics: "TOPICS", all: "All articles", empty: "No articles in this topic yet.", back: "All articles", language: "Article language" },
-  fa: { eyebrow: "ژورنال", unit: "مقاله", title: "ایده‌هایی که با شواهد سنجیده می‌شوند.", intro: "مقاله‌های پژوهش‌محور دربارهٔ طراحی محصول، نظام‌های بصری و تصمیم‌هایی که میان آن‌ها شکل می‌گیرند.", search: "جست‌وجوی مقاله‌ها", topics: "موضوع‌ها", all: "همهٔ مقاله‌ها", empty: "هنوز مقاله‌ای در این موضوع منتشر نشده است.", back: "همهٔ مقاله‌ها", language: "زبان مقاله‌ها" }
-};
-function localizedPost(post, locale) {
-  const translation = post.translations?.[locale];
-  if (locale === "fa" && !translation) return null;
-  return {...post, ...(translation || {}), locale};
-}
-function useJournalLocale() {
-  const { pathname } = useLocation();
-  return pathname.startsWith("/fa/") ? "fa" : "en";
-}
-function JournalLanguageToggle({ locale, slug = "", hasPersian = true }) {
-  const suffix = slug ? `/${slug}` : "";
-  return <nav className="journal-language" aria-label={journalCopy[locale].language}>
-    {hasPersian ? <Link lang="fa" hrefLang="fa" aria-current={locale === "fa" ? "page" : undefined} className={locale === "fa" ? "active" : ""} to={`/fa/journal${suffix}`}>فارسی</Link> : <span lang="fa" aria-disabled="true" title="ترجمهٔ فارسی این مقاله هنوز منتشر نشده است">فارسی</span>}
-    <Link lang="en" hrefLang="en" aria-current={locale === "en" ? "page" : undefined} className={locale === "en" ? "active" : ""} to={`/en/journal${suffix}`}>English</Link>
-  </nav>;
-}
-function useJournalDocument(locale, post) {
-  useEffect(() => {
-    const root = document.documentElement;
-    const metaDescription=document.querySelector('meta[name="description"]');
-    const previous = {lang:root.lang, dir:root.dir, title:document.title, description:metaDescription?.getAttribute("content") || ""};
-    root.lang = locale;
-    root.dir = locale === "fa" ? "rtl" : "ltr";
-    document.body.classList.toggle("journal-rtl", locale === "fa");
-    const title = post?.title ? `${post.title} — Desartly Journal` : `${journalCopy[locale].title} — Desartly`;
-    const description = post?.excerpt || journalCopy[locale].intro;
-    document.title = title;
-    metaDescription?.setAttribute("content", description);
-    const canonicalPath = `/${locale}/journal${post ? `/${post.id}` : ""}`;
-    const ensureLink = (rel, language) => {
-      const selector = language ? `link[rel="${rel}"][hreflang="${language}"]` : `link[rel="${rel}"]:not([hreflang])`;
-      let link = document.head.querySelector(selector);
-      if (!link) { link=document.createElement("link"); link.rel=rel; if(language)link.hreflang=language; document.head.append(link); }
-      link.href = `${location.origin}/${language || locale}/journal${post ? `/${post.id}` : ""}`;
-      return link;
-    };
-    const canonical=ensureLink("canonical");
-    const alternates=[ensureLink("alternate","fa"),ensureLink("alternate","en")];
-    canonical.href=`${location.origin}${canonicalPath}`;
-    return () => {
-      root.lang=previous.lang || "en"; root.dir=previous.dir || "ltr"; document.title=previous.title;
-      metaDescription?.setAttribute("content",previous.description);
-      document.body.classList.remove("journal-rtl"); canonical.remove(); alternates.forEach(link=>link.remove());
-    };
-  }, [locale, post?.id, post?.title, post?.excerpt]);
-}
-
 function Journal({ blogPosts }) {
   const page = usePage();
-  const locale = useJournalLocale();
-  const copy = journalCopy[locale];
-  const localizedPosts = blogPosts.map(post => localizedPost(post, locale)).filter(Boolean);
   const [params, setParams] = useSearchParams();
   const activeTopic = params.get("topic") || "all";
   const query = params.get("q") || "";
-  const topicLabels = Array.from(new Set(localizedPosts.map(post => post.category || "Notes")));
-  const topics = [{ id: "all", label: copy.all }, ...topicLabels.map(label => ({ id: label, label }))];
-  const visiblePosts = localizedPosts.filter(post => (activeTopic === "all" || (post.category || "Notes") === activeTopic) && `${post.title} ${post.excerpt}`.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale)));
-  const countFor = topic => topic.id === "all" ? localizedPosts.length : localizedPosts.filter(post => (post.category || "Notes") === topic.id).length;
+  const topicLabels = Array.from(new Set(blogPosts.map(post => post.category || "Notes")));
+  const topics = [{ id: "all", label: "All notes" }, ...topicLabels.map(label => ({ id: slugify(label), label }))];
+  const visiblePosts = blogPosts.filter(post => (activeTopic === "all" || slugify(post.category || "Notes") === activeTopic) && `${post.title} ${post.excerpt}`.toLowerCase().includes(query.toLowerCase()));
+  const countFor = topic => topic.id === "all" ? blogPosts.length : blogPosts.filter(post => slugify(post.category || "Notes") === topic.id).length;
   const chooseTopic = topic => setParams({...query ? {q:query} : {},...topic.id === "all" ? {} : {topic:topic.id}});
-  useJournalDocument(locale);
-  return <main className="page journal-page" lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}>
-    <div className="journal-heading-row"><div className="page-title"><span className="eyebrow">{copy.eyebrow} / {localizedPosts.length} {copy.unit}</span><h1>{locale === "en" && page.title ? page.title : copy.title}</h1><p>{locale === "en" && page.intro ? page.intro : copy.intro}</p></div><JournalLanguageToggle locale={locale}/></div>
+  return <main className="page journal-page">
+    <div className="page-title"><span className="eyebrow">THE JOURNAL / {blogPosts.length} NOTES</span><h1>{page.title || "Notes from the practice."}</h1><p>{page.intro || "Small observations on product thinking, visual systems and the work between."}</p></div>
     <div className="journal-layout">
-      <aside className="journal-topics" aria-label={copy.topics}>
-        <label className="journal-search">{copy.search}<input type="search" aria-label={copy.search} value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label><span className="eyebrow">{copy.topics}</span>
+      <aside className="journal-topics" aria-label="Journal topics">
+        <label className="journal-search">Search notes<input type="search" aria-label="Search notes" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label><span className="eyebrow">TOPICS</span>
         <div>{topics.map(topic => <button key={topic.id} type="button" className={activeTopic === topic.id ? "active" : ""} aria-pressed={activeTopic === topic.id} onClick={() => chooseTopic(topic)}><span>{topic.label}</span><span>{countFor(topic)}</span></button>)}</div>
       </aside>
-      <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post} locale={locale}/>) : <p className="empty-state">{copy.empty}</p>}</div>
+      <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post}/>) : <p className="empty-state">No notes in this topic yet.</p>}</div>
     </div>
   </main>;
 }
 
 function BlogPost({ blogPosts }) {
   const { slug } = useParams();
-  const locale = useJournalLocale();
-  const basePost = blogPosts.find(item => item.id === slug);
-  const post = basePost && localizedPost(basePost, locale);
-  useJournalDocument(locale, post);
+  const post = blogPosts.find(item => item.id === slug);
   if (!post) return <NotFound />;
-  const citations=["https://doi.org/10.1145/223355.223680","https://doi.org/10.1016/S0953-5438(00)00031-X","https://pubmed.ncbi.nlm.nih.gov/19892317/"];
-  const schema={"@context":"https://schema.org","@type":"Article",headline:post.title,description:post.excerpt,datePublished:post.date,dateModified:post.date,inLanguage:locale,author:{"@type":"Person",name:"Ali Komeili"},publisher:{"@type":"Organization",name:"Desartly"},image:`${location.origin}${post.heroImage}`,mainEntityOfPage:`${location.origin}/${locale}/journal/${post.id}`,citation:citations};
-  return <main className="blog-post-page" lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}><script type="application/ld+json">{JSON.stringify(schema)}</script><div className="article-topbar"><Link className="back" to={`/${locale}/journal`}><ArrowLeft size={16}/> {journalCopy[locale].back}</Link><JournalLanguageToggle locale={locale} slug={post.id} hasPersian={Boolean(basePost.translations?.fa)}/></div><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}{post.readingTime?.[locale] ? ` / ${post.readingTime[locale]}` : ""}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{post.heroImage&&<figure className="blog-post-figure"><div className="blog-post-cover"><img src={post.heroImage} alt={post.imageAlt || post.title} decoding="async" /></div><figcaption>{locale === "fa" ? "تصویر اختصاصی Desartly؛ ایده‌پردازی و اجرای مستقل بر پایهٔ بنچمارک تصویر ادیتوریال." : "Original Desartly artwork; independently art-directed against editorial-design benchmarks."}</figcaption></figure>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
+  return <main className="blog-post-page"><Link className="back" to="/journal"><ArrowLeft size={16}/> All notes</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{post.heroImage&&<div className="blog-post-cover"><img src={post.heroImage} alt={post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
 }
 function BlogEditorBlocks({ blocks = [], onPatch, onMove, onRemove, onUpload, onReorder }) {
   return <SortableGroup axis="y" values={blocks} onReorder={onReorder} className="blog-editor-blocks">{blocks.map((block, index) => <SortableBlock value={block} key={block.id}>{controls => <>
@@ -1912,7 +1851,7 @@ function App() {
               <br />
               DESIGN PORTFOLIO
             </span>
-            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to || (item.to === "/journal" && /^\/(?:en|fa)\/journal(?:\/|$)/.test(location.pathname))} />)}</nav>
+            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to} />)}</nav>
           </header>
         )}
         <div id="main">
@@ -1945,14 +1884,10 @@ function App() {
                 element={<Home projects={publicProjects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
               />
               <Route path="/work" element={<Work projects={publicProjects} />} />
-              <Route path="/journal" element={<Navigate to="/en/journal" replace />} />
+              <Route path="/journal" element={<Journal blogPosts={blogPosts} />} />
               <Route path="/blog" element={<Journal blogPosts={blogPosts} />} />
               <Route path="/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route path="/blog/:slug" element={<BlogPost blogPosts={blogPosts} />} />
-              <Route path="/en/journal" element={<Journal blogPosts={blogPosts} />} />
-              <Route path="/fa/journal" element={<Journal blogPosts={blogPosts} />} />
-              <Route path="/en/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
-              <Route path="/fa/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route
                 path="/work/:slug"
                 element={<Project key={location.pathname} projects={publicProjects} />}

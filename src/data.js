@@ -3,7 +3,6 @@ import mciProject from './mci-project.json' with { type: 'json' };
 import airbnbProject from './airbnb-project.json' with { type: 'json' };
 import digikalaProject from './digikala-project.json' with { type: 'json' };
 import flightioProject from './flightio-project.json' with { type: 'json' };
-import { firstResearchArticle } from './journal-first-article.js';
 import {cloud,uploadMedia} from './cloud.js';
 export const categories = ["Product & AI", "Branding", "Advertising"];
 export const categoryIds = ["product-ai", "branding", "advertising"];
@@ -281,21 +280,13 @@ export const addedJournalPosts = [
   }
 ];
 initialBlogPosts.push(...addedJournalPosts);
-initialBlogPosts.unshift(firstResearchArticle);
-function mergeResearchArticles(posts) {
- const items=Array.isArray(posts)?structuredClone(posts):[];
- const index=items.findIndex(post=>post.id===firstResearchArticle.id);
- if(index===-1)items.unshift(structuredClone(firstResearchArticle));
- else items[index]={...items[index],...structuredClone(firstResearchArticle)};
- return items;
-}
 export function readJournalPosts() {
- if(cloud.values["pol-blog-posts"])return mergeResearchArticles(cloud.values["pol-blog-posts"]);
+ if(cloud.values["pol-blog-posts"])return cloud.values["pol-blog-posts"];
  const saved = read("pol-blog-posts", initialBlogPosts);
- if (read("pol-journal-six-v1", false)) return mergeResearchArticles(saved);
+ if (read("pol-journal-six-v1", false)) return saved;
  const merged = [...saved, ...addedJournalPosts.filter(post => !saved.some(item => item.id === post.id))];
  try { localStorage.setItem("pol-blog-posts", JSON.stringify(merged)); localStorage.setItem("pol-journal-six-v1", "true"); } catch {}
- return mergeResearchArticles(merged);
+ return merged;
 }
 export function slugify(value) {
   return value
