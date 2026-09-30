@@ -8,13 +8,13 @@
     "Campaign"
   ],
   "year": "2022",
-  "presentationVersion": 3,
+  "presentationVersion": 4,
   "sample": false,
-  "coverImage": "/projects/flightio/cover.webp",
-  "heroImage": "/projects/flightio/cover.webp",
+  "coverImage": "/projects/flightio/cover-wordmark.webp",
+  "heroImage": "/projects/flightio/cover-wordmark.webp",
   "summary": "Visual direction for a travel platform where every booking opens a vivid path between places.",
   "clientName": "Flightio",
-  "clientLogo": "/projects/flightio/client-logo.svg",
+  "clientLogo": "/projects/flightio/client-wordmark.webp",
   "clientDescription": "An online travel agency focused on digital booking for flights, trains and intercity travel.",
   "challenge": "Unify travel products, performance marketing and a destination campaign through one recognizable brand signal.",
   "role": "Visual direction, campaign key visuals, hero imagery and landing-page design across brand, marketing and product.",
@@ -26,20 +26,33 @@
       "type": "text",
       "layout": "statement",
       "title": "Travel, reduced to one clear decision.",
-      "text": "Flightio operated where brand recognition, marketing performance and product clarity meet. The visual system turned movement into a consistent language—one that could sell a seat, launch a campaign and guide a user from intent to booking."
+      "text": "Flightio brought flight, rail and road travel into one booking platform. The work connected product clarity with a recognizable campaign idea, so every destination felt part of the same brand."
     },
     {
-      "id": "flightio-transport",
-      "type": "image",
-      "image": "/projects/flightio/transport-system.webp",
-      "alt": "A coordinated family of hero images for Flightio bus, train and flight products"
-    },
-    {
-      "id": "flightio-system-note",
+      "id": "flightio-transport-chapter",
       "type": "text",
-      "layout": "note",
-      "title": "One direction. A distinct hero for every product.",
-      "text": "Flights, trains and intercity buses were given their own hero image inside one controlled visual family. Consistent horizons, scale, color and negative space made the product set feel ordered while preserving a clear point of difference for each service."
+      "layout": "chapter",
+      "chapter": "PRODUCT IMAGERY",
+      "title": "One visual direction across every way to travel.",
+      "text": "Flight, train and intercity bus each have their own hero, built with consistent framing, scale and daylight."
+    },
+    {
+      "id": "flightio-bus",
+      "type": "image",
+      "image": "/projects/flightio/hero-bus.webp",
+      "alt": "Flightio intercity bus hero image in a consistent panoramic coastal composition"
+    },
+    {
+      "id": "flightio-train",
+      "type": "image",
+      "image": "/projects/flightio/hero-train.webp",
+      "alt": "Flightio train hero image in a consistent panoramic coastal composition"
+    },
+    {
+      "id": "flightio-flight",
+      "type": "image",
+      "image": "/projects/flightio/hero-flight.webp",
+      "alt": "Flightio flight hero image in a consistent panoramic coastal composition"
     },
     {
       "id": "flightio-campaign-chapter",
@@ -47,66 +60,59 @@
       "layout": "chapter",
       "chapter": "CAMPAIGN DIRECTION",
       "title": "One circular threshold. Many different journeys.",
-      "text": "A perfectly circular electric fissure translates Flightio’s multicolor loop into a real travel threshold. Every frame holds the same rear-view composition while origin, destination and daylight shift around the traveler."
+      "text": "The complete, circular portal echoes the Flightio symbol. A traveler approaches from the same rear-view position in every artwork, while landscape, destination and time of day change around them."
     },
     {
       "id": "flightio-portal-series",
       "type": "composition",
       "layout": "quartet",
       "images": [
-        "/projects/flightio/persepolis-rome.webp",
-        "/projects/flightio/hormuz-alps.webp",
-        "/projects/flightio/shiraz-paris.webp",
-        "/projects/flightio/caravanserai-petra.webp"
+        "/projects/flightio/persepolis-rome-art.webp",
+        "/projects/flightio/hormuz-alps-art.webp",
+        "/projects/flightio/shiraz-paris-art.webp",
+        "/projects/flightio/caravanserai-petra-art.webp"
       ],
       "alts": [
-        "Flightio portal campaign from Persepolis to Rome",
-        "Flightio portal campaign from Hormuz Island to the Alps",
-        "Flightio portal campaign from Shiraz to Paris",
-        "Flightio portal campaign from a night caravanserai to daytime Petra"
+        "Traveler approaching a circular portal from Persepolis to the Roman Colosseum",
+        "Traveler approaching a circular portal from Hormuz Island to an Alpine lake",
+        "Traveler approaching a circular portal from Shiraz citadel to the Louvre",
+        "Traveler approaching a circular portal from a night caravanserai to daytime Petra"
       ]
     },
     {
       "id": "flightio-environmental-chapter",
       "type": "text",
-      "layout": "interlude",
-      "title": "A printed surface by day. An illuminated portal by night.",
-      "text": "The campaign adapts to its physical medium. Printed billboards keep the folds, tension and material texture of outdoor vinyl; glass lightboxes carry fluorescent reflections while a segmented neon circle makes the portal tangible in the street."
+      "layout": "chapter",
+      "chapter": "ENVIRONMENTAL CAMPAIGN",
+      "title": "The artwork adapts to the surface.",
+      "text": "The overpass banner keeps the tension of printed vinyl. The mall lightbox carries visible fluorescent streaks and glass reflections, with the portal fully framed inside each setting."
     },
     {
-      "id": "flightio-environmental-pair",
-      "type": "composition",
-      "layout": "pair",
-      "images": [
-        "/projects/flightio/environment-day.webp",
-        "/projects/flightio/environment-night.webp"
-      ],
-      "alts": [
-        "Daytime Flightio campaign billboard in Shiraz with visible print texture and creases",
-        "Night Flightio lightbox with glass reflections and a multicolor circular neon installation"
-      ]
+      "id": "flightio-environment-bridge",
+      "type": "image",
+      "image": "/projects/flightio/environment-bridge-final.webp",
+      "alt": "Flightio travel campaign as a premium printed pedestrian-overpass banner"
+    },
+    {
+      "id": "flightio-environment-lightbox",
+      "type": "image",
+      "image": "/projects/flightio/environment-lightbox-refined.webp",
+      "alt": "Flightio travel campaign in a mall lightbox with fluorescent reflections and complete circular portal"
     },
     {
       "id": "flightio-product-chapter",
       "type": "text",
       "layout": "chapter",
       "chapter": "PRODUCT DESIGN",
-      "title": "Aurora brings the campaign energy into the interface.",
-      "text": "Flightio Aurora translated the halo into a focused product surface. Travel modes, route selection and reassurance cues were organized around one primary action, keeping the experience expressive without competing with the booking task."
+      "title": "A glass system for the journey ahead.",
+      "text": "Flightio Aurora carries the campaign’s color into a focused booking experience. The live study below introduces its glass surfaces, travel-mode controls, route fields, reassurance cues and primary action as one coherent component system."
     },
     {
-      "id": "flightio-aurora",
+      "id": "flightio-glass-system",
       "type": "html",
-      "title": "Flightio Aurora landing experience",
+      "title": "Flightio Aurora animated glass design system",
       "autoHeight": true,
-      "html": "<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><style>\n*{box-sizing:border-box}body{margin:0;background:#11182a;color:#fff;font-family:Inter,Arial,sans-serif}.wrap{min-height:780px;padding:72px;position:relative;overflow:hidden;background:radial-gradient(circle at 78% 68%,rgba(126,71,167,.6),transparent 34%),linear-gradient(145deg,#11182a 0%,#29263d 58%,#171d31 100%)}.orb{position:absolute;width:460px;height:460px;border-radius:50%;right:-70px;bottom:-100px;background:conic-gradient(from 30deg,#ff775a,#fe3045,#a132e0,#1e63ef,#4e85f6,#ffbe6a,#ff775a);filter:blur(18px);opacity:.62;animation:turn 16s linear infinite}.orb:after{content:\"\";position:absolute;inset:56px;border-radius:50%;background:#171d31;filter:blur(8px)}.top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.brand{font-size:22px;font-weight:700;letter-spacing:-.03em}.brand i{display:inline-block;width:16px;height:16px;border:4px solid #a132e0;border-top-color:#fe3045;border-radius:50%;margin-right:8px;vertical-align:-1px}.top small{color:#aca5c5}.intro{position:relative;z-index:1;margin:100px 0 44px;max-width:760px}.kicker{color:#c9b7ff;font-size:12px;letter-spacing:.16em;text-transform:uppercase}.intro h1{font-size:clamp(46px,7vw,92px);line-height:.98;letter-spacing:-.065em;margin:18px 0 24px}.intro p{font-size:18px;line-height:1.65;color:#d7d5e4;max-width:560px}.booking{position:relative;z-index:1;max-width:1100px;padding:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(18px);border-radius:28px;box-shadow:0 28px 80px rgba(0,0,0,.28)}.modes{display:flex;gap:8px;margin-bottom:16px}.mode{padding:11px 18px;border-radius:999px;color:#c9c8d5;font-size:14px}.mode.active{background:#fff;color:#1b2033}.route{display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px}.field{background:rgba(10,14,28,.58);padding:18px 20px;border-radius:18px}.field small{display:block;color:#8f91a6;margin-bottom:7px}.field strong{font-size:20px}.swap{align-self:center;color:#c9b7ff;font-size:22px;padding:12px}.search{border:0;border-radius:18px;padding:0 32px;background:linear-gradient(135deg,#fe3045,#a132e0);color:#fff;font-weight:700;font-size:16px}.proof{position:relative;z-index:1;display:flex;gap:28px;margin-top:22px;color:#b9b8c8;font-size:12px}.proof span:before{content:\"✓\";color:#79a6ff;margin-right:7px}@keyframes turn{to{transform:rotate(360deg)}}\n@media(max-width:760px){.wrap{min-height:720px;padding:36px 22px}.intro{margin:72px 0 34px}.intro h1{font-size:52px}.booking{border-radius:22px}.route{grid-template-columns:1fr}.swap{display:none}.search{min-height:58px}.proof{flex-wrap:wrap;gap:10px 18px}.orb{width:320px;height:320px}}\n@media(prefers-reduced-motion:reduce){.orb{animation:none}}\n</style></head><body><main class=\"wrap\"><div class=\"orb\"></div><header class=\"top\"><div class=\"brand\"><i></i>Flightio Aurora</div><small>Travel, in one clear flow</small></header><section class=\"intro\"><span class=\"kicker\">A conversion-focused travel experience</span><h1>From intent<br>to itinerary.</h1><p>Flights, trains and buses come together in one focused path—clear choices, useful reassurance and no visual noise.</p></section><section class=\"booking\"><nav class=\"modes\"><span class=\"mode active\">Flight</span><span class=\"mode\">Train</span><span class=\"mode\">Bus</span></nav><div class=\"route\"><div class=\"field\"><small>From</small><strong>Tehran</strong></div><div class=\"swap\">⇄</div><div class=\"field\"><small>To</small><strong>Shiraz</strong></div><button class=\"search\">Search trips</button></div></section><div class=\"proof\"><span>Transparent prices</span><span>Secure checkout</span><span>Support along the way</span></div></main><script>const send=()=>parent.postMessage({type:'desartly:preview-size',height:document.documentElement.scrollHeight},'*');addEventListener('load',send);new ResizeObserver(send).observe(document.body);</script></body></html>"
-    },
-    {
-      "id": "flightio-close",
-      "type": "text",
-      "layout": "note",
-      "title": "A brand system designed to perform.",
-      "text": "The work joined business goals with a clear visual hierarchy: a recognizable signal, adaptable campaign imagery and product journeys that moved users toward action."
+      "html": "<!doctype html><html lang=\"en\"><head><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><style>\n*{box-sizing:border-box}html,body{margin:0}body{font-family:Inter,Manrope,Arial,sans-serif;background:#101529;color:#fff}.stage{position:relative;min-height:840px;padding:48px clamp(22px,5vw,72px) 68px;overflow:hidden;isolation:isolate;background:radial-gradient(circle at 82% 10%,#683ca34d,transparent 31%),radial-gradient(circle at 12% 100%,#186eff43,transparent 38%),#101529}.stage:before{content:\"\";position:absolute;inset:-15%;z-index:-1;background:conic-gradient(from 210deg at 60% 58%,transparent 0 34%,#448bff24 48%,#d34bff29 60%,#ff876022 73%,transparent 86%);animation:ambient 18s linear infinite}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:26px;border-bottom:1px solid #ffffff2b}.brand{display:flex;align-items:center;gap:13px;font-size:25px;font-weight:750;letter-spacing:-.04em}.mark{width:30px;height:30px;border-radius:50%;background:conic-gradient(#ff895f,#fa3564,#bb3df2,#396dff,#ffda72,#ff895f);position:relative;animation:orbit 12s linear infinite}.mark:after{content:\"\";position:absolute;inset:8px;border-radius:50%;background:#17182c}.top small,.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#d3c7e5}.intro{max-width:850px;margin:65px 0 44px}.eyebrow{color:#bea8ff}.intro h1{font-size:clamp(44px,5.6vw,76px);line-height:1.02;letter-spacing:-.055em;font-weight:550;margin:17px 0}.intro p{font-size:16px;line-height:1.7;color:#c7c9d8;max-width:60ch}.specimen{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.6fr);gap:18px;max-width:1160px}.glass{border:1px solid #ffffff47;background:linear-gradient(145deg,#ffffff2c,#ffffff0b 55%,#ffffff1d);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 55px #05081766,inset 0 1px #ffffff65;border-radius:24px}.booking{padding:24px;animation:rise .8s both}.modes{display:flex;gap:8px;margin-bottom:25px}.mode{border:1px solid #ffffff35;background:#ffffff12;color:#e6e5f0;padding:10px 17px;border-radius:999px;font:600 13px inherit;cursor:pointer;transition:.25s}.mode:hover{background:#ffffff31}.mode.active{background:#fff;color:#26233d;border-color:#fff;box-shadow:0 4px 20px #ffffff33}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{padding:16px 18px;border-radius:16px;background:#070c2399;border:1px solid #ffffff1d}.field label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#abb4d4;margin-bottom:8px}.field strong{display:block;font-size:19px;font-weight:600}.bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:20px}.bottom span{font-size:12px;color:#c0c8e1}.cta{background:linear-gradient(110deg,#ff765e,#ed3c79 38%,#9743e7 70%,#3477f7);color:white;border:0;border-radius:13px;min-height:48px;padding:0 25px;font-weight:700;cursor:pointer;transition:transform .25s,box-shadow .25s}.cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px #873fe261}.side{display:grid;grid-template-rows:1fr 1fr;gap:18px}.ticket,.token{padding:21px 23px;animation:rise .8s .14s both}.card-kicker{font-size:10px;letter-spacing:.16em;color:#b9b2da;text-transform:uppercase}.ticket-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}.ticket-row strong{font-size:23px;font-weight:550}.ticket-row i{display:block;width:47px;height:47px;border-radius:50%;border:2px solid #7ecaff;box-shadow:0 0 18px #8758ff,inset 0 0 12px #8758ff;animation:pulse 3s ease-in-out infinite}.ticket p{font-size:12px;color:#c0c8e1;margin-bottom:0}.swatches{display:flex;gap:8px;margin:23px 0}.swatches i{width:31px;height:31px;border-radius:50%;display:block;border:1px solid #ffffff55}.token p{font-size:12px;color:#c0c8e1;line-height:1.5;margin:0}.foot{max-width:1160px;display:flex;justify-content:space-between;gap:20px;margin-top:28px;color:#aeb7d1;font-size:12px;line-height:1.5}.status{min-height:18px;color:#d6f4ff}\n@keyframes ambient{to{transform:rotate(360deg)}}@keyframes orbit{to{transform:rotate(360deg)}}@keyframes pulse{50%{box-shadow:0 0 34px #ad61ff,inset 0 0 18px #56b9ff;transform:scale(1.05)}}@keyframes rise{from{opacity:0;transform:translateY(23px)}to{opacity:1;transform:translateY(0)}}\n@media(max-width:760px){.stage{min-height:0;padding:28px 18px 42px}.top{align-items:flex-start}.top small{max-width:12ch;text-align:right;line-height:1.5}.intro{margin:48px 0 30px}.intro h1{font-size:46px}.specimen{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr;grid-template-rows:auto}.fields{grid-template-columns:1fr}.foot{display:block}.foot span{display:block;margin-bottom:8px}}\n@media(max-width:500px){.side{grid-template-columns:1fr}.booking{padding:18px}.bottom{align-items:stretch;flex-direction:column}.cta{width:100%}}\n@media(prefers-reduced-motion:reduce){.stage:before,.mark,.ticket-row i,.booking,.ticket,.token{animation:none}.cta,.mode{transition:none}}\n</style></head><body><main class=\"stage\"><header class=\"top\"><div class=\"brand\"><i class=\"mark\" aria-hidden=\"true\"></i>Flightio <span style=\"font-weight:400;opacity:.62\">Aurora</span></div><small>GLASS SYSTEM / 2022</small></header><section class=\"intro\"><span class=\"eyebrow\">Digital design system</span><h1>One clear path through every journey.</h1><p>Translucent layers, a focused booking card and one recognizable spectrum bring Flightio’s campaign language into the product experience.</p></section><section class=\"specimen\" aria-label=\"Flightio glass design system demonstration\"><div class=\"booking glass\"><div class=\"modes\" role=\"tablist\" aria-label=\"Travel mode\"><button class=\"mode active\" aria-selected=\"true\">Flights</button><button class=\"mode\" aria-selected=\"false\">Trains</button><button class=\"mode\" aria-selected=\"false\">Buses</button></div><div class=\"fields\"><div class=\"field\"><label>From</label><strong>Tehran</strong></div><div class=\"field\"><label>To</label><strong>Shiraz</strong></div><div class=\"field\"><label>Departure</label><strong>18 October</strong></div><div class=\"field\"><label>Travelers</label><strong>1 adult</strong></div></div><div class=\"bottom\"><span>Transparent fares · Secure checkout</span><button class=\"cta\">Search trips ↗</button></div></div><div class=\"side\"><div class=\"ticket glass\"><span class=\"card-kicker\">Journey preview</span><div class=\"ticket-row\"><strong>THR → SYZ</strong><i aria-hidden=\"true\"></i></div><p>One focused action, with details close at hand.</p></div><div class=\"token glass\"><span class=\"card-kicker\">Visual language</span><div class=\"swatches\" aria-label=\"Brand colors\"><i style=\"background:#ff8d5e\"></i><i style=\"background:#fa3d72\"></i><i style=\"background:#a34de9\"></i><i style=\"background:#386ff2\"></i></div><p>Light, blur and Flightio’s spectrum create depth without obscuring the task.</p></div></div></section><div class=\"foot\"><span>COMPONENTS&nbsp; 01 / Mode selector &nbsp; 02 / Route fields &nbsp; 03 / Action &nbsp; 04 / Trip card</span><span class=\"status\" aria-live=\"polite\">Try the controls above.</span></div></main><script>document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false')});b.classList.add('active');b.setAttribute('aria-selected','true');document.querySelector('.status').textContent=b.textContent+' selected.'}));document.querySelector('.cta').addEventListener('click',()=>{document.querySelector('.status').textContent='Your journey is ready to explore.'});const send=()=>parent.postMessage({type:'desartly:preview-size',height:document.documentElement.scrollHeight},'*');addEventListener('load',send);new ResizeObserver(send).observe(document.body);</script></body></html>\n"
     }
   ]
 }
