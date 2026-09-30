@@ -100,6 +100,37 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-digikala-smile-arrives-home .case-single-image img{display:block;width:100%;height:auto}
 @media(max-width:700px){.project-digikala-smile-arrives-home .case-statement,.project-digikala-smile-arrives-home .case-chapter,.project-digikala-smile-arrives-home .case-note{grid-template-columns:1fr}.project-digikala-smile-arrives-home .case-statement h2{font-size:clamp(42px,11vw,64px)}.project-digikala-smile-arrives-home .case-note p{margin-top:18px}}
 
+/* Flightio: a travel-tech rhythm of wide horizons, isolated portals and one immersive product chapter. */
+.project-flightio-ota{--flightio-night:#29263d;--flightio-deep:#11182a;--flightio-blue:#1e63ef;--flightio-red:#fe3045;--flightio-violet:#a132e0}
+.project-flightio-ota .project-heading{max-width:1040px}
+.project-flightio-ota .project-overview-copy{background:var(--flightio-night);color:#fff;border-color:#48445f}
+.project-flightio-ota .project-overview .case-brief-data>.eyebrow,.project-flightio-ota .project-overview .case-brief-data dd,.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-name{color:#fff}
+.project-flightio-ota .project-overview .case-brief-data dt,.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-label,.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-description{color:#c8c5d5}
+.project-flightio-ota .project-overview .case-brief-data dl>div,.project-flightio-ota .project-overview .project-overview-copy>.client-profile,.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-description{border-color:#514d69}
+.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-line{background:#514d69}
+.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-logo{background:#fff;border-radius:10px;overflow:hidden}
+.project-flightio-ota .case-statement{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.62fr);gap:clamp(34px,7vw,120px);align-items:end;margin:clamp(70px,10vw,150px) 0 clamp(34px,5vw,72px)}
+.project-flightio-ota .case-statement h2{font-size:clamp(48px,7vw,104px);line-height:.98;letter-spacing:-.065em;max-width:11ch;margin:0}
+.project-flightio-ota .case-statement p{font-size:clamp(16px,1.2vw,20px);line-height:1.72;max-width:42ch;margin:0 0 7px;color:#555d6b}
+.project-flightio-ota .case-single-image{margin:0 0 clamp(38px,7vw,108px)}
+.project-flightio-ota .case-single-image img{display:block;width:100%;height:auto}
+.project-flightio-ota .case-note{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1fr);gap:clamp(28px,7vw,120px);align-items:start;padding:clamp(30px,4vw,56px);margin:0 0 clamp(66px,10vw,148px);background:#eef6ff;border-top:3px solid var(--flightio-blue)}
+.project-flightio-ota .case-note h2{font-size:clamp(25px,3vw,42px);line-height:1.12;letter-spacing:-.04em;max-width:15ch;margin:0}
+.project-flightio-ota .case-note p{max-width:58ch;margin:2px 0 0;color:#465569;line-height:1.75}
+.project-flightio-ota .case-chapter{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(34px,8vw,140px);align-items:start;border-top:1px solid #dfe3eb;padding-top:clamp(32px,5vw,68px);margin:0 0 clamp(34px,5vw,72px)}
+.project-flightio-ota .case-chapter .eyebrow{display:inline-flex;align-items:center;gap:10px;color:#706f82;font-size:10px;letter-spacing:.14em}
+.project-flightio-ota .case-chapter .eyebrow:before{content:"";width:34px;height:3px;background:linear-gradient(90deg,var(--flightio-red),var(--flightio-violet),var(--flightio-blue))}
+.project-flightio-ota .case-chapter h2{font-size:clamp(34px,4.5vw,66px);line-height:1.04;letter-spacing:-.052em;max-width:13ch;margin:22px 0 0}
+.project-flightio-ota .case-chapter p{font-size:clamp(15px,1.15vw,19px);line-height:1.75;max-width:52ch;margin:32px 0 0;color:#586170}
+.project-flightio-ota .case-single-image.case-portrait{width:min(68%,900px);margin-left:auto;margin-right:0;padding:clamp(14px,2vw,30px);background:linear-gradient(145deg,#eef6ff,#f6efff)}
+.project-flightio-ota .case-interlude{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(32px,8vw,132px);align-items:center;margin:0 0 clamp(34px,5vw,72px);padding:clamp(40px,6vw,92px);color:#fff;background:radial-gradient(circle at 88% 20%,rgba(193,122,235,.72),transparent 31%),linear-gradient(135deg,var(--flightio-deep),var(--flightio-night))}
+.project-flightio-ota .case-interlude h2{font-size:clamp(36px,5vw,72px);line-height:1.02;letter-spacing:-.055em;max-width:10ch;margin:0}
+.project-flightio-ota .case-interlude p{font-size:clamp(15px,1.2vw,19px);line-height:1.72;max-width:51ch;margin:0;color:#dedbea}
+.project-flightio-ota .html-block{max-width:none;margin:0 0 clamp(54px,8vw,124px)}
+.project-flightio-ota .html-block .auto-height-preview{display:block;width:100%;max-height:none;border:0;background:var(--flightio-deep)}
+.project-flightio-ota .html-block+.case-note{background:#fff;border-top:1px solid #dfe3eb;border-bottom:1px solid #dfe3eb;padding-left:0;padding-right:0;margin-top:0}
+@media(max-width:700px){.project-flightio-ota .case-statement,.project-flightio-ota .case-note,.project-flightio-ota .case-chapter,.project-flightio-ota .case-interlude{grid-template-columns:1fr}.project-flightio-ota .case-statement{margin-top:58px}.project-flightio-ota .case-statement h2{font-size:clamp(45px,13vw,66px)}.project-flightio-ota .case-note p,.project-flightio-ota .case-chapter p{margin-top:18px}.project-flightio-ota .case-single-image.case-portrait{width:100%;padding:10px}.project-flightio-ota .case-interlude{padding:38px 24px}.project-flightio-ota .project-overview .project-overview-copy>.client-profile .client-profile-logo{border-radius:8px}}
+
 /* Project opening: a restrained two-panel system with one square visual. */
 .project-overview{display:grid;grid-template-columns:1fr;margin:0 0 clamp(54px,7vw,96px);gap:16px;background:#fff}
 .project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}

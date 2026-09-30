@@ -67,7 +67,7 @@ const Taxonomy = React.createContext({
 const SortableBlock = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableBlock})));
 const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableGroup})));
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
-const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure", "digikala-smile-arrives-home"]);
+const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure", "digikala-smile-arrives-home", "flightio-ota"]);
 const projectCardCovers = Object.fromEntries([...publicProjectIds].map(id => [id, {
   avif: `/projects/covers/${id}-640.avif 640w, /projects/covers/${id}-960.avif 960w`,
   webp: `/projects/covers/${id}-640.webp 640w, /projects/covers/${id}-960.webp 960w`,

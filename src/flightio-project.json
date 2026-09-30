@@ -1,0 +1,95 @@
+{
+  "id": "flightio-ota",
+  "title": "Flightio · Travel in One Clear Flow",
+  "category": "Product & AI",
+  "tags": [
+    "Product & AI",
+    "Art Direction",
+    "Campaign"
+  ],
+  "year": "2022",
+  "presentationVersion": 2,
+  "sample": false,
+  "coverImage": "/projects/flightio/cover.webp",
+  "heroImage": "/projects/flightio/cover.webp",
+  "summary": "Brand, campaign and product direction for an online travel agency built around clarity, movement and measurable action.",
+  "clientName": "Flightio",
+  "clientLogo": "/projects/flightio/client-logo.svg",
+  "clientDescription": "An online travel agency focused on digital booking for flights, trains and intercity travel.",
+  "challenge": "Unify high-volume performance marketing, seasonal campaigns and product landing pages without losing a coherent brand signal.",
+  "role": "Visual direction, campaign key visuals, hero imagery and landing-page design across brand, marketing and product.",
+  "deliverables": "Product hero-image system, portal campaign key visuals, performance assets, environmental advertising and the Flightio Aurora landing page.",
+  "credits": "Visual direction and design by Ali Komeili. Portfolio imagery was newly reconstructed at high resolution from original project references.",
+  "blocks": [
+    {
+      "id": "flightio-opening",
+      "type": "text",
+      "layout": "statement",
+      "title": "Travel, reduced to one clear decision.",
+      "text": "Flightio operated where brand recognition, marketing performance and product clarity meet. The visual system turned movement into a consistent language—one that could sell a seat, launch a campaign and guide a user from intent to booking."
+    },
+    {
+      "id": "flightio-transport",
+      "type": "image",
+      "image": "/projects/flightio/transport-system.webp",
+      "alt": "A coordinated family of hero images for Flightio bus, train and flight products"
+    },
+    {
+      "id": "flightio-system-note",
+      "type": "text",
+      "layout": "note",
+      "title": "One direction. A distinct hero for every product.",
+      "text": "Flights, trains and intercity buses were given their own hero image inside one controlled visual family. Consistent horizons, scale, color and negative space made the product set feel ordered while preserving a clear point of difference for each service."
+    },
+    {
+      "id": "flightio-campaign-chapter",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "CAMPAIGN DIRECTION",
+      "title": "A portal between planning and experience.",
+      "text": "Campaign imagery treated booking as the threshold to a different place. A luminous ring became the recurring device: clear enough for performance media, cinematic enough for brand campaigns, and flexible across Iran-focused travel stories."
+    },
+    {
+      "id": "flightio-portal",
+      "type": "image",
+      "layout": "portrait",
+      "image": "/projects/flightio/portal-campaign.webp",
+      "alt": "Iranian woman traveler approaching a luminous portal from Arg of Karim Khan in Shiraz to the Colosseum in Rome"
+    },
+    {
+      "id": "flightio-environmental-chapter",
+      "type": "text",
+      "layout": "interlude",
+      "title": "The portal becomes the campaign frame.",
+      "text": "The same circular threshold connected the hero artwork, performance formats and outdoor placements. In every execution, the traveler remains on the edge of departure while the destination opens directly in front of them."
+    },
+    {
+      "id": "flightio-environmental",
+      "type": "image",
+      "image": "/projects/flightio/portal-billboard.webp",
+      "alt": "Flightio portal campaign on a large roadside billboard in Tehran with the Persian campaign layout"
+    },
+    {
+      "id": "flightio-product-chapter",
+      "type": "text",
+      "layout": "chapter",
+      "chapter": "PRODUCT DESIGN",
+      "title": "Aurora brings the campaign energy into the interface.",
+      "text": "Flightio Aurora translated the halo into a focused product surface. Travel modes, route selection and reassurance cues were organized around one primary action, keeping the experience expressive without competing with the booking task."
+    },
+    {
+      "id": "flightio-aurora",
+      "type": "html",
+      "title": "Flightio Aurora landing experience",
+      "autoHeight": true,
+      "html": "<!doctype html><html><head><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><style>\n*{box-sizing:border-box}body{margin:0;background:#11182a;color:#fff;font-family:Inter,Arial,sans-serif}.wrap{min-height:780px;padding:72px;position:relative;overflow:hidden;background:radial-gradient(circle at 78% 68%,rgba(126,71,167,.6),transparent 34%),linear-gradient(145deg,#11182a 0%,#29263d 58%,#171d31 100%)}.orb{position:absolute;width:460px;height:460px;border-radius:50%;right:-70px;bottom:-100px;background:conic-gradient(from 30deg,#ff775a,#fe3045,#a132e0,#1e63ef,#4e85f6,#ffbe6a,#ff775a);filter:blur(18px);opacity:.62;animation:turn 16s linear infinite}.orb:after{content:\"\";position:absolute;inset:56px;border-radius:50%;background:#171d31;filter:blur(8px)}.top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.brand{font-size:22px;font-weight:700;letter-spacing:-.03em}.brand i{display:inline-block;width:16px;height:16px;border:4px solid #a132e0;border-top-color:#fe3045;border-radius:50%;margin-right:8px;vertical-align:-1px}.top small{color:#aca5c5}.intro{position:relative;z-index:1;margin:100px 0 44px;max-width:760px}.kicker{color:#c9b7ff;font-size:12px;letter-spacing:.16em;text-transform:uppercase}.intro h1{font-size:clamp(46px,7vw,92px);line-height:.98;letter-spacing:-.065em;margin:18px 0 24px}.intro p{font-size:18px;line-height:1.65;color:#d7d5e4;max-width:560px}.booking{position:relative;z-index:1;max-width:1100px;padding:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(18px);border-radius:28px;box-shadow:0 28px 80px rgba(0,0,0,.28)}.modes{display:flex;gap:8px;margin-bottom:16px}.mode{padding:11px 18px;border-radius:999px;color:#c9c8d5;font-size:14px}.mode.active{background:#fff;color:#1b2033}.route{display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px}.field{background:rgba(10,14,28,.58);padding:18px 20px;border-radius:18px}.field small{display:block;color:#8f91a6;margin-bottom:7px}.field strong{font-size:20px}.swap{align-self:center;color:#c9b7ff;font-size:22px;padding:12px}.search{border:0;border-radius:18px;padding:0 32px;background:linear-gradient(135deg,#fe3045,#a132e0);color:#fff;font-weight:700;font-size:16px}.proof{position:relative;z-index:1;display:flex;gap:28px;margin-top:22px;color:#b9b8c8;font-size:12px}.proof span:before{content:\"✓\";color:#79a6ff;margin-right:7px}@keyframes turn{to{transform:rotate(360deg)}}\n@media(max-width:760px){.wrap{min-height:720px;padding:36px 22px}.intro{margin:72px 0 34px}.intro h1{font-size:52px}.booking{border-radius:22px}.route{grid-template-columns:1fr}.swap{display:none}.search{min-height:58px}.proof{flex-wrap:wrap;gap:10px 18px}.orb{width:320px;height:320px}}\n@media(prefers-reduced-motion:reduce){.orb{animation:none}}\n</style></head><body><main class=\"wrap\"><div class=\"orb\"></div><header class=\"top\"><div class=\"brand\"><i></i>Flightio Aurora</div><small>Travel, in one clear flow</small></header><section class=\"intro\"><span class=\"kicker\">A conversion-focused travel experience</span><h1>From intent<br>to itinerary.</h1><p>Flights, trains and buses come together in one focused path—clear choices, useful reassurance and no visual noise.</p></section><section class=\"booking\"><nav class=\"modes\"><span class=\"mode active\">Flight</span><span class=\"mode\">Train</span><span class=\"mode\">Bus</span></nav><div class=\"route\"><div class=\"field\"><small>From</small><strong>Tehran</strong></div><div class=\"swap\">⇄</div><div class=\"field\"><small>To</small><strong>Shiraz</strong></div><button class=\"search\">Search trips</button></div></section><div class=\"proof\"><span>Transparent prices</span><span>Secure checkout</span><span>Support along the way</span></div></main><script>const send=()=>parent.postMessage({type:'desartly:preview-size',height:document.documentElement.scrollHeight},'*');addEventListener('load',send);new ResizeObserver(send).observe(document.body);</script></body></html>"
+    },
+    {
+      "id": "flightio-close",
+      "type": "text",
+      "layout": "note",
+      "title": "A brand system designed to perform.",
+      "text": "The work joined business goals with a clear visual hierarchy: a recognizable signal, adaptable campaign imagery and product journeys that moved users toward action."
+    }
+  ]
+}
