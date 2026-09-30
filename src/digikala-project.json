@@ -4,7 +4,7 @@
   "category": "Advertising",
   "tags": ["Advertising", "Art Direction", "Campaign"],
   "year": "2025",
-  "presentationVersion": 2,
+  "presentationVersion": 3,
   "sample": false,
   "coverImage": "/projects/digikala/balloon-box.webp",
   "heroImage": "/projects/digikala/balloon-box.webp",
@@ -90,8 +90,8 @@
       "type": "grid",
       "layout": "pair",
       "images": [
-        "/projects/digikala/btl-karim-khan.svg",
-        "/projects/digikala/btl-hafez.svg"
+        "/projects/digikala/btl-karim-khan.webp",
+        "/projects/digikala/btl-hafez.webp"
       ],
       "alts": [
         "Digikala box and red balloon BTL installation with pedestrians at the Arg of Karim Khan",
