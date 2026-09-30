@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Digikala BTL activation at the Hafez memorial</title>
+  <desc id="desc">Three branded delivery boxes with red balloons create a pedestrian activation near the Hafez memorial in Shiraz at blue hour.</desc>
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#102433"/><stop offset=".58" stop-color="#3c6671"/><stop offset="1" stop-color="#d69c7c"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efe1c6"/><stop offset="1" stop-color="#bfa17b"/></linearGradient>
+    <linearGradient id="box" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcb17c"/><stop offset="1" stop-color="#a56c42"/></linearGradient>
+    <radialGradient id="red" cx="34%" cy="24%"><stop stop-color="#ff6c76"/><stop offset=".5" stop-color="#ef4056"/><stop offset="1" stop-color="#b61c36"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#night)"/>
+  <circle cx="800" cy="442" r="270" fill="#f6d6a4" opacity=".15" filter="url(#glow)"/>
+  <path d="M0 535c250-74 465-69 668-20 264 64 520 26 932-24v509H0Z" fill="#1f3535"/>
+  <g transform="translate(412 220)">
+    <path d="m388 0 254 134H134Z" fill="#d5bb8f"/>
+    <path d="m388 0 37 134h-74Z" fill="#f0ddbd"/>
+    <rect x="166" y="134" width="444" height="28" rx="4" fill="#c8a97e"/>
+    <g fill="url(#stone)"><path d="M190 162h48l-12 330h-24Z"/><path d="M280 162h48l-12 330h-24Z"/><path d="M370 162h48l-12 330h-24Z"/><path d="M460 162h48l-12 330h-24Z"/><path d="M550 162h48l-12 330h-24Z"/></g>
+    <path d="M150 492h475l72 56H78Z" fill="#b39167"/>
+    <path d="M93 548h590l56 34H35Z" fill="#8d704f"/>
+  </g>
+  <path d="M0 845c305-40 600-57 850-18 270 42 506 42 750 1v172H0Z" fill="#796b5d"/>
+  <g opacity=".55" fill="#112626"><path d="M0 564h225v246H0Z"/><path d="M1375 564h225v246h-225Z"/></g>
+  <g>
+    <path d="M505 352c-4 120-1 246 4 374M805 300c-5 134-4 286 0 438M1101 372c-4 114-2 231 2 350" fill="none" stroke="#db334a" stroke-width="4"/>
+    <g transform="translate(434 178)"><path d="M74 0c52 0 84 42 78 92-6 45-40 82-78 104C35 175 2 137 0 92-2 42 23 0 74 0Z" fill="url(#red)"/><path d="m68 195 6 13 7-13Z" fill="#b61c36"/></g>
+    <g transform="translate(720 112)"><path d="M85 0c59 0 97 48 89 106-6 51-46 95-89 120C40 201 2 158 0 106-2 48 26 0 85 0Z" fill="url(#red)"/><path d="m78 225 7 14 7-14Z" fill="#b61c36"/></g>
+    <g transform="translate(1038 205)"><path d="M64 0c45 0 73 36 68 80-5 39-35 71-68 90C31 152 2 119 0 80-2 36 20 0 64 0Z" fill="url(#red)"/><path d="m59 169 5 11 6-11Z" fill="#b61c36"/></g>
+  </g>
+  <g>
+    <g transform="translate(438 700)"><path d="m0 38 70-38 96 31-70 41Z" fill="#e3bb89"/><path d="m0 38 96 34v104L0 141Z" fill="url(#box)"/><path d="m96 72 70-41v104l-70 41Z" fill="#96603a"/><path d="M28 96q20 29 43 7" fill="none" stroke="#8e1730" stroke-width="10" stroke-linecap="round"/></g>
+    <g transform="translate(718 690)"><path d="m0 48 89-48 122 40-89 52Z" fill="#e3bb89"/><path d="m0 48 122 44v132L0 180Z" fill="url(#box)"/><path d="m122 92 89-52v132l-89 52Z" fill="#96603a"/><path d="M36 122q25 37 54 9" fill="none" stroke="#8e1730" stroke-width="13" stroke-linecap="round"/></g>
+    <g transform="translate(1039 710)"><path d="m0 34 63-34 86 28-63 37Z" fill="#e3bb89"/><path d="m0 34 86 31v93L0 127Z" fill="url(#box)"/><path d="m86 65 63-37v93l-63 37Z" fill="#96603a"/><path d="M25 86q18 26 39 6" fill="none" stroke="#8e1730" stroke-width="9" stroke-linecap="round"/></g>
+  </g>
+  <g fill="#111d24">
+    <g transform="translate(250 672)"><circle cx="43" cy="34" r="25"/><path d="M17 70q26-25 53 0l16 112H0Z"/><path d="m17 180-9 112h23l17-112Zm47 0 15 112h23l-9-112Z"/><path d="m68 92 74 23-6 20-75-18Z"/></g>
+    <g transform="translate(1230 694)"><circle cx="37" cy="30" r="23"/><path d="M12 63q25-23 50 0l13 100H0Z"/><path d="m16 161-8 102h21l14-102Zm40 0 14 102h21l-9-102Z"/></g>
+    <g transform="translate(1325 730)"><circle cx="28" cy="24" r="19"/><path d="M8 51q20-19 41 0l11 78H0Z"/><path d="m13 127-6 78h17l11-78Zm32 0 10 78h17l-7-78Z"/></g>
+  </g>
+  <rect x="374" y="778" width="36" height="50" rx="5" fill="#ef4056" transform="rotate(6 374 778)"/>
+</svg>
