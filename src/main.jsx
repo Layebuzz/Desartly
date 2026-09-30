@@ -68,6 +68,11 @@ const SortableBlock = React.lazy(() => import("./EditorMotion").then(m => ({defa
 const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({default:m.SortableGroup})));
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
 const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure", "digikala-smile-arrives-home"]);
+const projectCardCovers = Object.fromEntries([...publicProjectIds].map(id => [id, {
+  avif: `/projects/covers/${id}-640.avif 640w, /projects/covers/${id}-960.avif 960w`,
+  webp: `/projects/covers/${id}-640.webp 640w, /projects/covers/${id}-960.webp 960w`,
+  fallback: `/projects/covers/${id}-640.webp`,
+}]));
 
 function SiteMotion({ disabled = false }) {
   const location = useLocation();
@@ -149,13 +154,13 @@ function usePage() {
 }
 const Arrow = () => <ArrowUpRight size={18} />;
 const defaultNav = [
-  { id: "work", label: "Work", to: "/work" },
+  { id: "work", label: "Projects", to: "/work" },
   { id: "journal", label: "Journal", to: "/journal" },
   { id: "about", label: "About", to: "/about" },
   { id: "certificates", label: "Certificates", to: "/certificates" },
   { id: "contact", label: "Contact", to: "/contact", arrow: true },
 ];
-function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url));}
+function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url)).map(item=>(item.to||item.url)==="/work"?{...item,label:"Projects"}:item);}
 function SiteNavLink({ item, active }) {
   const to = safeLink(item.to) || "/";
   const props = { className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
@@ -266,13 +271,20 @@ function Art({ index = 0 }) {
     </div>
   );
 }
-function Card({ p, editable = false, onTitleChange }) {
+function Card({ p, editable = false, onTitleChange, priority = false }) {
+  const optimizedCover = !editable && projectCardCovers[p.id];
   return (
     <Link className={"project-card" + (editable ? " is-editable" : "")} to={"/work/" + p.id} onClick={e=>{if(editable){e.preventDefault();}}}>
       <div className="cover">
-        {p.coverImage ? (
-          <img src={p.coverImage} alt={p.title} loading="lazy" decoding="async" />
+        {p.coverImage ? (optimizedCover ? (
+          <picture>
+            <source type="image/avif" srcSet={optimizedCover.avif} sizes="(max-width: 700px) 90vw, (max-width: 1100px) 45vw, 30vw" />
+            <source type="image/webp" srcSet={optimizedCover.webp} sizes="(max-width: 700px) 90vw, (max-width: 1100px) 45vw, 30vw" />
+            <img src={optimizedCover.fallback} alt={p.title} width="640" height="640" loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" />
+          </picture>
         ) : (
+          <img src={p.coverImage} alt={p.title} width="960" height="960" loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" />
+        )) : (
           <Art index={p.cover} />
         )}
         <span className="cover-arrow">
@@ -290,14 +302,15 @@ function Card({ p, editable = false, onTitleChange }) {
   );
 }
 
-function BlogCard({ post, editable = false, onChange }) {
+function BlogCard({ post, locale = "en", editable = false, onChange }) {
+  const destination = `/${locale}/journal/${post.id}`;
   return (
-    <Link className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
-      <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt="" loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
+    <Link className={"blog-card" + (editable ? " is-editable" : "")} to={destination} lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} onClick={e=>{if(editable)e.preventDefault();}}>
+      <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt={post.imageAlt || ""} loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
       <div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
       <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.innerText})}>{post.title}</h3>
       <p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{excerpt:e.currentTarget.innerText})}>{post.excerpt}</p>
-      <span className="blog-read"><span>Read note</span> <ArrowUpRight size={16} /></span>
+      <span className="blog-read"><span>{locale === "fa" ? "خواندن مقاله" : "Read article"}</span> <ArrowUpRight size={16} /></span>
     </Link>
   );
 }
@@ -528,33 +541,93 @@ function ContactBand({ editable = false, page = {}, onPatch }) {
  </section>;
 }
 
+const journalCopy = {
+  en: { eyebrow: "THE JOURNAL", unit: "ARTICLES", title: "Ideas, tested against evidence.", intro: "Research-led writing on product design, visual systems and the decisions between them.", search: "Search articles", topics: "TOPICS", all: "All articles", empty: "No articles in this topic yet.", back: "All articles", language: "Article language" },
+  fa: { eyebrow: "ژورنال", unit: "مقاله", title: "ایده‌هایی که با شواهد سنجیده می‌شوند.", intro: "مقاله‌های پژوهش‌محور دربارهٔ طراحی محصول، نظام‌های بصری و تصمیم‌هایی که میان آن‌ها شکل می‌گیرند.", search: "جست‌وجوی مقاله‌ها", topics: "موضوع‌ها", all: "همهٔ مقاله‌ها", empty: "هنوز مقاله‌ای در این موضوع منتشر نشده است.", back: "همهٔ مقاله‌ها", language: "زبان مقاله‌ها" }
+};
+function localizedPost(post, locale) {
+  const translation = post.translations?.[locale];
+  if (locale === "fa" && !translation) return null;
+  return {...post, ...(translation || {}), locale};
+}
+function useJournalLocale() {
+  const { pathname } = useLocation();
+  return pathname.startsWith("/fa/") ? "fa" : "en";
+}
+function JournalLanguageToggle({ locale, slug = "", hasPersian = true }) {
+  const suffix = slug ? `/${slug}` : "";
+  return <nav className="journal-language" aria-label={journalCopy[locale].language}>
+    {hasPersian ? <Link lang="fa" hrefLang="fa" aria-current={locale === "fa" ? "page" : undefined} className={locale === "fa" ? "active" : ""} to={`/fa/journal${suffix}`}>فارسی</Link> : <span lang="fa" aria-disabled="true" title="ترجمهٔ فارسی این مقاله هنوز منتشر نشده است">فارسی</span>}
+    <Link lang="en" hrefLang="en" aria-current={locale === "en" ? "page" : undefined} className={locale === "en" ? "active" : ""} to={`/en/journal${suffix}`}>English</Link>
+  </nav>;
+}
+function useJournalDocument(locale, post) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const metaDescription=document.querySelector('meta[name="description"]');
+    const previous = {lang:root.lang, dir:root.dir, title:document.title, description:metaDescription?.getAttribute("content") || ""};
+    root.lang = locale;
+    root.dir = locale === "fa" ? "rtl" : "ltr";
+    document.body.classList.toggle("journal-rtl", locale === "fa");
+    const title = post?.title ? `${post.title} — Desartly Journal` : `${journalCopy[locale].title} — Desartly`;
+    const description = post?.excerpt || journalCopy[locale].intro;
+    document.title = title;
+    metaDescription?.setAttribute("content", description);
+    const canonicalPath = `/${locale}/journal${post ? `/${post.id}` : ""}`;
+    const ensureLink = (rel, language) => {
+      const selector = language ? `link[rel="${rel}"][hreflang="${language}"]` : `link[rel="${rel}"]:not([hreflang])`;
+      let link = document.head.querySelector(selector);
+      if (!link) { link=document.createElement("link"); link.rel=rel; if(language)link.hreflang=language; document.head.append(link); }
+      link.href = `${location.origin}/${language || locale}/journal${post ? `/${post.id}` : ""}`;
+      return link;
+    };
+    const canonical=ensureLink("canonical");
+    const alternates=[ensureLink("alternate","fa"),ensureLink("alternate","en")];
+    canonical.href=`${location.origin}${canonicalPath}`;
+    return () => {
+      root.lang=previous.lang || "en"; root.dir=previous.dir || "ltr"; document.title=previous.title;
+      metaDescription?.setAttribute("content",previous.description);
+      document.body.classList.remove("journal-rtl"); canonical.remove(); alternates.forEach(link=>link.remove());
+    };
+  }, [locale, post?.id, post?.title, post?.excerpt]);
+}
+
 function Journal({ blogPosts }) {
   const page = usePage();
+  const locale = useJournalLocale();
+  const copy = journalCopy[locale];
+  const localizedPosts = blogPosts.map(post => localizedPost(post, locale)).filter(Boolean);
   const [params, setParams] = useSearchParams();
   const activeTopic = params.get("topic") || "all";
   const query = params.get("q") || "";
-  const topicLabels = Array.from(new Set(blogPosts.map(post => post.category || "Notes")));
-  const topics = [{ id: "all", label: "All notes" }, ...topicLabels.map(label => ({ id: slugify(label), label }))];
-  const visiblePosts = blogPosts.filter(post => (activeTopic === "all" || slugify(post.category || "Notes") === activeTopic) && `${post.title} ${post.excerpt}`.toLowerCase().includes(query.toLowerCase()));
-  const countFor = topic => topic.id === "all" ? blogPosts.length : blogPosts.filter(post => slugify(post.category || "Notes") === topic.id).length;
+  const topicLabels = Array.from(new Set(localizedPosts.map(post => post.category || "Notes")));
+  const topics = [{ id: "all", label: copy.all }, ...topicLabels.map(label => ({ id: label, label }))];
+  const visiblePosts = localizedPosts.filter(post => (activeTopic === "all" || (post.category || "Notes") === activeTopic) && `${post.title} ${post.excerpt}`.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale)));
+  const countFor = topic => topic.id === "all" ? localizedPosts.length : localizedPosts.filter(post => (post.category || "Notes") === topic.id).length;
   const chooseTopic = topic => setParams({...query ? {q:query} : {},...topic.id === "all" ? {} : {topic:topic.id}});
-  return <main className="page journal-page">
-    <div className="page-title"><span className="eyebrow">THE JOURNAL / {blogPosts.length} NOTES</span><h1>{page.title || "Notes from the practice."}</h1><p>{page.intro || "Small observations on product thinking, visual systems and the work between."}</p></div>
+  useJournalDocument(locale);
+  return <main className="page journal-page" lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}>
+    <div className="journal-heading-row"><div className="page-title"><span className="eyebrow">{copy.eyebrow} / {localizedPosts.length} {copy.unit}</span><h1>{locale === "en" && page.title ? page.title : copy.title}</h1><p>{locale === "en" && page.intro ? page.intro : copy.intro}</p></div><JournalLanguageToggle locale={locale}/></div>
     <div className="journal-layout">
-      <aside className="journal-topics" aria-label="Journal topics">
-        <label className="journal-search">Search notes<input type="search" aria-label="Search notes" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label><span className="eyebrow">TOPICS</span>
+      <aside className="journal-topics" aria-label={copy.topics}>
+        <label className="journal-search">{copy.search}<input type="search" aria-label={copy.search} value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label><span className="eyebrow">{copy.topics}</span>
         <div>{topics.map(topic => <button key={topic.id} type="button" className={activeTopic === topic.id ? "active" : ""} aria-pressed={activeTopic === topic.id} onClick={() => chooseTopic(topic)}><span>{topic.label}</span><span>{countFor(topic)}</span></button>)}</div>
       </aside>
-      <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post}/>) : <p className="empty-state">No notes in this topic yet.</p>}</div>
+      <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post} locale={locale}/>) : <p className="empty-state">{copy.empty}</p>}</div>
     </div>
   </main>;
 }
 
 function BlogPost({ blogPosts }) {
   const { slug } = useParams();
-  const post = blogPosts.find(item => item.id === slug);
+  const locale = useJournalLocale();
+  const basePost = blogPosts.find(item => item.id === slug);
+  const post = basePost && localizedPost(basePost, locale);
+  useJournalDocument(locale, post);
   if (!post) return <NotFound />;
-  return <main className="blog-post-page"><Link className="back" to="/journal"><ArrowLeft size={16}/> All notes</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{post.heroImage&&<div className="blog-post-cover"><img src={post.heroImage} alt={post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
+  const citations=["https://doi.org/10.1145/223355.223680","https://doi.org/10.1016/S0953-5438(00)00031-X","https://pubmed.ncbi.nlm.nih.gov/19892317/"];
+  const schema={"@context":"https://schema.org","@type":"Article",headline:post.title,description:post.excerpt,datePublished:post.date,dateModified:post.date,inLanguage:locale,author:{"@type":"Person",name:"Ali Komeili"},publisher:{"@type":"Organization",name:"Desartly"},image:`${location.origin}${post.heroImage}`,mainEntityOfPage:`${location.origin}/${locale}/journal/${post.id}`,citation:citations};
+  return <main className="blog-post-page" lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}><script type="application/ld+json">{JSON.stringify(schema)}</script><div className="article-topbar"><Link className="back" to={`/${locale}/journal`}><ArrowLeft size={16}/> {journalCopy[locale].back}</Link><JournalLanguageToggle locale={locale} slug={post.id} hasPersian={Boolean(basePost.translations?.fa)}/></div><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}{post.readingTime?.[locale] ? ` / ${post.readingTime[locale]}` : ""}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{post.heroImage&&<figure className="blog-post-figure"><div className="blog-post-cover"><img src={post.heroImage} alt={post.imageAlt || post.title} decoding="async" /></div><figcaption>{locale === "fa" ? "تصویر اختصاصی Desartly؛ ایده‌پردازی و اجرای مستقل بر پایهٔ بنچمارک تصویر ادیتوریال." : "Original Desartly artwork; independently art-directed against editorial-design benchmarks."}</figcaption></figure>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
 }
 function BlogEditorBlocks({ blocks = [], onPatch, onMove, onRemove, onUpload, onReorder }) {
   return <SortableGroup axis="y" values={blocks} onReorder={onReorder} className="blog-editor-blocks">{blocks.map((block, index) => <SortableBlock value={block} key={block.id}>{controls => <>
@@ -574,6 +647,7 @@ function Work({ projects }) {
   const [params, setParams] = useSearchParams();
   const active = params.get("category");
   const visibleCategories = [...new Set([...categories, ...projects.flatMap(projectTags)])].filter(category => projects.some(project => matchesCategory(project, category)));
+  useEffect(() => { const previous=document.title; document.title="Projects — Desartly"; return () => { document.title=previous; }; }, []);
   return (
     <main className="page">
       <div className="page-title work-title-with-samurai">
@@ -581,14 +655,14 @@ function Work({ projects }) {
         <span className="eyebrow">
           THE PORTFOLIO / {projects.length} PROJECTS
         </span>
-        <h1>{page.title || "Work, connected."}</h1>
+        <h1>{page.title || "Projects"}</h1>
         <p>
           {page.intro ||
             "Product thinking. Visual identities. Ideas that move."}
         </p>
       </div>
       <div className="filters">
-        {["All work", ...visibleCategories].map((c, i) => (
+        {["All projects", ...visibleCategories].map((c, i) => (
           <button
             key={c}
             className={active === (i ? slugify(c) : null) ? "active" : ""}
@@ -613,8 +687,8 @@ function Work({ projects }) {
             (p) =>
               !active || projectTags(p).some(tag => slugify(tag) === active),
           )
-          .map((p) => (
-            <Card key={p.id} p={p} />
+          .map((p, index) => (
+            <Card key={p.id} p={p} priority={index < 3} />
           ))}
       </motion.div>
       </AnimatePresence>
@@ -633,7 +707,7 @@ function Project({ projects }) {
   return (
     <main className={`project-page project-${p.id}`}>
       <Link className="back" to="/work">
-        <ArrowLeft size={16} /> All work
+        <ArrowLeft size={16} /> All projects
       </Link>
       <div className="project-heading">
         <span className="eyebrow">
@@ -1350,7 +1424,7 @@ function Editor({
       <div className="save-notice" role="status">{notice||"Save changes keeps a private cloud draft. Publish website makes it public."}</div>
       <div className="editor-layout">
         <aside id="editor-inspector" aria-label="Editor map and settings">
-          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Content workspace</h2><p>Manage structured content, then refine it directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Work"],["/journal","Journal"],["/about","About"],["/certificates","Certificates"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a className={contextPath===path?"active":""} key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details open><summary>Collections</summary><button onClick={()=>{setMode("project-library");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal-library");setInspectorOpen(false);}}>Articles <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details open><summary>Database</summary><button onClick={()=>{setMode("media");setInspectorOpen(false);}}>Files & folders</button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");setInspectorOpen(false);}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
+          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Content workspace</h2><p>Manage structured content, then refine it directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Projects"],["/journal","Journal"],["/about","About"],["/certificates","Certificates"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a className={contextPath===path?"active":""} key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details open><summary>Collections</summary><button onClick={()=>{setMode("project-library");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal-library");setInspectorOpen(false);}}>Articles <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details open><summary>Database</summary><button onClick={()=>{setMode("media");setInspectorOpen(false);}}>Files & folders</button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");setInspectorOpen(false);}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
             <button
               className={mode === "page" ? "active" : ""}
               onClick={() => setMode("page")}
@@ -1838,7 +1912,7 @@ function App() {
               <br />
               DESIGN PORTFOLIO
             </span>
-            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to} />)}</nav>
+            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to || (item.to === "/journal" && /^\/(?:en|fa)\/journal(?:\/|$)/.test(location.pathname))} />)}</nav>
           </header>
         )}
         <div id="main">
@@ -1871,10 +1945,14 @@ function App() {
                 element={<Home projects={publicProjects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
               />
               <Route path="/work" element={<Work projects={publicProjects} />} />
-              <Route path="/journal" element={<Journal blogPosts={blogPosts} />} />
+              <Route path="/journal" element={<Navigate to="/en/journal" replace />} />
               <Route path="/blog" element={<Journal blogPosts={blogPosts} />} />
               <Route path="/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route path="/blog/:slug" element={<BlogPost blogPosts={blogPosts} />} />
+              <Route path="/en/journal" element={<Journal blogPosts={blogPosts} />} />
+              <Route path="/fa/journal" element={<Journal blogPosts={blogPosts} />} />
+              <Route path="/en/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
+              <Route path="/fa/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
               <Route
                 path="/work/:slug"
                 element={<Project key={location.pathname} projects={publicProjects} />}
