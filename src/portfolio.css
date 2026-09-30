@@ -254,3 +254,54 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-card .card-sub{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:6px;margin-top:auto;font:11px/1.4 Manrope,Arial,sans-serif}
 .project-card .project-tag{display:inline-flex;align-items:center;padding:5px 9px;border:1px solid #e2e4e8;background:#fafafa;color:#626975;white-space:nowrap}
 @media(max-width:700px){.project-card .card-meta h3{font-size:18px}.project-card .project-card-summary{font-size:12px}.project-card .card-sub{font-size:10px}}
+
+/* Restore shared project/client cards from the approved Digikala BTL build. */
+/* Project opening: a restrained two-panel system with one square visual. */
+.project-overview{display:grid;grid-template-columns:1fr;margin:0 0 clamp(54px,7vw,96px);gap:16px;background:#fff}
+.project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.project-overview-cover{width:100%;min-width:0;aspect-ratio:1;margin:0;background:#ece9e3;overflow:hidden}
+.project-overview-cover img{display:block;width:100%;height:100%;aspect-ratio:1;object-fit:cover}
+.project-overview-copy{min-width:0;aspect-ratio:1;display:flex;flex-direction:column;padding:clamp(26px,3vw,42px);box-sizing:border-box;background:#f0f2ed;color:#202632;border:1px solid #d6ddcf}
+.project-overview .case-brief-data>.eyebrow{display:block;font:600 18px/1.3 Manrope,Arial,sans-serif;letter-spacing:-.02em;color:#202632}
+.project-overview .case-brief-data dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(24px,3vw,44px);margin:22px 0 0}
+.project-overview .case-brief-data dl>div{padding:14px 0 16px;border-top:1px solid #d6ddcf;box-sizing:border-box}
+.project-overview .case-brief-data dl>div:last-child:nth-child(odd){grid-column:1/-1;display:grid;grid-template-columns:minmax(90px,.28fr) minmax(0,1fr);gap:24px}
+.project-overview .case-brief-data dt{font:600 11px/1.4 Manrope,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#697080;margin-bottom:8px}
+.project-overview .case-brief-data dd{margin:0;font-size:13px;line-height:1.62;letter-spacing:-.006em;color:#202632;white-space:pre-line;overflow-wrap:anywhere}
+.project-overview .project-overview-copy>.client-profile{margin-top:auto;border:0;border-top:1px solid #d6ddcf;background:transparent;padding:20px 0 0;color:#202632}
+.project-overview .project-overview-copy>.client-profile .client-profile-heading{margin:0 0 16px}
+.project-overview .project-overview-copy>.client-profile .client-profile-label{font:600 11px/1.4 Manrope,Arial,sans-serif;letter-spacing:0;text-transform:none;color:#697080}
+.project-overview .project-overview-copy>.client-profile .client-profile-line{background:#d6ddcf}
+.project-overview .project-overview-copy>.client-profile .client-profile-body{grid-template-columns:minmax(150px,.48fr) minmax(0,1fr);gap:24px;align-items:center}
+.project-overview .project-overview-copy>.client-profile .client-profile-logo{flex-basis:52px;width:52px;height:52px}
+.project-overview .project-overview-copy>.client-profile .client-profile-name{font-size:21px;color:#202632}
+.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:0 0 0 24px;border-top:0;border-left:1px solid #d6ddcf;font-size:11px;line-height:1.65;color:#4e5661}
+
+
+
+
+
+
+
+/* Two real, horizontal project cards replace the former text-only next link. */
+.project-suggestions{margin-top:clamp(72px,9vw,128px);padding-top:24px;border-top:1px solid var(--folio-rule)}
+.project-suggestions-heading{display:flex;justify-content:space-between;gap:24px;margin-bottom:28px;font:10px/1.4 Manrope,Arial,sans-serif;letter-spacing:.06em;color:#737b88}
+.project-suggestion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.project-suggestion-card{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(0,1.2fr);min-height:230px;border:1px solid var(--folio-rule);background:#fff;overflow:hidden;transition:border-color .2s,transform .2s}
+.project-suggestion-card:hover{border-color:#9ba1ac;transform:translateY(-2px)}
+.project-suggestion-cover{min-width:0;background:#f2f3f6;overflow:hidden}
+.project-suggestion-cover>img,.project-suggestion-cover>.art{display:block;width:100%;height:100%;object-fit:cover;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.project-suggestion-card:hover .project-suggestion-cover>img,.project-suggestion-card:hover .project-suggestion-cover>.art{transform:scale(1.025)}
+.project-suggestion-copy{display:flex;flex-direction:column;padding:26px;min-width:0}
+.project-suggestion-copy>small{font:9px/1.4 Manrope,Arial,sans-serif;letter-spacing:.07em;color:#747b87;text-transform:uppercase}
+.project-suggestion-copy>div{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:24px 0 12px}
+.project-suggestion-copy h2{font-size:clamp(21px,2vw,30px);line-height:1.18;letter-spacing:-.025em;margin:0;overflow-wrap:anywhere}
+.project-suggestion-copy svg{flex:0 0 auto}
+.project-suggestion-copy p{margin:auto 0 0;font-size:12px;line-height:1.7;color:#6d7480;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:1050px){.project-overview.has-cover{grid-template-columns:repeat(2,minmax(0,1fr))}.project-overview-copy{aspect-ratio:auto;min-height:100%}.project-overview .case-brief-data dl{grid-template-columns:1fr}.project-overview .case-brief-data dl>div:last-child:nth-child(odd){grid-column:auto;display:block}.project-overview .project-overview-copy>.client-profile .client-profile-body{grid-template-columns:1fr}.project-overview .project-overview-copy>.client-profile .client-profile-description{padding:16px 0 0;border-left:0;border-top:1px solid #d6ddcf}.project-suggestion-grid{grid-template-columns:1fr}.project-suggestion-card{grid-template-columns:minmax(190px,.65fr) minmax(0,1.35fr)}}
+@media(max-width:700px){.project-overview.has-cover{grid-template-columns:1fr}.project-overview-cover,.project-overview-cover img{width:100%;height:auto;aspect-ratio:1}.project-overview-copy{aspect-ratio:auto;padding:26px 22px}.project-overview .case-brief-data dl{grid-template-columns:1fr}.project-overview .project-overview-copy>.client-profile{margin-top:22px}.project-suggestions-heading span{display:none}.project-suggestion-card{grid-template-columns:116px minmax(0,1fr);min-height:166px}.project-suggestion-copy{padding:18px}.project-suggestion-copy>div{margin:15px 0 8px}.project-suggestion-copy h2{font-size:20px}.project-suggestion-copy p{font-size:11px;-webkit-line-clamp:2}}
+
+.project-flightio-ota .case-image-pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,28px);align-items:start}
+.project-flightio-ota .case-image-pair figure{margin:0;min-width:0}
+.project-flightio-ota .case-image-pair img{display:block;width:100%;height:auto;object-fit:contain}
+@media(max-width:700px){.project-flightio-ota .case-image-pair{grid-template-columns:1fr}}
