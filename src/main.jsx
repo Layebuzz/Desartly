@@ -69,8 +69,8 @@ const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({defa
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
 const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure", "digikala-smile-arrives-home", "flightio-ota", "afc-qatar"]);
 const projectCardCovers = Object.fromEntries([...publicProjectIds].map(id => [id, {
-  avif: `/projects/covers/${id}-640.avif${id === "afc-qatar" ? "?v=b834a9b9" : ""} 640w, /projects/covers/${id}-960.avif${id === "afc-qatar" ? "?v=b834a9b9" : ""} 960w`,
-  webp: `/projects/covers/${id}-640.webp${id === "afc-qatar" ? "?v=b834a9b9" : ""} 640w, /projects/covers/${id}-960.webp${id === "afc-qatar" ? "?v=b834a9b9" : ""} 960w`,
+  avif: `/projects/covers/${id}-640.avif${id === "afc-qatar" ? "?v=91da2f7c" : ""} 640w, /projects/covers/${id}-960.avif${id === "afc-qatar" ? "?v=91da2f7c" : ""} 960w`,
+  webp: `/projects/covers/${id}-640.webp${id === "afc-qatar" ? "?v=91da2f7c" : ""} 640w, /projects/covers/${id}-960.webp${id === "afc-qatar" ? "?v=91da2f7c" : ""} 960w`,
   fallback: `/projects/covers/${id}-640.webp`,
 }]));
 
