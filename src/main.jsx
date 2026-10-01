@@ -69,8 +69,8 @@ const SortableGroup = React.lazy(() => import("./EditorMotion").then(m => ({defa
 const CredentialGallery = React.lazy(() => import("./CredentialGallery").then(m => ({default:m.CredentialGallery})));
 const publicProjectIds = new Set(["divar", "toypet", "myom", "cafe-de-la-corte", "noghteh", "mci-5g", "airbnb-unlock-adventure", "digikala-smile-arrives-home", "flightio-ota", "afc-qatar"]);
 const projectCardCovers = Object.fromEntries([...publicProjectIds].map(id => [id, {
-  avif: `/projects/covers/${id}-640.avif 640w, /projects/covers/${id}-960.avif 960w`,
-  webp: `/projects/covers/${id}-640.webp 640w, /projects/covers/${id}-960.webp 960w`,
+  avif: `/projects/covers/${id}-640.avif${id === "afc-qatar" ? "?v=b834a9b9" : ""} 640w, /projects/covers/${id}-960.avif${id === "afc-qatar" ? "?v=b834a9b9" : ""} 960w`,
+  webp: `/projects/covers/${id}-640.webp${id === "afc-qatar" ? "?v=b834a9b9" : ""} 640w, /projects/covers/${id}-960.webp${id === "afc-qatar" ? "?v=b834a9b9" : ""} 960w`,
   fallback: `/projects/covers/${id}-640.webp`,
 }]));
 
@@ -105,7 +105,7 @@ function SiteMotion({ disabled = false }) {
 
       document.querySelectorAll("#main img").forEach(image => {
         if (image.closest("[data-editor-ui]")) return;
-        if (image.closest(".work-results")) return;
+        if (image.closest(".work-results,.project-afc-qatar .project-overview-cover")) return;
         const host = image.closest("figure,.cover,.intro-slide-visual,.blog-cover,.blog-post-cover,.credential-cover,.project-overview-cover,.project-suggestion-cover,.client-logo-row a");
         if (!host) return;
         host.classList.add("skeleton-host");
