@@ -429,7 +429,7 @@ function Grid({ block, cover = 0 }) {
           }}
         >
           {block.images?.[i] ? (
-            <img src={block.images[i]} alt={"Project composition " + (i + 1)} />
+            <img src={block.images[i]} alt={block.alts?.[i] || "Project composition " + (i + 1)} loading="lazy" decoding="async" />
           ) : (
             <Art index={(cover + i) % 9} />
           )}
