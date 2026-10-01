@@ -9,6 +9,8 @@ export function validateDocument(kind,doc){
  if(doc.id==='new'||!/^[a-z0-9][a-z0-9-]{0,119}$/.test(doc.id||''))fail('Use a lowercase URL slug with letters, numbers and hyphens.');
  if(typeof doc.title!=='string'||!doc.title.trim()||doc.title.length>200)fail('A title of 1–200 characters is required.');
  if(!Array.isArray(doc.blocks)||doc.blocks.length>150)fail('Use at most 150 content blocks.');
+ for(const key of ['summary','excerpt','industry','clientName','clientDescription','challenge','role','deliverables','outcome','credits'])if(doc[key]!==undefined&&typeof doc[key]!=='string')fail(key+' must be text.');
+ if(doc.references!==undefined&&(!Array.isArray(doc.references)||doc.references.length>30))fail('Use at most 30 benchmark references.');
  if(JSON.stringify(doc).length>600000)fail('Document exceeds 600 KB. Upload images to the media library.');
  const ids=new Set();for(const block of doc.blocks){if(!block.id||ids.has(block.id))fail('Every block needs a unique ID.');ids.add(block.id);if(!['text','image','html','markdown','grid','composition'].includes(block.type))fail('Unsupported content block: '+block.type);if(block.type==='html'&&typeof block.html!=='string')fail('HTML blocks need HTML content.');}
  for(const key of ['coverImage','heroImage','clientLogo'])if(doc[key]&&!(/^(\/[^/\\]|https:\/\/)/.test(doc[key])||/^data:image\/(webp|png|jpeg);base64,/.test(doc[key])))fail('Invalid image URL.');
