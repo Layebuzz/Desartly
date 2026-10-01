@@ -1,12 +1,14 @@
+import {materialize} from '../src/cms/materialize.js';
 import {isOwner} from './owner-auth.js';
 import {validateSite,publicSite,references} from '../src/cms/schema.js';
+function versionedSite(site,previous){const next=materialize(validateSite(site));for(const field of ['projects','blogPosts']){next[field]=(next[field]||[]).map(doc=>{const before=(previous[field]||[]).find(d=>d.id===doc.id);if(before&&JSON.stringify(before)!==JSON.stringify(doc))return {...doc,_version:(before._version||0)+1,updatedAt:new Date().toISOString()};return doc;});}return next;}
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function bounded(request,limit){const reader=request.body?.getReader();if(!reader)return new Uint8Array();let size=0,parts=[];for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit){await reader.cancel();throw Object.assign(Error('Upload exceeds the size limit.'),{status:413});}parts.push(value);}const bytes=new Uint8Array(size);let n=0;for(const part of parts){bytes.set(part,n);n+=part.length;}return bytes;}
-export async function contentResponse(request,env,store,media,transform){
+export async function contentResponse(request,env,store,media,transform,trustedAccess={}){
  const url=new URL(request.url),path=url.pathname;if(!path.startsWith('/api/'))return null;if(path.startsWith('/api/owner/'))return null;
  try{
  if(!store)throw Object.assign(Error('Content database is not connected.'),{status:503});
- const owner=await isOwner(request,env);const privatePath=path.startsWith('/api/studio');
+ const owner=await isOwner(request,env)||(trustedAccess.upload&&path==='/api/studio/upload');const privatePath=path.startsWith('/api/studio');
  if(privatePath&&!owner)return json({error:'Owner sign-in required.'},401);
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  let state=await store.read();
@@ -47,10 +49,10 @@ export async function contentResponse(request,env,store,media,transform){
   // Draft writes use a draft-specific revision so inbox/events cannot invalidate edits.
   if(['save','publish','restore','import'].includes(path.split('/').at(-1))&&body.draftVersion!==(state.draftVersion||0))return json({error:'A newer draft exists. Reload before saving.'},409);
   if(path==='/api/studio/save'||path==='/api/studio/import'){
-   const draft=validateSite(body.site);await save({...state,draft,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
+   const draft=versionedSite(body.site,state.draft);await save({...state,draft,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/publish'){
-   const draft=validateSite(body.site);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,3);await save({...state,draft,published:structuredClone(draft),publishedAt:new Date().toISOString(),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
+   const draft=versionedSite(body.site,state.draft);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,3);await save({...state,draft,published:structuredClone(draft),publishedAt:new Date().toISOString(),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/restore'){
    const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});

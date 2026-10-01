@@ -1,3 +1,5 @@
+import {previewHtml} from './cms/html-preview.js';
+import {isVisibleProject} from './cms/visibility.js';
 import React, { useState, useEffect } from "react";
 import { DivarCategories } from "./DivarCategories";
 import { ResumeProfile } from "./ResumeProfile";
@@ -52,7 +54,7 @@ import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
-import { projectTags, matchesCategory } from "./project-tags.js";
+import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
 import {CaseFields, CaseBrief} from "./PortfolioTools";
 import { MarkdownContent, MarkdownEditor, articleTemplates, SettingsPanel, SiteMetadata } from "./StudioTools";
@@ -272,7 +274,7 @@ function Art({ index = 0 }) {
   );
 }
 function Card({ p, editable = false, onTitleChange, priority = false }) {
-  const optimizedCover = !editable && projectCardCovers[p.id];
+  const optimizedCover = !editable && !p.managed && p.coverImage?.startsWith("/projects/") && projectCardCovers[p.id];
   return (
     <Link className={"project-card" + (editable ? " is-editable" : "")} to={"/work/" + p.id} onClick={e=>{if(editable){e.preventDefault();}}}>
       <div className="cover">
@@ -476,7 +478,7 @@ function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
   const html = block.html || "<main style='font-family:system-ui;padding:32px;background:#f5f6fa;color:#202632'><p style='font-size:12px;letter-spacing:.08em;text-transform:uppercase'>HTML sample</p><h1 style='font-size:36px;margin:18px 0'>Your UX prototype lives here.</h1><button style='padding:12px 16px;border:1px solid #202632;background:white'>Try the interaction</button></main>";
   return <section className={"html-block" + (editable ? " html-block-editor" : "")}>
     {editable && <><label className="html-upload" data-editor-ui>Upload HTML file<input type="file" accept=".html,.htm,text/html" onChange={async e => { const file=e.target.files?.[0]; if (!file) return; if(file.size>2000000){e.target.setCustomValidity("Choose an HTML file under 2 MB.");e.target.reportValidity();return;} onChange?.(await file.text()); }}/></label><input className="html-block-title" aria-label="HTML sample title" value={block.title || "UX sample"} onChange={e=>onTitleChange?.(e.target.value)} /><textarea aria-label="HTML sample source" value={html} onChange={e=>onChange?.(e.target.value)} spellCheck={false} /></>}
-    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={block.autoHeight?{height:frameHeight}:undefined} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={html} />
+    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={block.autoHeight?{height:frameHeight}:undefined} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={previewHtml(html,block.autoHeight)} />
   </section>;
 }
 function Footer() {
@@ -533,8 +535,8 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
       <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Desartly · Portfolio</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
         <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet Ali Komeili</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>The mind behind Desartly.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
-        {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{activeProject.category}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
-        <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{project.category}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${activeProject.category}` : ""}</span></div>
+        {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{projectDiscipline(activeProject)}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
+        <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{projectDiscipline(project)}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${projectDiscipline(activeProject)}` : ""}</span></div>
       </div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
@@ -593,7 +595,7 @@ function BlogPost({ blogPosts }) {
   const { slug } = useParams();
   const post = blogPosts.find(item => item.id === slug);
   if (!post) return <NotFound />;
-  return <main className="blog-post-page"><Link className="back" to="/journal"><ArrowLeft size={16}/> All notes</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{post.heroImage&&<div className="blog-post-cover"><img src={post.heroImage} alt={post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
+  return <main className="blog-post-page"><Link className="back" to="/journal"><ArrowLeft size={16}/> All notes</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{(post.heroImage||post.coverImage)&&<div className="blog-post-cover"><img src={post.heroImage||post.coverImage} alt={post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : ["grid","composition"].includes(block.type) ? <Grid key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
 }
 function BlogEditorBlocks({ blocks = [], onPatch, onMove, onRemove, onUpload, onReorder }) {
   return <SortableGroup axis="y" values={blocks} onReorder={onReorder} className="blog-editor-blocks">{blocks.map((block, index) => <SortableBlock value={block} key={block.id}>{controls => <>
@@ -612,7 +614,10 @@ function Work({ projects }) {
   const { categories } = React.useContext(Taxonomy);
   const [params, setParams] = useSearchParams();
   const active = params.get("category");
-  const visibleCategories = [...new Set([...categories, ...projects.flatMap(projectTags)])].filter(category => projects.some(project => matchesCategory(project, category)));
+  const visibleCategories = disciplines;
+  const industry = params.get("industry");
+  const disciplineProjects = projects.filter(p=>!active||slugify(projectDiscipline(p))===active);
+  const industries = [...new Set(disciplineProjects.map(projectIndustry).filter(Boolean))].sort();
   useEffect(() => { const previous=document.title; document.title="Projects — Desartly"; return () => { document.title=previous; }; }, []);
   return (
     <main className="page">
@@ -643,15 +648,16 @@ function Work({ projects }) {
           </button>
         ))}
       </div>
+      <div className="filters industry-filters" aria-label="Filter by industry">{["All industries",...industries].map((name,i)=><button key={name} className={industry===(i?slugify(name):null)?"active":""} onClick={()=>setParams({...active?{category:active}:{},...i?{industry:slugify(name)}:{}})}>{name}<span className="filter-count">{i?disciplineProjects.filter(p=>projectIndustry(p)===name).length:disciplineProjects.length}</span></button>)}</div>
       <AnimatePresence mode="wait" initial={false}>
-      <motion.div key={active || "all"} className="cards work-results"
+      <motion.div key={(active || "all")+(industry||"")} className="cards work-results"
         initial={{ opacity: reducedMotion ? 1 : 0 }}
         animate={{ opacity: 1, transition: { duration: reducedMotion ? 0 : .18, ease: "easeOut" } }}
         exit={{ opacity: reducedMotion ? 1 : 0, transition: { duration: reducedMotion ? 0 : .1, ease: "easeIn" } }}>
         {projects
           .filter(
             (p) =>
-              !active || projectTags(p).some(tag => slugify(tag) === active),
+              (!active || slugify(projectDiscipline(p)) === active) && (!industry || slugify(projectIndustry(p)) === industry),
           )
           .map((p, index) => (
             <Card key={p.id} p={p} priority={index < 3} />
@@ -667,8 +673,8 @@ function Project({ projects }) {
   if (!p) return <NotFound />;
   const hasBrief = [p.challenge,p.role,p.deliverables,p.outcome,p.credits].some(value=>value?.trim());
   const suggestions = [
-    ...projects.filter(item=>item.id!==p.id&&projectTags(item).some(tag=>projectTags(p).includes(tag))),
-    ...projects.filter(item=>item.id!==p.id&&!projectTags(item).some(tag=>projectTags(p).includes(tag))),
+    ...projects.filter(item=>isVisibleProject(item)&&item.id!==p.id&&projectTags(item).some(tag=>projectTags(p).includes(tag))),
+    ...projects.filter(item=>isVisibleProject(item)&&item.id!==p.id&&!projectTags(item).some(tag=>projectTags(p).includes(tag))),
   ].slice(0,2);
   return (
     <main className={`project-page project-${p.id}`}>
@@ -702,7 +708,7 @@ function Project({ projects }) {
           </section>
         ) : b.type === "image" ? (
           <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
-        ) : b.type === "html" ? (
+        ) : b.type === "markdown" ? <MarkdownContent source={b.markdown} key={b.id}/> : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (
           <section className="composition-block" key={b.id}>
@@ -711,7 +717,7 @@ function Project({ projects }) {
         ),
       )}
       {p.relatedNote&&<Link className="related-note" to={"/journal/"+p.relatedNote}>Read the thinking behind this work <Arrow/></Link>}
-      {suggestions.length>0&&<section className="project-suggestions" aria-label="More projects"><div className="project-suggestions-heading"><small>KEEP EXPLORING</small><span>{suggestions.length} SELECTED PROJECTS</span></div><div className="project-suggestion-grid">{suggestions.map(item=><Link className="project-suggestion-card" to={"/work/"+item.id} key={item.id}><div className="project-suggestion-cover">{item.coverImage?<img src={item.coverImage} alt="" loading="lazy" decoding="async"/>:<Art index={item.cover}/>}</div><div className="project-suggestion-copy"><small>{item.category}</small><div><h2>{item.title}</h2><ArrowUpRight size={22}/></div><p>{item.summary}</p></div></Link>)}</div></section>}
+      {suggestions.length>0&&<section className="project-suggestions" aria-label="More projects"><div className="project-suggestions-heading"><small>KEEP EXPLORING</small><span>{suggestions.length} SELECTED PROJECTS</span></div><div className="project-suggestion-grid">{suggestions.map(item=><Link className="project-suggestion-card" to={"/work/"+item.id} key={item.id}><div className="project-suggestion-cover">{item.coverImage?<img src={item.coverImage} alt="" loading="lazy" decoding="async"/>:<Art index={item.cover}/>}</div><div className="project-suggestion-copy"><small>{projectTags(item).join(" / ")}</small><div><h2>{item.title}</h2><ArrowUpRight size={22}/></div><p>{item.summary}</p></div></Link>)}</div></section>}
       <ContactBand/>
     </main>
   );
@@ -1063,6 +1069,8 @@ function PagePosts({ projects }) {
     </section>
   );
 }
+const Studio = React.lazy(()=>import("./cms/Studio.jsx"));
+function LegacyStudioRedirect(){const {pathname}=useLocation();const base=pathname.replace(/\/(edit|new)\/?$/,"")||"/";const isNew=/\/new\/?$/.test(pathname);let to="/studio";if(base.startsWith("/work"))to="/studio/projects"+(isNew?"/new":base.startsWith("/work/")?"/"+base.slice(6):"");else if(base.startsWith("/journal")||base.startsWith("/blog"))to="/studio/articles"+(isNew?"/new":base.split("/")[2]?"/"+base.split("/")[2]:"");else if(base!=="/"&&base!=="/admin")to="/studio/layout?path="+encodeURIComponent(base);return <Navigate to={to} replace/>;}
 function OwnerWorkspace(props) {
   const location = useLocation(),
     navigate = useNavigate();
@@ -1070,7 +1078,7 @@ function OwnerWorkspace(props) {
   const started = React.useRef(false);
   const action = /\/new\/?$/.test(location.pathname) ? "new" : "edit";
   const rawBase = location.pathname.replace(/\/(edit|new)\/?$/, "") || "/";
-  const base = rawBase === "/resume" ? "/about" : rawBase;
+  const base = location.pathname === "/studio/layout" ? (new URLSearchParams(location.search).get("path")||"/") : rawBase === "/resume" ? "/about" : rawBase;
   const { pages, setPages } = React.useContext(PageContent);
   useEffect(() => {
     if (action !== "new" || started.current) return;
@@ -1847,19 +1855,16 @@ function App() {
   useEffect(() => {
     if(location.hash){requestAnimationFrame(()=>document.getElementById(location.hash.slice(1))?.scrollIntoView());}else window.scrollTo(0, 0);
   }, [location.pathname,location.hash]);
-  const isWorkspace =
-    /\/(edit|new)\/?$/.test(location.pathname) ||
-    location.pathname === "/admin" ||
-    location.pathname.startsWith("/edit/");
-  const edit = isWorkspace || location.pathname === "/login";
-  const curatedProjects = projects.filter(project => publicProjectIds.has(project.id));
-  const publicProjects = curatedProjects.length ? curatedProjects : projects;
+  const isWorkspace = (!location.pathname.startsWith("/studio") && (/\/(edit|new)\/?$/.test(location.pathname) || location.pathname === "/admin" || location.pathname.startsWith("/edit/"))) || location.pathname === "/studio/layout";
+  const isStudio = location.pathname === "/studio" || location.pathname.startsWith("/studio/");
+  const edit = isWorkspace || isStudio || location.pathname === "/login";
+  const publicProjects = projects.filter(isVisibleProject);
   return (
     <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings}/>
       <Taxonomy.Provider
         value={{
-          categories: taxonomy,
-          categoryIds: taxonomy.map(slugify),
+          categories: disciplines,
+          categoryIds: disciplines.map(slugify),
           setCategories: setTaxonomy,
         }}
       >
@@ -1882,8 +1887,9 @@ function App() {
           </header>
         )}
         <div id="main">
-          {isWorkspace ? (
+          {isWorkspace && location.pathname!=="/studio/layout" ? <LegacyStudioRedirect/> : isWorkspace ? (
             <OwnerGate>
+              <Link className="cms-legacy-back" to="/studio/pages">← Back to Studio</Link>
               <React.Suspense fallback={<p className="page">Loading editor…</p>}><OwnerWorkspace
                 {...{
                   projects,
@@ -1905,6 +1911,8 @@ function App() {
             </OwnerGate>
           ) : (
             <Routes>
+              <Route path="/studio" element={<OwnerGate><React.Suspense fallback={<p>Opening Studio…</p>}><Studio/></React.Suspense></OwnerGate>}/><Route path="/studio/:section/:id?" element={<OwnerGate><React.Suspense fallback={<p>Opening Studio…</p>}><Studio/></React.Suspense></OwnerGate>}/>
+              <Route path="/preview/work/:slug" element={<OwnerGate><Project projects={projects}/></OwnerGate>}/><Route path="/preview/journal/:slug" element={<OwnerGate><BlogPost blogPosts={blogPosts}/></OwnerGate>}/>
               <Route path="/login" element={<Login />} />
               <Route
                 path="/"

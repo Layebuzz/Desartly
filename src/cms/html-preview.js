@@ -1,0 +1,5 @@
+export function previewHtml(html,autoHeight){
+ if(!autoHeight||html.includes('desartly:preview-size'))return html;
+ const bridge=`<style>html{overflow:hidden}body{overflow:hidden}</style><script>(()=>{let queued=false;function send(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const body=document.body;if(!body)return;const style=getComputedStyle(body);const height=Math.max(100,Math.ceil(body.getBoundingClientRect().height+parseFloat(style.marginTop||0)+parseFloat(style.marginBottom||0)));parent.postMessage({type:'desartly:preview-size',height},'*');});}function start(){new ResizeObserver(send).observe(document.body);new MutationObserver(send).observe(document.body,{childList:true,subtree:true});document.fonts?.ready.then(send);send();}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',start):start();window.addEventListener('load',send);})();<\/script>`;
+ return html.includes('</body>')?html.replace('</body>',bridge+'</body>'):html+bridge;
+}

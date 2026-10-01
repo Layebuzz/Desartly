@@ -1,3 +1,4 @@
+import {cmsResponse} from "./cms-api.js";
 import sharp from "sharp";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -14,7 +15,7 @@ export function ownerAccessPlugin() {
       try {
         const requestUrl = new URL(req.url, "http://" + req.headers.host);
         if (
-          !requestUrl.pathname.startsWith("/api/") &&
+          !requestUrl.pathname.startsWith("/api/") && requestUrl.pathname!=="/mcp" &&
           !ownerPath(requestUrl.pathname)
         )
           return next();
@@ -26,6 +27,7 @@ export function ownerAccessPlugin() {
             : { body: req, duplex: "half" }),
         });
         let response = await authResponse(request, env);
+        if(!response) response=await cmsResponse(request,env,store,store,null);
         if (!response && requestUrl.pathname.startsWith("/api/")) response = await contentResponse(request, env, store, store, async bytes => {
           const input = sharp(bytes, {limitInputPixels: 40000000}).rotate();
           const meta=await input.metadata();

@@ -38,6 +38,7 @@ export function ownerPath(path) {
   return (
     /\/(edit|new)\/?$/.test(path) ||
     path === "/admin" ||
+    path === "/studio" || path.startsWith("/studio/") || path.startsWith("/preview/") ||
     path === "/preview" ||
     path.startsWith("/edit/")
   );

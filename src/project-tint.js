@@ -1,0 +1,2 @@
+export function tintFromPixels(data){const bins=new Map();for(let i=0;i<data.length;i+=4){const [r,g,b,a]=data.slice(i,i+4);if(a<128)continue;const max=Math.max(r,g,b),min=Math.min(r,g,b),sat=max-min;if(max<30||min>235||sat<18)continue;const key=[r,g,b].map(v=>Math.round(v/32)).join(',');const item=bins.get(key)||{rgb:[r,g,b],weight:0};item.weight+=sat;bins.set(key,item);}return [...bins.values()].sort((a,b)=>b.weight-a.weight)[0]?.rgb||[108,120,135];}
+export function pastel(rgb,amount=.055){return 'rgb('+rgb.map(c=>Math.round(255*(1-amount)+c*amount)).join(',')+')';}
