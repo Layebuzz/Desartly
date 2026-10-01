@@ -7,11 +7,15 @@ test('proposal requests require a brief, remain private and respect delivery con
  const store={read:async()=>structuredClone(state),write:async next=>(state=structuredClone(next))};
  const env={LOCAL:true,PUBLIC_RATE_LIMITER:{limit:async()=>({success:true})}};
  const call=(body,config=env)=>contentResponse(new Request('https://example.com/api/inquiry',{method:'POST',headers:{Origin:'https://example.com','Content-Type':'application/json'},body:JSON.stringify(body)}),config,store,{},null);
- const fields={name:'Test',email:'test@example.com',industry:'OTA',services:'Product',message:'A considered design brief for a travel product.'};
+ const fields={name:'Test',company:'Test company',email:'test@example.com',industry:'OTA',services:'Product',message:'A considered design brief for a travel product.'};
  assert.equal((await call({reason:'proposal',fields:{...fields,message:''}})).status,400);
  assert.equal((await call({reason:'proposal',fields})).status,200);
  assert.equal(state.inbox[0].reason,'proposal');
  assert.equal(state.inbox[0].fields.services,'Product');
+ assert.equal(state.inbox[0].proposal.contact.company,'Test company');
+ assert.deepEqual(state.inbox[0].proposal.project.services,['Product']);
+ assert.equal(state.inbox[0].delivery.status,'not_configured');
+ assert.match(state.inbox[0].delivery.text,/Company: Test company/);
  assert.equal(state.published.inbox,undefined);
  assert.equal((await call({reason:'proposal',fields},{...env,LOCAL:false})).status,503);
  assert.equal((await call({reason:'proposal',fields},{...env,PUBLIC_RATE_LIMITER:{limit:async()=>({success:false})}})).status,429);
