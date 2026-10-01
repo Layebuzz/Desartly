@@ -22,6 +22,14 @@
         "limit": 5,
         "period": 60
       }
+    },
+    {
+      "name": "PUBLIC_RATE_LIMITER",
+      "namespace_id": "9161402",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
     }
   ],
   "kv_namespaces": [

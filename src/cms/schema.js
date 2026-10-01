@@ -5,13 +5,13 @@ export const sectionTypes=['intro','projects','logos','text','image','gallery','
 export function newSection(type='text'){return {id:uid(),type,title:'',text:'',visible:true,items:[],width:'wide',background:'white',spacing:'normal'};}
 export function defaults(){return {
  schema:1,projects:structuredClone(initialProjects),categories:[...categories],certificates:[],pages:{
- '/':{title:'Useful products.',subtitle:'Distinct identities.',intro:"Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems.",sections:['intro','logos','projects','practice','quote','contact'].map(type=>({...newSection(type),visible:!['logos','quote'].includes(type)}))},
+ '/':{title:'Useful products.',subtitle:'Distinct identities.',intro:"Independent design across Product & AI, branding and communication design. I turn complex ideas into clear experiences and distinctive visual systems.",sections:['intro','logos','projects','practice','quote','contact'].map(type=>({...newSection(type),visible:!['logos','quote'].includes(type)}))},
  '/about':{sections:[]},'/resume':{sections:[]},'/services':{sections:[]},'/contact':{sections:[]},'/certificates':{sections:[]},'/work':{sections:[]}},
  nav:['Work','About','Resume','Certificates','Contact'].map(label=>({id:uid(),label,url:'/'+label.toLowerCase(),visible:true})),footer:[{id:uid(),label:'Services',url:'/services',visible:true},{id:uid(),label:'Privacy',url:'/privacy',visible:true}],
  slides:[],clients:[],testimonials:[],collections:[],media:[],trash:[],
  profile:{name:'Desartly',logo:'Desartly',description:'DESIGN PORTFOLIO',bio:'',photo:'',resume:'',experience:[],skills:[]},
  theme:{ink:'#202632',muted:'#697080',blue:'#3475ef',violet:'#8255db',rose:'#ff678c',surface:'#f5f6fa',font:'Manrope',width:1440,space:1},
- settings:{autoplay:true,interval:5,analytics:false,siteTitle:'Desartly',description:'Product & AI, branding and advertising.',shareImage:''}
+ settings:{autoplay:true,interval:5,analytics:false,siteTitle:'Desartly',description:'Product & AI, branding and communication design.',shareImage:''}
 };}
 export function migrateLegacy(){const base=defaults();try{for(const [key,field]of [['pol-published','projects'],['pol-categories','categories'],['pol-certificates','certificates']]){const data=JSON.parse(localStorage.getItem(key));if(Array.isArray(data)&&data.length)base[field]=data;}const pages=JSON.parse(localStorage.getItem('pol-page-content'))||{};for(const [path,page]of Object.entries(pages))base.pages[path]={...base.pages[path],...page};}catch{}return base;}
 export function normalize(site){const d=defaults();return {...d,...site,pages:{...d.pages,...site?.pages},profile:{...d.profile,...site?.profile},theme:{...d.theme,...site?.theme},settings:{...d.settings,...site?.settings}};}

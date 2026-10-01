@@ -29,14 +29,15 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&!references(state.published,id)))return json({error:'Media not found.'},404);
   const width=Number(url.searchParams.get('w'))||1920;const variant=item.variants.find(v=>v.width>=width)||item.variants.at(-1);const response=await media.get(variant.asset);return new Response(response.body,{headers:{'Content-Type':item.type,'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; sandbox",'X-Content-Type-Options':'nosniff','Cache-Control':owner?'private, no-store':'public, max-age=3600',...(item.type==='application/pdf'?{'Content-Disposition':'attachment; filename="resume.pdf"'}:{})}});
  }
- if(path==='/api/config'&&request.method==='GET')return json({turnstileSiteKey:env.TURNSTILE_SITE_KEY||'',local:!!env.LOCAL});
+ if(path==='/api/config'&&request.method==='GET')return json({turnstileSiteKey:env.TURNSTILE_SITE_KEY||'',local:!!env.LOCAL,deliveryReady:!!(env.LOCAL||(env.PUBLIC_RATE_LIMITER&&env.TURNSTILE_SITE_KEY&&env.TURNSTILE_SECRET_KEY))});
  if(path==='/api/inquiry'&&request.method==='POST'){
   if(!env.PUBLIC_RATE_LIMITER||!(await env.PUBLIC_RATE_LIMITER.limit({key:'inquiry:'+ (request.headers.get('CF-Connecting-IP')||'local')})).success)return json({error:'Please try again in a minute.'},429);
   const body=JSON.parse(new TextDecoder().decode(await bounded(request,16000)));
   if(body.website_trap)return json({ok:true});
   if(!env.LOCAL){if(!env.TURNSTILE_SECRET_KEY)return json({error:'Contact delivery is being configured. Please try again later.'},503);const result=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:env.TURNSTILE_SECRET_KEY,response:body.token||''})}).then(r=>r.json());if(!result.success||result.hostname!==url.hostname)return json({error:'Please complete the verification.'},400);}
   const fields=body.fields||{};if(!String(fields.name||'').trim()||!/^\S+@\S+\.\S+$/.test(fields.email||''))return json({error:'Please provide your name and a valid email.'},400);
-  const item={id:crypto.randomUUID(),reason:body.reason==='hr'?'hr':'client',fields:Object.fromEntries(Object.entries(fields).slice(0,20).filter(([k])=>/^[\w-]{1,50}$/.test(k)).map(([k,v])=>[k,String(v).slice(0,4000)])),createdAt:new Date().toISOString(),status:'new'};await save({...state,inbox:[item,...state.inbox].slice(0,1000)});return json({ok:true});
+  if(body.reason==='proposal'&&(!String(fields.services||'').trim()||!String(fields.industry||'').trim()||String(fields.message||'').trim().length<10))return json({error:'Choose your services and industry, and add a short project description.'},400);
+  const item={id:crypto.randomUUID(),reason:body.reason==='proposal'?'proposal':body.reason==='hr'?'hr':'client',fields:Object.fromEntries(Object.entries(fields).slice(0,20).filter(([k])=>/^[\w-]{1,50}$/.test(k)).map(([k,v])=>[k,String(v).slice(0,4000)])),createdAt:new Date().toISOString(),status:'new'};await save({...state,inbox:[item,...state.inbox].slice(0,1000)});return json({ok:true});
  }
  if(path==='/api/event'&&request.method==='POST'){
   if(!state.published.settings.analytics)return json({ok:true});

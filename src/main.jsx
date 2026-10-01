@@ -1,3 +1,4 @@
+import {ProposalContact} from './ProposalContact.jsx';
 import {previewHtml} from './cms/html-preview.js';
 import {isVisibleProject} from './cms/visibility.js';
 import React, { useState, useEffect } from "react";
@@ -164,12 +165,18 @@ const defaultNav = [
 ];
 function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url)).map(item=>(item.to||item.url)==="/work"?{...item,label:"Projects"}:item);}
 function SiteNavLink({ item, active }) {
-  const to = safeLink(item.to) || "/";
+  const to = safeLink(item.to||item.url) || "/";
   const props = { className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
   if (!to.startsWith("/")) {
     return <a href={to} {...props} target="_blank" rel="noopener noreferrer">{item.label}{item.arrow && <ArrowUpRight size={13} />}</a>;
   }
   return <Link to={to} {...props}>{item.label}{item.arrow && <ArrowUpRight size={13} />}</Link>;
+}
+function PublicHeader({items}){
+ const location=useLocation(),[open,setOpen]=useState(false);
+ useEffect(()=>setOpen(false),[location.pathname]);
+ const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
+ return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}>{open?'Close':'More'} <span aria-hidden="true">{open?'−':'+'}</span></button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.filter(item=>!['/work','/contact'].includes(item.to||item.url)).map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)}/>)}</div></header>;
 }
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const [selected, setSelected] = useState(null);
@@ -189,8 +196,8 @@ function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
 function EditablePagePreview({ contextPath, pages, onPagePatch, navItems, onNavChange }) {
   const copy = pages[contextPath] || {};
   const defaults = {
-    "/about": { eyebrow: "THE PRACTICE / DESARTLY", title: "Curiosity connects everything I do.", intro: "My practice brings together product design, AI agents, branding and advertising." },
-    "/resume": { eyebrow: "RÉSUMÉ / ALI KOMEILI", title: "Design across disciplines.", intro: "Product & AI · Branding · Advertising" },
+    "/about": { eyebrow: "THE PRACTICE / DESARTLY", title: "Curiosity connects everything I do.", intro: "My practice brings together product design, AI agents, branding and communication design." },
+    "/resume": { eyebrow: "RÉSUMÉ / ALI KOMEILI", title: "Design across disciplines.", intro: "Product & AI · Branding · Communication Design" },
     "/services": { eyebrow: "WAYS TO WORK TOGETHER", title: "From a first thought to a considered result.", intro: "Choose a starting point and shape the scope together." },
     "/contact": { eyebrow: "THE NEXT CONNECTION", title: "Your next idea. Let’s make it real.", intro: "Tell me what you are building, who it is for and where you need a design partner." },
     "/privacy": { eyebrow: "POL / PRIVACY", title: "Privacy, simply.", intro: "A clear note about how this portfolio handles information." },
@@ -354,7 +361,7 @@ function StatsBand({ stats, editable = false, onChange }) {
     <section className="stats-band" aria-label="Selected practice statistics">
       <div className="folio-section-label"><span>03 / A FEW NUMBERS</span><span>Updated as the practice grows</span></div>
       <div className="stats-grid">
-        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.innerText})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.innerText})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.innerText})}>{editable||!/replace|add the year/i.test(stat.detail||'')?stat.detail:""}</p></div></article>)}
+        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.innerText})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.innerText})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.innerText})}>{editable||!/replace|add the year/i.test(stat.detail||'')?stat.detail?.replace(/Advertising/g,'Communication Design'):""}</p></div></article>)}
       </div>
     </section>
   );
@@ -534,27 +541,27 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     intro: <section className="folio-intro">
       <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Desartly · Portfolio</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> DESIGN ACROSS DISCIPLINES</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "Independent design across Product & AI, branding and advertising. I turn complex ideas into clear experiences and distinctive visual systems."}</p><Link to="/about" className="intro-about" onClick={e=>{if(editable)e.preventDefault();}}><span>Meet Ali Komeili</span> <ArrowRight size={17}/></Link><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>The mind behind Desartly.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
+        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> PRODUCT · BRANDING · COMMUNICATION</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{(page.intro || "I’m Ali, an independent designer creating digital products, brand identities and communication—from campaigns to packaging.").replace(/branding and advertising/gi,"branding and communication design")}</p><div className="hero-actions"><Link to="/work" className="hero-work">View all projects <ArrowUpRight size={18}/></Link><Link to="/contact" className="hero-contact">Request a proposal <ArrowRight size={18}/></Link></div><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>Focus. Precision. Character.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
         {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{projectDiscipline(activeProject)}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
-        <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+project.category} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{projectDiscipline(project)}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${projectDiscipline(activeProject)}` : ""}</span></div>
+        <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+projectDiscipline(project)} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{projectDiscipline(project)}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${projectDiscipline(activeProject)}` : ""}</span></div>
       </div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
       <div className="folio-section-label"><img className="samurai-peek" src="/brand/samurai/peek.webp" alt="" width="100" height="100"/><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
-      <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Advertising</p></div>
-      {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p} editable onTitleChange={onProjectTitleChange}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
+      <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Communication Design</p></div>
+      {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
     </section>,
-    practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>{if(editable)setCategories(categories.map((v,j)=>j===i?e.currentTarget.innerText:v))}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.innerText})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","An idea expressed clearly, across campaigns and touchpoints."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
+    practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={()=>{}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.innerText})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","Advertising, packaging and every touchpoint that brings a brand to life."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
     clients: <ClientsStrip clients={clients} editable={editable} onChange={onClientChange} onCollectionChange={onClientsChange}/>,
     stats: <StatsBand stats={stats} editable={editable} onChange={onStatsChange}/>,
-    journal: <section className="journal-preview"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post} editable={editable} onChange={onBlogChange}/>)}</div></section>,
+    journal: <section className="journal-preview"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post}/>)}</div></section>,
     contact: <ContactBand editable={editable} page={page} onPatch={onPagePatch}/>,
   };
   const normalizedSections = (homeSections?.length ? homeSections : initialHomeSections).map(section => typeof section === "string" ? { id: section, visible: true } : section);
   const patchSection = (id, values) => onSectionsChange?.(normalizedSections.map(section=>section.id===id?{...section,...values}:section));
   const renderSection = section => sectionMap[section.id] || (section.type === 'html' ? <HtmlPreview block={section} editable={editable} onChange={html=>patchSection(section.id,{html})} onTitleChange={title=>patchSection(section.id,{title})}/> : section.type === 'image' ? <figure className="custom-image"><img src={section.image || undefined} alt={section.title || ''}/>{editable && <input data-editor-ui type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])patchSection(section.id,{image:await optimizeImage(e.target.files[0])});}}/>}<figcaption contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</h2><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{text:e.currentTarget.innerText})}>{section.text}</p></section>);
   if (!editable) return <main className="folio-home">{normalizedSections.filter(s=>s.visible!==false).map(section=><React.Fragment key={section.id}>{renderSection(section)}</React.Fragment>)}</main>;
-  return <main className="folio-home home-canvas"><SortableGroup axis="y" values={normalizedSections} onReorder={onSectionsChange}>{normalizedSections.map((section,index)=><SortableBlock key={section.id} value={section}>{controls=><div className={section.visible===false?'canvas-section is-hidden':'canvas-section'}><div className="canvas-section-tools" data-editor-ui><button className="drag-handle" aria-label={`Drag ${section.label || section.type}`} onPointerDown={e=>controls.start(e)}><GripVertical size={16}/></button><strong>{section.label || section.type}</strong><button disabled={index===0} onClick={()=>{const next=[...normalizedSections];[next[index-1],next[index]]=[next[index],next[index-1]];onSectionsChange(next);}}>↑</button><button disabled={index===normalizedSections.length-1} onClick={()=>{const next=[...normalizedSections];[next[index+1],next[index]]=[next[index],next[index+1]];onSectionsChange(next);}}>↓</button><button onClick={()=>patchSection(section.id,{visible:section.visible===false})}>{section.visible===false?'Show':'Hide'}</button>{section.type && <button onClick={()=>onSectionsChange(normalizedSections.filter(s=>s.id!==section.id))}>Remove</button>}</div>{renderSection(section)}{section.id==='intro' && activeProject && <div className="canvas-insert" data-editor-ui><label>Replace square cover<input type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])onCoverChange?.(activeProject.id,await optimizeImage(e.target.files[0],{purpose:"cover",aspect:1}));}}/></label></div>}{section.id==='selected' && <div className="canvas-insert" data-editor-ui>{selected.map((project,i)=><label key={i}>Card {i+1}<select aria-label={`Featured card ${i+1}`} value={project.id} onChange={e=>onFeaturedChange?.(i,e.target.value)}>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}</div>}</SortableBlock>)}</SortableGroup><div className="canvas-insert" data-editor-ui><span>Add a section</span>{['text','image','html'].map(type=><button key={type} onClick={()=>onSectionsChange([...normalizedSections,{id:crypto.randomUUID(),type,visible:true,title:'New section',text:'Write here.'}])}><Plus size={14}/>{type === 'html'?'HTML prototype':type}</button>)}</div></main>;
+  return <main className="folio-home home-canvas"><SortableGroup axis="y" values={normalizedSections} onReorder={onSectionsChange}>{normalizedSections.map((section,index)=><SortableBlock key={section.id} value={section}>{controls=><div className={section.visible===false?'canvas-section is-hidden':'canvas-section'}><div className="canvas-section-tools" data-editor-ui><button className="drag-handle" aria-label={`Drag ${section.label || section.type}`} onPointerDown={e=>controls.start(e)}><GripVertical size={16}/></button><strong>{section.label || section.type}</strong><button disabled={index===0} onClick={()=>{const next=[...normalizedSections];[next[index-1],next[index]]=[next[index],next[index-1]];onSectionsChange(next);}}>↑</button><button disabled={index===normalizedSections.length-1} onClick={()=>{const next=[...normalizedSections];[next[index+1],next[index]]=[next[index],next[index+1]];onSectionsChange(next);}}>↓</button><button onClick={()=>patchSection(section.id,{visible:section.visible===false})}>{section.visible===false?'Show':'Hide'}</button>{section.type && <button onClick={()=>onSectionsChange(normalizedSections.filter(s=>s.id!==section.id))}>Remove</button>}</div>{renderSection(section)}{section.id==='intro' && activeProject && onCoverChange && <div className="canvas-insert" data-editor-ui><label>Replace square cover<input type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])onCoverChange?.(activeProject.id,await optimizeImage(e.target.files[0],{purpose:"cover",aspect:1}));}}/></label></div>}{section.id==='selected' && <div className="canvas-insert" data-editor-ui>{selected.map((project,i)=><label key={i}>Card {i+1}<select aria-label={`Featured card ${i+1}`} value={project.id} onChange={e=>onFeaturedChange?.(i,e.target.value)}>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}</div>}</SortableBlock>)}</SortableGroup><div className="canvas-insert" data-editor-ui><span>Add a section</span>{['text','image','html'].map(type=><button key={type} onClick={()=>onSectionsChange([...normalizedSections,{id:crypto.randomUUID(),type,visible:true,title:'New section',text:'Write here.'}])}><Plus size={14}/>{type === 'html'?'HTML prototype':type}</button>)}</div></main>;
 }
 function EditableHeading({as:Tag="h1", first, second, editable, onChange, label="Heading"}) {
   const value=[first,second].filter(Boolean).join("\n");
@@ -564,8 +571,8 @@ function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
  return <section className="contact-band folio-contact compact-contact">
    <div className="contact-sketch" aria-hidden="true"><img src="/brand/samurai/ready-stance.webp" alt="" width="100" height="100"/><svg viewBox="0 0 130 30" fill="none"><path d="M5 21C29 10 53 27 78 16S108 8 123 13M8 25C43 16 62 27 88 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg></div>
-   <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "Good ideas start"} second={page.contactSubtitle ?? "with a conversation."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Open to teams and independent collaborations."}</p></div>
-   <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Let’s talk</span><Arrow/></Link>
+   <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "A clear brief."} second={page.contactSubtitle ?? "A considered next move."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Share the idea. I’ll help shape the direction."}</p></div>
+   <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Request a proposal</span><Arrow/></Link>
  </section>;
 }
 
@@ -613,7 +620,7 @@ function Work({ projects }) {
   const page = usePage();
   const { categories } = React.useContext(Taxonomy);
   const [params, setParams] = useSearchParams();
-  const active = params.get("category");
+  const active = params.get("category") === "advertising" ? "communication-design" : params.get("category");
   const visibleCategories = disciplines;
   const industry = params.get("industry");
   const disciplineProjects = projects.filter(p=>!active||slugify(projectDiscipline(p))===active);
@@ -632,10 +639,11 @@ function Work({ projects }) {
             "Product thinking. Visual identities. Ideas that move."}
         </p>
       </div>
-      <div className="filters">
+      <div className="filters discipline-filters" role="group" aria-label="Design discipline">
         {["All projects", ...visibleCategories].map((c, i) => (
           <button
             key={c}
+            aria-pressed={active === (i ? slugify(c) : null)}
             className={active === (i ? slugify(c) : null) ? "active" : ""}
             onClick={() => setParams(i ? { category: slugify(c) } : {})}
           >
@@ -648,7 +656,8 @@ function Work({ projects }) {
           </button>
         ))}
       </div>
-      <div className="filters industry-filters" aria-label="Filter by industry">{["All industries",...industries].map((name,i)=><button key={name} className={industry===(i?slugify(name):null)?"active":""} onClick={()=>setParams({...active?{category:active}:{},...i?{industry:slugify(name)}:{}})}>{name}<span className="filter-count">{i?disciplineProjects.filter(p=>projectIndustry(p)===name).length:disciplineProjects.length}</span></button>)}</div>
+      <div className="industry-filter-bar"><p role="status">{disciplineProjects.filter(p=>!industry||slugify(projectIndustry(p))===industry).length} projects <span>across {industry ? '1 industry' : industries.length+' industries'}</span></p><label>Industry<select value={industry||''} onChange={e=>setParams({...active?{category:active}:{},...e.target.value?{industry:e.target.value}:{}})}><option value="">All industries</option>{industries.map(name=><option key={name} value={slugify(name)}>{name} ({disciplineProjects.filter(p=>projectIndustry(p)===name).length})</option>)}</select></label>{(active||industry)&&<button className="filter-reset" onClick={()=>setParams({})}>Reset filters <X size={14}/></button>}</div>
+      {!disciplineProjects.some(p=>!industry||slugify(projectIndustry(p))===industry)&&<p className="filter-empty">No projects in this selection. <button onClick={()=>setParams({})}>View all projects</button></p>}
       <AnimatePresence mode="wait" initial={false}>
       <motion.div key={(active || "all")+(industry||"")} className="cards work-results"
         initial={{ opacity: reducedMotion ? 1 : 0 }}
@@ -783,7 +792,7 @@ function Resume({embedded=false}) {
           </>
         )}
       </Heading>
-      <p className="lead">Product & AI · Branding · Advertising</p>
+      <p className="lead">Product & AI · Branding · Communication Design</p>
       <ResumeProfile profile={page.resumeProfile}/>
       <button className="button" onClick={() => window.print()}>
         Print resume
@@ -816,7 +825,7 @@ function Services() {
                 [
                   "Product discovery, UX flows, interface design, design systems and AI agent experiences.",
                   "Visual identity, art direction, brand guidelines and applications.",
-                  "Campaign concepts, key visuals, digital assets and integrated creative.",
+                  "Advertising concepts, packaging, key visuals and connected brand touchpoints.",
                 ][i]
               }
             </p>
@@ -830,204 +839,7 @@ function Services() {
     </main>
   );
 }
-function Contact() {
-  const page = usePage();
-  const { categories } = React.useContext(Taxonomy);
-  const [contactParams] = useSearchParams();
-  const [reason, setReason] = useState(contactParams.get("reason") === "client" ? "client" : "hr"),
-    [saved, setSaved] = useState(false);
-  const hr = reason === "hr";
-  return (
-    <main className="page contact-page">
-      <div>
-        <span className="eyebrow">THE NEXT CONNECTION</span>
-        <h1>
-          {page.title ||
-            (hr ? (
-              <>
-                A new team.
-                <br />A shared ambition.
-              </>
-            ) : (
-              <>
-                Your next idea.
-                <br />
-                Let’s make it real.
-              </>
-            ))}
-        </h1>
-        <p>
-          {hr
-            ? "Tell me about the role, your team and the way you work."
-            : "Tell me what you are building, who it is for and where you need a design partner."}
-        </p>
-        <div className="contact-decoration">↗</div>
-      </div>
-      <form
-        key={reason}
-        onSubmit={(e) => {
-          e.preventDefault();
-          try {
-            localStorage.setItem(
-              "pol-contact-" + reason,
-              JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))),
-            );
-            setSaved(true);
-          } catch {
-            setSaved(false);
-          }
-        }}
-      >
-        <fieldset className="inquiry-switch">
-          <legend>I’m reaching out as</legend>
-          <div className="choice">
-            {[
-              ["hr", "HR / Hiring team"],
-              ["client", "Client / Collaborator"],
-            ].map(([id, label]) => (
-              <button
-                type="button"
-                key={id}
-                aria-pressed={id === reason}
-                className={id === reason ? "active" : ""}
-                onClick={() => {
-                  setReason(id);
-                  setSaved(false);
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <label htmlFor="name">Your name</label>
-        <input id="name" name="name" autoComplete="name" required />
-        <label htmlFor="email">Work email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-        />
-        <label htmlFor="company">
-          {hr ? "Company name" : "Company / Brand"}
-        </label>
-        <input
-          id="company"
-          name="company"
-          autoComplete="organization"
-          required
-        />
-        {hr ? (
-          <>
-            <label htmlFor="role">Role you are hiring for</label>
-            <input
-              id="role"
-              name="role"
-              required
-              placeholder="Product Designer"
-            />
-            <div className="form-columns">
-              <div>
-                <label htmlFor="type">Employment type</label>
-                <select id="type" name="employment">
-                  <option>Full-time</option>
-                  <option>Part-time</option>
-                  <option>Contract</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="arrangement">Work arrangement</label>
-                <select id="arrangement" name="arrangement">
-                  <option>Remote</option>
-                  <option>Hybrid</option>
-                  <option>On-site</option>
-                </select>
-              </div>
-            </div>
-            <label htmlFor="location">Location / Time zone</label>
-            <input
-              id="location"
-              name="location"
-              placeholder="City, country or time zone"
-            />
-            <label htmlFor="job">Job description link (optional)</label>
-            <input id="job" name="jobUrl" type="url" placeholder="https://" />
-            <label htmlFor="salary">Compensation range (optional)</label>
-            <input
-              id="salary"
-              name="compensation"
-              placeholder="Range and currency"
-            />
-          </>
-        ) : (
-          <>
-            <label htmlFor="service">What do you need?</label>
-            <select id="service" name="service">
-              {categories.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-              <option>More than one discipline</option>
-            </select>
-            <label htmlFor="deliverables">Scope / Deliverables</label>
-            <input
-              id="deliverables"
-              name="deliverables"
-              required
-              placeholder="A product experience, a new identity, a campaign…"
-            />
-            <div className="form-columns">
-              <div>
-                <label htmlFor="budget">Budget range (optional)</label>
-                <input
-                  id="budget"
-                  name="budget"
-                  placeholder="Amount and currency"
-                />
-              </div>
-              <div>
-                <label htmlFor="timeline">Target timeline</label>
-                <input
-                  id="timeline"
-                  name="timeline"
-                  placeholder="When would you like to launch?"
-                />
-              </div>
-            </div>
-            <label htmlFor="project-link">
-              Website / Brief link (optional)
-            </label>
-            <input
-              id="project-link"
-              name="briefUrl"
-              type="url"
-              placeholder="https://"
-            />
-          </>
-        )}
-        <label htmlFor="message">
-          {hr
-            ? "About the team and opportunity"
-            : "About the project and its goals"}
-        </label>
-        <textarea id="message" name="message" required rows="4" />
-        <button className="button dark" type="submit">
-          <span>{hr ? "Save hiring inquiry" : "Save project inquiry"}</span>
-          <Arrow />
-        </button>
-        <small className="form-note">
-          Local preview: your inquiry is saved on this device. Nothing is sent.
-        </small>
-        {saved && (
-          <p role="status">
-            Your {hr ? "hiring" : "project"} inquiry draft is saved.
-          </p>
-        )}
-      </form>
-    </main>
-  );
-}
+function Contact(){const page=usePage(),editingPath=React.useContext(EditingPath);return <ProposalContact page={page} previewOnly={Boolean(editingPath)}/>;}
 function Certificates({ certificates }) {
   const page = usePage();
   return (
@@ -1072,753 +884,40 @@ function PagePosts({ projects }) {
 const Studio = React.lazy(()=>import("./cms/Studio.jsx"));
 function LegacyStudioRedirect(){const {pathname}=useLocation();const base=pathname.replace(/\/(edit|new)\/?$/,"")||"/";const isNew=/\/new\/?$/.test(pathname);let to="/studio";if(base.startsWith("/work"))to="/studio/projects"+(isNew?"/new":base.startsWith("/work/")?"/"+base.slice(6):"");else if(base.startsWith("/journal")||base.startsWith("/blog"))to="/studio/articles"+(isNew?"/new":base.split("/")[2]?"/"+base.split("/")[2]:"");else if(base!=="/"&&base!=="/admin")to="/studio/layout?path="+encodeURIComponent(base);return <Navigate to={to} replace/>;}
 function OwnerWorkspace(props) {
-  const location = useLocation(),
-    navigate = useNavigate();
-  const { categories, categoryIds } = React.useContext(Taxonomy);
-  const started = React.useRef(false);
-  const action = /\/new\/?$/.test(location.pathname) ? "new" : "edit";
-  const rawBase = location.pathname.replace(/\/(edit|new)\/?$/, "") || "/";
-  const base = location.pathname === "/studio/layout" ? (new URLSearchParams(location.search).get("path")||"/") : rawBase === "/resume" ? "/about" : rawBase;
-  const { pages, setPages } = React.useContext(PageContent);
-  useEffect(() => {
-    if (action !== "new" || started.current) return;
-    started.current = true;
-    const draft = read("pol-draft", props.projects);
-    if (base === "/journal" || base.startsWith("/journal/")) {
-      const posts = readJournalPosts();
-      const post = { id: "note-" + crypto.randomUUID().slice(0, 8), title: "Untitled note", excerpt: "", date: new Date().toISOString().slice(0, 10), category: "Notes", cover: 0, blocks: [{ id: crypto.randomUUID(), type: "text", title: "A new note", text: "Write your note here." }] };
-      try { cloud.values["pol-blog-posts"]=[...posts,post]; localStorage.setItem("pol-blog-posts", JSON.stringify([...posts, post])); navigate("/journal/" + post.id + "/edit", { replace: true }); } catch { setError("Browser storage is full. No note was created."); }
-      return;
-    }
-    const parent = draft.find((p) => "/work/" + p.id === base);
-    const categoryParam = new URLSearchParams(location.search).get("category");
-    const category =
-      categories[categoryIds.indexOf(categoryParam)] ||
-      parent?.category ||
-      categories[0];
-    const post = {
-      id: "post-" + crypto.randomUUID().slice(0, 8),
-      title: "Untitled post",
-      category,
-      summary: "",
-      cover: 0,
-      sample: false,
-      parentPath: base,
-      blocks: [],
-    };
-    try {
-      cloud.values["pol-draft"]=[...draft,post];
-      localStorage.setItem("pol-draft", JSON.stringify([...draft, post]));
-      navigate("/work/" + post.id + "/edit", { replace: true });
-    } catch {
-      setError("Browser storage is full. No post was created.");
-    }
-  }, [action, base, location.search, navigate]);
-  const [error, setError] = useState("");
-  if (action === "new")
-    return (
-      <main className="owner-login">
-        <p>{error || "Creating a new draft…"}</p>
-      </main>
-    );
-  if (
-    base.startsWith("/work/") &&
-    !read("pol-draft", props.projects).some((p) => "/work/" + p.id === base)
-  )
-    return <NotFound />;
-  return (
-    <Editor
-      {...props}
-      key={base}
-      contextPath={base}
-      pages={pages}
-      setPages={setPages}
-    />
-  );
+ const location=useLocation(),{pages,setPages}=React.useContext(PageContent);
+ const base=new URLSearchParams(location.search).get('path')||'/';
+ if(base.startsWith('/work/'))return <Navigate to={'/studio/projects/'+base.split('/')[2]} replace/>;
+ if(base.startsWith('/journal/'))return <Navigate to={'/studio/articles/'+base.split('/')[2]} replace/>;
+ if(!['/','/work','/journal','/about','/services','/privacy','/contact','/certificates'].includes(base))return <Navigate to="/studio/pages" replace/>;
+ return <Editor {...props} key={base} contextPath={base} pages={pages} setPages={setPages}/>;
 }
-function Editor({
-  projects,
-  setProjects,
-  certificates,
-  setCertificates,
-  contextPath = "/work",
-  pages,
-  setPages,
-  stats,
-  setStats,
-  clients,
-  setClients,
-  blogPosts,
-  setBlogPosts,
-  homeSections,
-  setHomeSections,
-  navItems,
-  setNavItems,
-}) {
-  const { categories, categoryIds, setCategories } = React.useContext(Taxonomy);
-  const [newCategory, setNewCategory] = useState(""),
-    [certificateDraft, setCertificateDraft] = useState(() =>
-      read("pol-certificates-draft", certificates),
-    );
-  const journalContext = contextPath === "/journal" || contextPath.startsWith("/journal/");
-  const [blogDraft, setBlogDraft] = useState(() => read("pol-blog-posts", blogPosts)),
-    [blogIndex, setBlogIndex] = useState(() => Math.max(0, read("pol-blog-posts", blogPosts).findIndex(post => "/journal/" + post.id === contextPath)));
-  const blog = blogDraft[blogIndex];
-  const siteNav = mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav);
-  const editableHomeSections = homeSections?.length ? homeSections : initialHomeSections;
-  function addCategory() {
-    const name = newCategory.trim(),
-      id = slugify(name);
-    if (!id) {
-      setNotice("Enter a category name in English.");
-      return;
-    }
-    if (categoryIds.includes(id)) {
-      setNotice("That category already exists.");
-      return;
-    }
-    setCategories([...categories, name]);
-    setNewCategory("");
-    setNotice("Category added. Save draft to retain it.");
-  }
-  function addPost() {
-    const post = {
-      id: "post-" + crypto.randomUUID().slice(0, 8),
-      title: "Untitled post",
-      category: categories[0],
-      parentPath: contextPath,
-      summary: "",
-      cover: 0,
-      sample: false,
-      blocks: [],
-    };
-    setDraft(current => [...current, post]);
-    setIndex(draft.length);
-    setMode("content");
-    setNotice("New post created. Add your title and content.");
-  }
-  function addBlogPost() {
-    const post = { id: "note-" + crypto.randomUUID().slice(0, 8), title: "Untitled note", excerpt: "", date: new Date().toISOString().slice(0, 10), category: "Notes", cover: 0, blocks: [{ id: crypto.randomUUID(), type: "text", title: "A new note", text: "Write your note here." }] };
-    setBlogDraft(current => [...current, post]); setBlogIndex(blogDraft.length); setMode("journal"); setNotice("New note created. Add your title and copy.");
-  }
-  function patchBlogBlock(blockId, values) {
-    setBlogDraft(drafts => drafts.map((post, i) => i === blogIndex ? { ...post, blocks: (post.blocks || []).map(block => block.id === blockId ? { ...block, ...values } : block) } : post));
-  }
-  function moveBlogBlock(index, direction) {
-    const next = index + direction;
-    if (next < 0 || next >= (blog?.blocks || []).length) return;
-    const blocks = [...(blog.blocks || [])];
-    [blocks[index], blocks[next]] = [blocks[next], blocks[index]];
-    setBlogDraft(blogDraft.map((post, i) => i === blogIndex ? { ...post, blocks } : post));
-  }
-  function removeBlogBlock(blockId) {
-    setBlogDraft(blogDraft.map((post, i) => i === blogIndex ? { ...post, blocks: (post.blocks || []).filter(block => block.id !== blockId) } : post));
-  }
-  function uploadBlogImage(blockId, event) {
-    upload(event, image => patchBlogBlock(blockId, { image }));
-  }
-  function updateNav(index, values) {
-    setNavItems(siteNav.map((item, i) => i === index ? { ...item, ...values } : item));
-  }
-  function moveNav(index, direction) {
-    const next = index + direction;
-    if (next < 0 || next >= siteNav.length) return;
-    const reordered = [...siteNav];
-    [reordered[index], reordered[next]] = [reordered[next], reordered[index]];
-    setNavItems(reordered);
-  }
-  function addNavItem() {
-    setNavItems([...siteNav, { id: "custom-" + crypto.randomUUID().slice(0, 8), label: "New link", to: "/" }]);
-    setNotice("Navigation item added. Set its label and URL, then save the draft.");
-  }
-  function moveHomeSection(index, direction) {
-    const next = index + direction;
-    if (next < 0 || next >= editableHomeSections.length) return;
-    const reordered = [...editableHomeSections];
-    [reordered[index], reordered[next]] = [reordered[next], reordered[index]];
-    setHomeSections(reordered);
-  }
-  function dropHomeSection(index) {
-    if (homeDrag === null || homeDrag === index) return;
-    const reordered = [...editableHomeSections];
-    const [moved] = reordered.splice(homeDrag, 1);
-    reordered.splice(index, 0, moved);
-    setHomeSections(reordered);
-    setHomeDrag(null);
-  }
-  const pageMode = !contextPath.startsWith("/work") && contextPath !== "/admin";
-  const [draft, setDraft] = useState(() => read("pol-draft", projects)),
-    [mode, setMode] = useState(
-      contextPath === "/work" ? "project-library" : contextPath === "/journal" ? "journal-library" : contextPath === "/certificates"
-        ? "certificates"
-        : journalContext
-          ? "journal"
-        : pageMode
-          ? "page"
-          : "content",
-    ),
-    [index, setIndex] = useState(() =>
-      Math.max(
-        0,
-        read("pol-draft", projects).findIndex(
-          (p) => "/work/" + p.id === contextPath,
-        ),
-      ),
-    ),
-    [notice, setNotice] = useState(""),
-    [drag, setDrag] = useState(null),
-    [homeDrag, setHomeDrag] = useState(null),
-    [inspectorOpen, setInspectorOpen] = useState(false);
-  const snapshot=JSON.stringify({draft,pages,categories,stats,clients,siteNav,editableHomeSections,blogDraft,certificateDraft});
-  const [savedSnapshot,setSavedSnapshot]=useState(snapshot);
-  const [saving,setSaving]=useState(false);
-  const dirty=snapshot!==savedSnapshot;
-  const latestSave=React.useRef(null);
-  function commitActiveField(){flushSync(()=>document.activeElement?.blur());}
-  function saveCurrent(){commitActiveField();return latestSave.current.save();}
-  function publishCurrent(){commitActiveField();return latestSave.current.publish();}
-
-  useEffect(()=>{const warn=e=>{if(dirty){e.preventDefault();e.returnValue="";}};window.addEventListener("beforeunload",warn);return ()=>window.removeEventListener("beforeunload",warn);},[dirty]);
-  useEffect(()=>{const shortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();document.activeElement?.blur();setTimeout(()=>document.querySelector(".save-changes")?.click(),0);}};window.addEventListener("keydown",shortcut);return()=>window.removeEventListener("keydown",shortcut);},[]);
-  useEffect(()=>{
-    if(!dirty||saving)return;
-    const timer=window.setTimeout(()=>latestSave.current?.save(),2000);
-    return()=>window.clearTimeout(timer);
-  },[snapshot,dirty,saving]);
-  const p = draft[index];
-  function patch(values) {
-    setDraft((d) => d.map((v, i) => (i === index ? { ...v, ...values } : v)));
-  }
-  function patchProjectById(id, values) {
-    setDraft((d) => d.map((project) => project.id === id ? { ...project, ...values } : project));
-  }
-  function patchStatById(id, values) {
-    setStats(current => current.map(stat => stat.id === id ? { ...stat, ...values } : stat));
-  }
-  function patchClientById(id, values) {
-    setClients(current => current.map(client => client.id === id ? { ...client, ...values } : client));
-  }
-  function patchBlogPostById(id, values) {
-    setBlogDraft(current => current.map(post => post.id === id ? { ...post, ...values } : post));
-  }
-  function blockPatch(id, values) {
-    patch({
-      blocks: p.blocks.map((b) => (b.id === id ? { ...b, ...values } : b)),
-    });
-  }
-  async function save() {
-    if(saving)return false;setSaving(true);
-    try {
-      await saveCloud({schema:1,projects:draft,pages,categories,stats,clients,nav:siteNav,homeSections:editableHomeSections,blogPosts:blogDraft,certificates:certificateDraft});
-      try {
-      localStorage.setItem("pol-draft", JSON.stringify(draft));
-      localStorage.setItem("pol-page-content", JSON.stringify(pages));
-      localStorage.setItem("pol-categories", JSON.stringify(categories));
-      localStorage.setItem("pol-stats", JSON.stringify(stats));
-      localStorage.setItem("pol-clients", JSON.stringify(clients));
-      localStorage.setItem("pol-nav", JSON.stringify(siteNav));
-      localStorage.setItem("pol-home-sections", JSON.stringify(editableHomeSections));
-      localStorage.setItem("pol-blog-posts", JSON.stringify(blogDraft));
-      localStorage.setItem(
-        "pol-certificates-draft",
-        JSON.stringify(certificateDraft),
-      );
-      } catch { /* Cloud save remains authoritative if local backup is full. */ }
-      setSavedSnapshot(snapshot);
-      setNotice("Draft saved to the cloud. Publish when it is ready for visitors.");
-      return true;
-    } catch (error) {
-      setNotice(error.message || "Storage is full. Remove a large image and try again.");return false;
-    }finally{setSaving(false);}
-  }
-  async function publish() {
-    if(saving)return;setSaving(true);
-    try {
-      await saveCloud({schema:1,projects:draft,pages,categories,stats,clients,nav:siteNav,homeSections:editableHomeSections,blogPosts:blogDraft,certificates:certificateDraft},true);
-      try {
-      localStorage.setItem("pol-published", JSON.stringify(draft));
-      localStorage.setItem("pol-page-content", JSON.stringify(pages));
-      localStorage.setItem("pol-categories", JSON.stringify(categories));
-      localStorage.setItem("pol-stats", JSON.stringify(stats));
-      localStorage.setItem("pol-clients", JSON.stringify(clients));
-      localStorage.setItem("pol-nav", JSON.stringify(siteNav));
-      localStorage.setItem("pol-home-sections", JSON.stringify(editableHomeSections));
-      localStorage.setItem("pol-blog-posts", JSON.stringify(blogDraft));
-      localStorage.setItem(
-        "pol-certificates",
-        JSON.stringify(certificateDraft),
-      );
-      } catch { /* Cloud publication succeeded; local cache is optional. */ }
-      setCertificates(certificateDraft);
-      setProjects(draft);
-      setBlogPosts(blogDraft);
-      setSavedSnapshot(snapshot);
-      setNotice("Published. Your changes are now visible to everyone.");
-    } catch (error) {
-      setNotice(error.message || "Storage is full. Reduce image sizes.");
-    }finally{setSaving(false);}
-  }
-  latestSave.current={save,publish};
-  async function upload(e, cb, options) {
-    try {
-      if (e.target.files[0]) cb(await optimizeImage(e.target.files[0],options));
-      setNotice("Image converted to WebP. Save your draft to retain it.");
-    } catch (err) {
-      setNotice(err.message);
-    }
-  }
-  return (
-    <div className={"editor" + (inspectorOpen ? " inspector-open" : " inspector-closed")}>
-      <div className="editor-toolbar" data-editor-ui>
-        <div>
-          <Settings2 size={17} />
-          <b>Desartly Studio</b>
-          <span className="local-badge">{cloud.ready?"CLOUD CMS":"OFFLINE"}</span>
-          <select aria-label="Editing collection" value={mode} onChange={e=>setMode(e.target.value)}>{[["page","Pages"],["project-library","Projects"],["journal-library","Articles"],["certificates","Certificates"],["media","Files"],["site","Navigation"],["settings","Settings"],["content","Project canvas"],["journal","Article canvas"]].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>
-        </div>
-        <div>
-          <button className="inspector-toggle" onClick={() => setInspectorOpen(value => !value)} aria-expanded={inspectorOpen} aria-controls="editor-inspector">
-            <Settings2 size={14} /> {inspectorOpen ? "Close pages" : "Pages & tools"}
-          </button>
-          <span className="save-state" role="status">{saving?"Saving draft…":dirty?"Autosave in 2 seconds":"Draft saved"}</span><button className="dark save-changes" disabled={saving||!dirty} onClick={saveCurrent}>{saving?"Saving…":"Save now"}</button>
-          <button disabled={saving} onClick={publishCurrent}>
-            Publish website
-          </button>
-          <a href={contextPath} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(contextPath);}}}>Exit <X size={16}/></a>
-          <button
-            onClick={async () => {
-              await fetch("/api/owner/logout", { method: "POST" });
-              window.location.assign(contextPath);
-            }}
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-      <div className="save-notice" role="status">{notice||"Save changes keeps a private cloud draft. Publish website makes it public."}</div>
-      <div className="editor-layout">
-        <aside id="editor-inspector" aria-label="Editor map and settings">
-          <div className="studio-map" data-editor-ui><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Content workspace</h2><p>Manage structured content, then refine it directly on the canvas.</p></div><details open><summary>Pages</summary><div className="map-page-grid">{[["/","Home"],["/work","Projects"],["/journal","Journal"],["/about","About"],["/certificates","Certificates"],["/contact","Contact"],["/services","Services"],["/privacy","Privacy"]].map(([path,label])=><a className={contextPath===path?"active":""} key={path} href={path==="/"?"/edit":path+"/edit"} onClick={async e=>{if(dirty){e.preventDefault();if(await saveCurrent())window.location.assign(path==="/"?"/edit":path+"/edit");}}}>{label}</a>)}</div></details>{mode==='page'&&contextPath==='/'&&<details><summary>Home sections</summary>{editableHomeSections.map((section,i)=><button key={section.id} onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelectorAll('.canvas-section')[i]?.scrollIntoView({behavior:'smooth',block:'center'}),0);}}>{section.label||section.id}</button>)}<button onClick={()=>{setInspectorOpen(false);setTimeout(()=>document.querySelector('.editor-canvas footer')?.scrollIntoView({behavior:'smooth'}),0);}}>Footer</button></details>}<details open><summary>Collections</summary><button onClick={()=>{setMode("project-library");setInspectorOpen(false);}}>Projects <span>{draft.length}</span></button><button onClick={()=>{setMode("journal-library");setInspectorOpen(false);}}>Articles <span>{blogDraft.length}</span></button><button onClick={()=>{setMode("certificates");setInspectorOpen(false);}}>Certificates <span>{certificateDraft.length}</span></button></details><details open><summary>Database</summary><button onClick={()=>{setMode("media");setInspectorOpen(false);}}>Files & folders</button></details><details><summary>Site settings</summary><button onClick={()=>{setMode("site");setInspectorOpen(false);}}>Navigation & links</button><button onClick={()=>{setMode("settings");setInspectorOpen(false);}}>Identity & password</button></details></div><details className="map-details"><summary>Page options</summary><div className="editor-tabs" data-editor-ui>
-            <button
-              className={mode === "page" ? "active" : ""}
-              onClick={() => setMode("page")}
-            >
-              Page
-            </button>
-            <button
-              className={mode === "content" ? "active" : ""}
-              onClick={() => setMode("content")}
-            >
-              Content
-            </button>
-            <button className={mode === "site" ? "active" : ""} onClick={() => setMode("site")}>Site</button>
-            <button className={mode === "journal" ? "active" : ""} onClick={() => setMode("journal")}>Journal</button>
-            <button
-              className={mode === "certificates" ? "active" : ""}
-              onClick={() => setMode("certificates")}
-            >
-              Credentials
-            </button>
-          </div>
-          <div className="editor-context" aria-live="polite">
-            <span className="eyebrow">EDITING</span>
-            <strong>{{page: "Page layout", content: "Project canvas", "project-library": "Projects", "project-covers": "Project covers", journal: "Article canvas", "journal-library": "Articles", "journal-covers": "Article covers", media:"Files & folders", site: "Navigation", certificates: "Certificates", settings: "Site settings"}[mode]}</strong>
-            <small>{dirty ? "Draft has unsaved changes" : "Draft is saved"}</small>
-          </div>
-          {["content","project-covers"].includes(mode)&&<button className="add-block" onClick={addPost}>
-            <Plus size={14} /> New post
-          </button>}
-          {["journal","journal-covers"].includes(mode)&&<button className="add-block" onClick={addBlogPost}><Plus size={14}/> New note</button>}
-          {["content","project-covers"].includes(mode)&&<div className="category-create">
-            <label htmlFor="new-category">New category</label>
-            <div>
-              <input
-                id="new-category"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Category name"
-              />
-              <button aria-label="Add category" onClick={addCategory}>
-                <Plus size={15} />
-              </button>
-            </div>
-          </div>}
-          {mode === "site" ? (
-            <>
-              <label>SITE NAVIGATION</label>
-              <p className="form-note">Edit labels, destinations and order. Changes appear in the public header after Publish website.</p>
-              {siteNav.map((item, i) => <div className="nav-edit-row" key={item.id || i}>
-                <span className="nav-edit-index">{String(i + 1).padStart(2, "0")}</span>
-                <input aria-label={`Navigation item ${i + 1} label`} value={item.label} onChange={e => updateNav(i, { label: e.target.value })} />
-                <input aria-label={`Navigation item ${i + 1} URL`} value={item.to} onChange={e => updateNav(i, { to: e.target.value })} placeholder="/page or https://…" />
-                <button type="button" aria-label={`Move navigation item ${i + 1} up`} disabled={i === 0} onClick={() => moveNav(i, -1)}>↑</button>
-                <button type="button" aria-label={`Move navigation item ${i + 1} down`} disabled={i === siteNav.length - 1} onClick={() => moveNav(i, 1)}>↓</button>
-                <button type="button" aria-label={`Remove navigation item ${i + 1}`} onClick={() => setNavItems(siteNav.filter((_, j) => j !== i))}><Trash2 size={13} /></button>
-              </div>)}
-              <button className="add-block" type="button" onClick={addNavItem}><Plus size={14} /> Add navigation item</button>
-            </>
-          ) : mode === "journal" ? (
-            blog ? <>
-              <label>NOTE</label><select value={blogIndex} onChange={e=>setBlogIndex(+e.target.value)}>{blogDraft.map((post,i)=><option key={post.id} value={i}>{post.title}</option>)}</select>
-              <label>Title</label><input value={blog.title} onChange={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,title:e.target.value}:v))}/>
-              <label>Excerpt</label><textarea rows="3" value={blog.excerpt} onChange={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,excerpt:e.target.value}:v))}/>
-              <label>Date</label><input type="date" value={blog.date} onChange={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,date:e.target.value}:v))}/>
-              <label>Category</label><input value={blog.category} onChange={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,category:e.target.value}:v))}/>
-              <label>Cover image</label><input type="file" accept="image/*" onChange={e=>upload(e,image=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,coverImage:image}:v)),{purpose:"cover",aspect:1.5})}/>
-              <button className="add-block" onClick={() => setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,blocks:[...(v.blocks||[]),{id:crypto.randomUUID(),type:"text",title:"New paragraph",text:"Write here."}]}:v))}><Plus size={14}/> Text block</button>
-              <button className="add-block" onClick={() => setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,blocks:[...(v.blocks||[]),{id:crypto.randomUUID(),type:"image",image:"",alt:"",caption:"Add a caption."}]}:v))}><Plus size={14}/> Image block</button>
-              <p className="form-note">Edit directly in the writing canvas. Move or remove blocks beside each module; notes are published with Publish website.</p>
-            </> : <p>No notes yet. Add one above.</p>
-          ) : mode === "page" ? (
-            <>
-              <label>Editing page</label>
-              <p className="editing-path">{contextPath}</p>
-              {(contextPath === "/" ? ["intro", "contactNote"] : ["title", "intro", "body"]).map((field) => (
-                <label key={field}>
-                  {field}
-                  <textarea
-                    rows={field === "intro" ? 4 : 2}
-                    value={pages[contextPath]?.[field] || ""}
-                    placeholder="Use default text"
-                    onChange={(e) =>
-                      setPages({
-                        ...pages,
-                        [contextPath]: {
-                          ...pages[contextPath],
-                          [field]: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </label>
-              ))}
-              {contextPath === "/" && <div className="home-selections"><label>Featured projects</label>{categories.slice(0,3).map((category,i)=><label key={category}>Position 0{i+1}<select value={pages["/"]?.selectedProjects?.[i] || ""} onChange={e => {const selectedProjects=[...(pages["/"]?.selectedProjects || [])];selectedProjects[i]=e.target.value;setPages({...pages,"/":{...pages["/"],selectedProjects}})}}><option value="">Automatic · {category}</option>{draft.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}</select></label>)}</div>}
-              {contextPath === "/" && <div className="home-section-editor"><label>Homepage sections</label><p className="form-note">Drag to reorder, use the arrows for keyboard control, or hide a section temporarily.</p>{editableHomeSections.map((section,i)=><div className="home-section-row" key={section.id} draggable onDragStart={()=>setHomeDrag(i)} onDragOver={e=>e.preventDefault()} onDrop={()=>dropHomeSection(i)} onDragEnd={()=>setHomeDrag(null)}><GripVertical size={14}/><span>{section.label}</span><label className="checkbox"><input type="checkbox" checked={section.visible !== false} onChange={e=>setHomeSections(editableHomeSections.map((v,j)=>j===i?{...v,visible:e.target.checked}:v))}/> Show</label><button type="button" aria-label={`Move ${section.label} up`} disabled={i===0} onClick={()=>moveHomeSection(i,-1)}>↑</button><button type="button" aria-label={`Move ${section.label} down`} disabled={i===editableHomeSections.length-1} onClick={()=>moveHomeSection(i,1)}>↓</button></div>)}</div>}
-              {contextPath === "/" && <div className="home-stat-editor"><label>Home counters</label>{stats.map((stat,i)=><div className="stat-edit-row" key={stat.id}><input aria-label={`${stat.label} value`} value={stat.value} onChange={e=>setStats(stats.map((v,j)=>j===i?{...v,value:e.target.value}:v))}/><input aria-label={`${stat.label} label`} value={stat.label} onChange={e=>setStats(stats.map((v,j)=>j===i?{...v,label:e.target.value}:v))}/><input aria-label={`${stat.label} detail`} value={stat.detail} onChange={e=>setStats(stats.map((v,j)=>j===i?{...v,detail:e.target.value}:v))}/><button type="button" aria-label={`Remove ${stat.label} counter`} onClick={()=>setStats(stats.filter((_,j)=>j!==i))}><Trash2 size={13}/></button></div>)}<button className="add-block" type="button" onClick={()=>setStats([...stats,{id:"stat-"+crypto.randomUUID().slice(0,8),value:"00",label:"New metric",detail:"Add a short proof point."}])}><Plus size={14}/> Add counter</button></div>}
-              {contextPath === "/" && <div className="home-client-editor"><label>Selected collaborations</label>{clients.map((client,i)=><div className="client-edit-row" key={client.id}><input aria-label={`Client ${i+1} name`} value={client.name} onChange={e=>setClients(clients.map((v,j)=>j===i?{...v,name:e.target.value}:v))}/><input aria-label={`Client ${i+1} relationship`} value={client.relationship} onChange={e=>setClients(clients.map((v,j)=>j===i?{...v,relationship:e.target.value}:v))}/><input aria-label={`Client ${i+1} URL`} value={client.url} onChange={e=>setClients(clients.map((v,j)=>j===i?{...v,url:e.target.value}:v))}/><label className="checkbox"><input type="checkbox" checked={client.visible !== false} onChange={e=>setClients(clients.map((v,j)=>j===i?{...v,visible:e.target.checked}:v))}/> Show</label><input type="file" accept="image/*" aria-label={`Client ${i+1} logo`} onChange={e=>upload(e,image=>setClients(clients.map((v,j)=>j===i?{...v,image}:v)))}/><button type="button" aria-label={`Remove client ${i+1}`} onClick={()=>setClients(clients.filter((_,j)=>j!==i))}><Trash2 size={13}/></button></div>)}<button className="add-block" type="button" onClick={()=>setClients([...clients,{id:"client-"+crypto.randomUUID().slice(0,8),name:"Client name",relationship:"Add a collaboration",image:"",url:"",visible:true}])}><Plus size={14}/> Add logo</button></div>}
-              <p className="form-note">
-                Add a new post to this page by appending /new to its URL. Use
-                Content to edit posts.
-              </p>
-            </>
-          ) : mode === "certificates" ? (
-            <>
-              <button
-                className="add-block"
-                onClick={() =>
-                  setCertificateDraft(current => [
-                    ...current,
-                    {
-                      id: crypto.randomUUID(),
-                      title: "New certificate",
-                      issuer: "",
-                      date: "",
-                      url: "",
-                    },
-                  ])
-                }
-              >
-                <Plus size={14} /> Add certificate
-              </button>
-              <p className="form-note">
-                Add your actual credentials, certificate image and verification
-                link. Publish website to show them on the Certificates page.
-              </p>
-            </>
-          ) : mode === "content" ? (
-            <>
-              <label>PROJECT</label>
-              <select value={index} onChange={(e) => setIndex(+e.target.value)}>
-                {draft.map((p, i) => (
-                  <option key={p.id} value={i}>
-                    {p.title}
-                  </option>
-                ))}
-              </select>
-              <ProjectTagsEditor project={p} onChange={patch}/>
-              <label>Title</label>
-              <input
-                value={p.title}
-                onChange={(e) => patch({ title: e.target.value })}
-              />
-              <label>Introduction</label>
-              <textarea
-                rows="4"
-                value={p.summary}
-                onChange={(e) => patch({ summary: e.target.value })}
-              />
-              <label>Square cover</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  upload(e, (image) => patch({ coverImage: image }),{purpose:"cover",aspect:1})
-                }
-              />
-              <label>ADD A SECTION</label>
-              <button
-                className="add-block"
-                onClick={() =>
-                  patch({
-                    blocks: [
-                      ...p.blocks,
-                      {
-                        id: crypto.randomUUID(),
-                        type: "text",
-                        title: "New section",
-                        text: "Write your story here.",
-                      },
-                    ],
-                  })
-                }
-              >
-                <Plus size={16} /> Text section
-              </button>
-              <button
-                className="add-block"
-                onClick={() =>
-                  patch({
-                    blocks: [
-                      ...p.blocks,
-                      {
-                        id: crypto.randomUUID(),
-                        type: "grid",
-                        preset: 1,
-                        images: [],
-                      },
-                    ],
-                  })
-                }
-              >
-                <Plus size={16} /> Image composition
-              </button>
-              <button
-                className="add-block"
-                onClick={() =>
-                  patch({
-                    blocks: [
-                      ...p.blocks,
-                      {
-                        id: crypto.randomUUID(),
-                        type: "html",
-                        title: "UX sample",
-                        html: "<main style='font-family:system-ui;padding:32px;background:#f5f6fa;color:#202632'><p style='font-size:12px;letter-spacing:.08em;text-transform:uppercase'>HTML sample</p><h1 style='font-size:36px;margin:18px 0'>Your UX prototype lives here.</h1><button style='padding:12px 16px;border:1px solid #202632;background:white'>Try the interaction</button></main>",
-                      },
-                    ],
-                  })
-                }
-              >
-                <Plus size={16} /> HTML sample
-              </button>
-              <p className="form-note">
-                Edit directly in the page. Drag section handles to change the
-                order. HTML samples render in a sandboxed preview and never
-                access the parent page.
-              </p>
-            </>
-          ) : null}
-          </details><p className="editor-status" role="status">
-            {notice}
-          </p>
-        </aside>
-        <div className={"editor-canvas"+(mode==="content"?" project-edit-canvas":"")}><div className="canvas-context-bar" data-editor-ui><span>{mode==='page'?contextPath:mode==='content'?'Project':mode==='journal'?'Journal':mode==='media'?'Database':'Studio'}</span>{mode==='content' && <><button onClick={()=>setMode("project-library")}>← All projects</button><select aria-label="Current project" value={index} onChange={e=>setIndex(+e.target.value)}>{draft.map((project,i)=><option key={project.id} value={i}>{project.title}</option>)}</select><button onClick={addPost}><Plus size={14}/> New project</button></>}{mode==='journal' && <><button onClick={()=>setMode("journal-library")}>← All articles</button><select aria-label="Current note" value={blogIndex} onChange={e=>setBlogIndex(+e.target.value)}>{blogDraft.map((post,i)=><option key={post.id} value={i}>{post.title}</option>)}</select><button onClick={addBlogPost}><Plus size={14}/> New article</button></>}<small>Click text to write · use handles to move modules</small></div><EditingPath.Provider value={contextPath}><VisualCopy editable copy={pages["/site"]?.copy || {}} scope="site" onChange={(key,value)=>setPages(current=>({...current,"/site":{...current["/site"],copy:{...current["/site"]?.copy,[key]:value}}}))}>{["content","journal"].includes(mode) && <EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>}
-          {mode === "project-library" ? <CollectionLibrary kind="project" items={draft} setItems={setDraft} onNew={addPost} onOpen={i=>{setIndex(i);setMode("content")}}/> : mode === "journal-library" ? <CollectionLibrary kind="article" items={blogDraft} setItems={setBlogDraft} onNew={addBlogPost} onOpen={i=>{setBlogIndex(i);setMode("journal")}}/> : mode === "media" ? <MediaLibrary onNotice={setNotice}/> : mode === "project-covers" || mode === "journal-covers" ? <CoverManager kind={mode==="journal-covers"?"journal":"work"} items={mode==="journal-covers"?blogDraft:draft} onUpload={optimizeImage} onChange={mode==="journal-covers"?patchBlogPostById:patchProjectById} onNew={mode==="journal-covers"?addBlogPost:addPost} onEdit={i=>{if(mode==="journal-covers"){setBlogIndex(i);setMode("journal");}else{setIndex(i);setMode("content");}}}/> : mode === "settings" ? <SettingsPanel value={pages["/site"]?.settings||{}} onChange={settings=>setPages(current=>({...current,"/site":{...current["/site"],settings}}))}/> : mode === "journal" ? (
-            blog ? <div className="blog-editor-preview"><div className="canvas-insert" data-editor-ui><label>Topic<input value={blog.category||''} onChange={e=>patchBlogPostById(blog.id,{category:e.target.value})}/></label><label>Date<input type="date" value={blog.date||''} onChange={e=>patchBlogPostById(blog.id,{date:e.target.value})}/></label><label>Card cover · 960 × 640 px<input type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patchBlogPostById(blog.id,{coverImage}),{purpose:"cover",aspect:1.5})}/></label></div><div className="blog-post-heading"><span className="eyebrow">{blog.category} / {blog.date}</span><h1 contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,title:e.currentTarget.innerText}:v))}>{blog.title}</h1><p contentEditable suppressContentEditableWarning onBlur={e=>setBlogDraft(blogDraft.map((v,i)=>i===blogIndex?{...v,excerpt:e.currentTarget.innerText}:v))}>{blog.excerpt}</p></div><div className="project-upload-guide" data-editor-ui><h2>Article main image</h2><p>Independent from the card cover. Recommended: 2400 × 1600 px, up to 2560 px wide, high-quality WebP. Optional: leave empty for a text-first article.</p><label>Upload article main image<input type="file" accept="image/*" onChange={e=>upload(e,heroImage=>patchBlogPostById(blog.id,{heroImage}))}/></label>{blog.heroImage&&<button onClick={()=>patchBlogPostById(blog.id,{heroImage:""})}>Remove main image</button>}</div>{blog.heroImage&&<div className="blog-post-cover"><img src={blog.heroImage} alt={blog.title}/></div>}<div className="canvas-insert" data-editor-ui><span>Start with a template</span>{Object.entries(articleTemplates).map(([name,markdown])=><button key={name} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type:'markdown',markdown}]})}>{name}</button>)}<span>Or add a module</span>{['text','image','html','markdown'].map(type=><button key={type} onClick={()=>patchBlogPostById(blog.id,{blocks:[...(blog.blocks||[]),{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',html:'',image:'',caption:''}]})}><Plus size={14}/> {type === 'html' ? 'HTML file / prototype' : type}</button>)}</div><BlogEditorBlocks blocks={blog.blocks || []} onPatch={patchBlogBlock} onMove={moveBlogBlock} onRemove={removeBlogBlock} onUpload={uploadBlogImage} onReorder={blocks=>patchBlogPostById(blog.id,{blocks})}/></div> : null
-          ) : mode === "page" ? (
-              contextPath === "/" ? <div className="home-edit-preview"><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/><Home projects={draft} stats={stats} clients={clients} blogPosts={blogDraft} homeSections={editableHomeSections} pageOverride={pages["/"] || {}} editable onPagePatch={values=>setPages(current=>({...current,"/":{...current["/"],...values}}))} onProjectTitleChange={(id,title)=>patchProjectById(id,{title})} onStatsChange={patchStatById} onClientChange={patchClientById} onClientsChange={setClients} onBlogChange={patchBlogPostById} onSectionsChange={setHomeSections} onFeaturedOrder={selectedProjects=>setPages(current=>({...current,"/":{...current["/"],selectedProjects}}))} onCoverChange={(id,coverImage)=>patchProjectById(id,{coverImage})} onFeaturedChange={(i,id)=>{const selectedProjects=[...(pages["/"]?.selectedProjects||[])];selectedProjects[i]=id;setPages({...pages,"/":{...pages["/"],selectedProjects}});}}/><Footer/></div> : (
-            <><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/>{contextPath === '/about' ? <About/> : contextPath === '/resume' ? <About/> : contextPath === '/services' ? <Services/> : contextPath === '/contact' ? <Contact/> : contextPath === '/work' ? <Work projects={draft}/> : ['/journal','/blog'].includes(contextPath) ? <Journal blogPosts={blogDraft}/> : <EditablePagePreview contextPath={contextPath} pages={pages} navItems={siteNav} onNavChange={updateNav} onPagePatch={values=>setPages({...pages,[contextPath]:{...pages[contextPath],...values}})}/>}<PageModules blocks={pages[contextPath]?.blocks || []} onChange={blocks=>setPages({...pages,[contextPath]:{...pages[contextPath],blocks}})}/><Footer/></>
-            )
-          ) : mode === "certificates" ? (
-            <CredentialEditor items={certificateDraft} onChange={setCertificateDraft} onUpload={file => optimizeImage(file)} onNotice={setNotice}/>
-          ) : mode === "site" ? (
-            <div className="site-edit-preview"><EditableHeader navItems={siteNav} onNavChange={updateNav} onReorder={setNavItems} onAdd={addNavItem} onRemove={i=>setNavItems(siteNav.filter((_,j)=>j!==i))}/><p data-editor-ui className="form-note">Edit menu labels in place. Use the grip to move a link and its settings button to change the destination.</p><Footer/></div>
-          ) : (
-            <main className="project-page project-editor-page">
-              <div className="project-heading">
-                <span className="eyebrow">
-                  {p.category} /{" "}
-                  {p.sample === false ? "CASE STUDY" : "CONCEPT STUDY"}
-                </span>
-                <h1
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => patch({ title: e.target.innerText })}
-                >
-                  {p.title}
-                </h1>
-                <p contentEditable suppressContentEditableWarning onBlur={e=>patch({summary:e.currentTarget.innerText})}>{p.summary}</p>
-              </div>
-              <section className="project-upload-guide" data-editor-ui><div><span>01 / PROJECT COVER</span><h2>Choose the image that introduces your project.</h2><p>This square cover appears on project cards and the homepage feature. Choose the main image for the case-study page separately below.</p></div><label className="upload-cover-button">{p.coverImage ? 'Replace project cover' : 'Upload project cover'}<input aria-label="Upload project cover" type="file" accept="image/*" onChange={e=>upload(e,coverImage=>patch({coverImage}),{purpose:"cover",aspect:1})}/></label><small>Card cover: 960 × 960 px (1:1). Centre-cropped and compressed separately for fast loading. This image never appears inside the project.</small></section>
-              <section className="project-upload-guide" data-editor-ui><div><span>02 / CASE-STUDY MAIN IMAGE</span><h2>A separate opening image for this project.</h2><p>Recommended: 2400 × 2400 px. This image opens the case study; it does not change the card cover. Optional. If empty, no opening image is shown. Your card cover is never used here.</p></div><label>Upload main image<input aria-label="Upload main image" type="file" accept="image/*" onChange={e=>upload(e,heroImage=>patch({heroImage}))}/></label>{p.heroImage&&<button onClick={()=>patch({heroImage:""})}>Remove main image</button>}</section>
-              <div className="project-hero">
-                {p.heroImage ? (
-                  <img src={p.heroImage} alt="Project main image" />
-                ) : (
-                  <div className="main-image-empty" data-editor-ui>No main image selected. This space is hidden on the public project.</div>
-                )}
-              </div>
-              <CaseFields project={p} onChange={patch}/><div className="canvas-insert" data-editor-ui><div className="case-content-guide"><strong>03 / CASE-STUDY CONTENT</strong><p>Add text and image compositions below. These images belong inside the story and do not replace your cover. Full-width: 2400 px wide, any aspect ratio. Two-column images: at least 1200 px wide each. Fine text and diagrams: export at 2× display size.</p></div><ProjectTagsEditor project={p} onChange={patch}/>{['text','image','grid','html'].map(type=><button key={type} onClick={()=>patch({blocks:[...p.blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',preset:1,images:[],html:''}]})}><Plus size={14}/>{type==='grid'?'Image composition':type==='image'?'Full-width image':type==='html'?'HTML file / prototype':'Text'}</button>)}</div>
-              <SortableGroup
-                as="div"
-                axis="y"
-                values={p.blocks}
-                onReorder={(blocks) => patch({ blocks })}
-                className="block-list"
-              >
-                {p.blocks.map((b, i) => (
-                  <SortableBlock key={b.id} value={b}>
-                    {(controls) => (
-                      <>
-                        <div className="block-controls" data-editor-ui>
-                          <button
-                            onPointerDown={(e) => controls.start(e)}
-                            className="drag-handle"
-                            aria-label="Drag section"
-                          >
-                            <GripVertical size={16} />
-                          </button>
-                          <small>
-                            {b.type === "text" ? "TEXT" : b.type === "html" ? "HTML SAMPLE" : "IMAGE COMPOSITION"} /{" "}
-                            {String(i + 1).padStart(2, "0")}
-                          </small>
-                          <button
-                            aria-label="Move up"
-                            disabled={i === 0}
-                            onClick={() => {
-                              const blocks = [...p.blocks];
-                              [blocks[i - 1], blocks[i]] = [
-                                blocks[i],
-                                blocks[i - 1],
-                              ];
-                              patch({ blocks });
-                            }}
-                          >
-                            ↑
-                          </button>
-                          <button
-                            aria-label="Move down"
-                            disabled={i === p.blocks.length - 1}
-                            onClick={() => {
-                              const blocks = [...p.blocks];
-                              [blocks[i + 1], blocks[i]] = [
-                                blocks[i],
-                                blocks[i + 1],
-                              ];
-                              patch({ blocks });
-                            }}
-                          >
-                            ↓
-                          </button>
-                          <button
-                            aria-label="Duplicate section"
-                            onClick={() =>
-                              patch({
-                                blocks: [
-                                  ...p.blocks.slice(0, i + 1),
-                                  { ...b, id: crypto.randomUUID() },
-                                  ...p.blocks.slice(i + 1),
-                                ],
-                              })
-                            }
-                          >
-                            <Copy size={14} />
-                          </button>
-                          <button
-                            aria-label="Delete section"
-                            onClick={() =>
-                              patch({
-                                blocks: p.blocks.filter((x) => x.id !== b.id),
-                              })
-                            }
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                        {b.type === "text" ? (
-                          <section className="text-block">
-                            <h2
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(e) =>
-                                blockPatch(b.id, {
-                                  title: e.target.innerText,
-                                })
-                              }
-                            >
-                              {b.title}
-                            </h2>
-                            <p
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(e) =>
-                                blockPatch(b.id, { text: e.target.innerText })
-                              }
-                            >
-                              {b.text}
-                            </p>
-                          </section>
-                        ) : b.type === "image" ? (
-                          <figure className="case-single-image"><div data-editor-ui><label>Upload case-study image<input type="file" accept="image/*" onChange={e=>upload(e,image=>blockPatch(b.id,{image}))}/></label><label>Image description<input value={b.alt||""} onChange={e=>blockPatch(b.id,{alt:e.target.value})}/></label><label>Caption<input value={b.caption||""} onChange={e=>blockPatch(b.id,{caption:e.target.value})}/></label></div>{b.image&&<img src={b.image} alt={b.alt||"Project detail"}/>}</figure>
-                        ) : b.type === "html" ? (
-                          <HtmlPreview block={b} editable onChange={html=>blockPatch(b.id,{html})} onTitleChange={title=>blockPatch(b.id,{title})} />
-                        ) : (
-                          <>
-                            <div className="preset-picker" data-editor-ui>
-                              {presets.map((preset) => (
-                                <button
-                                  className={
-                                    Number(b.preset) === preset.id
-                                      ? "active"
-                                      : ""
-                                  }
-                                  key={preset.id}
-                                  title={"Grid " + preset.id}
-                                  onClick={() =>
-                                    blockPatch(b.id, { preset: preset.id })
-                                  }
-                                >
-                                  <GridPreview id={preset.id} />
-                                  <small>
-                                    {String(preset.id).padStart(2, "0")}
-                                  </small>
-                                </button>
-                              ))}
-                            </div>
-                            <Grid block={b} cover={p.cover} />
-                            <div className="grid-uploads" data-editor-ui>
-                              {Array.from(
-                                { length: presets[Number(b.preset) - 1].count },
-                                (_, j) => (
-                                  <label key={j}>
-                                    Image {j + 1}
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={(e) =>
-                                        upload(e, (image) => {
-                                          const images = [...(b.images || [])];
-                                          images[j] = image;
-                                          blockPatch(b.id, { images });
-                                        })
-                                      }
-                                    />
-                                  </label>
-                                ),
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </SortableBlock>
-                ))}
-              </SortableGroup>
-            </main>
-          )}
-        {["content","journal","certificates"].includes(mode) && <Footer/>}</VisualCopy></EditingPath.Provider></div>
-      </div>
-    </div>
-  );
+function Editor({projects,certificates,contextPath='/',pages,setPages,stats,setStats,clients,setClients,blogPosts,homeSections,setHomeSections}) {
+ const [certificateDraft,setCertificateDraft]=useState(certificates);
+ const [notice,setNotice]=useState(''),[saving,setSaving]=useState(false),[inspectorOpen,setInspectorOpen]=useState(false);
+ const page=pages[contextPath]||{};
+ const payload={path:contextPath,page,...contextPath==='/'?{stats,clients,homeSections}:{},...contextPath==='/certificates'?{certificates:certificateDraft}:{}};
+ const snapshot=JSON.stringify(payload),[savedSnapshot,setSavedSnapshot]=useState(snapshot),dirty=snapshot!==savedSnapshot;
+ const latest=React.useRef(null);
+ const patch=values=>setPages(current=>({...current,[contextPath]:{...current[contextPath],...values}}));
+ async function save(publish=false){
+  if(saving)return false;setSaving(true);
+  try{const r=await fetch('/api/cms/page',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,publish,draftVersion:cloud.version})});const data=await r.json();if(!r.ok)throw Error(data.error);cloud.version=data.draftVersion;setSavedSnapshot(snapshot);setNotice(publish?'This page is live. Other drafts remain private.':'Page draft saved.');return true;}catch(e){setNotice(e.message);return false;}finally{setSaving(false);}
+ }
+ latest.current=save;
+ function commit(publish){flushSync(()=>document.activeElement?.blur());return latest.current(publish);}
+ useEffect(()=>{const warn=e=>{if(dirty){e.preventDefault();e.returnValue='';}};const shortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){e.preventDefault();commit(false);}};window.addEventListener('beforeunload',warn);window.addEventListener('keydown',shortcut);return()=>{window.removeEventListener('beforeunload',warn);window.removeEventListener('keydown',shortcut);};},[dirty]);
+ async function leave(e,url){if(dirty){e.preventDefault();if(await commit(false))window.location.assign(url);}}
+ const pageLinks=[['/','Home'],['/work','Projects'],['/journal','Journal'],['/about','About'],['/contact','Contact'],['/certificates','Certificates'],['/services','Services'],['/privacy','Privacy']];
+ return <div className={'editor page-studio '+(inspectorOpen?'inspector-open':'inspector-closed')}>
+ <div className="editor-toolbar" data-editor-ui><div><a className="studio-return" href="/studio/pages" onClick={e=>leave(e,'/studio/pages')}><ArrowLeft size={16}/> Studio</a><b>Page editor</b><span className="local-badge">{pageLinks.find(([p])=>p===contextPath)?.[1]}</span></div><div><button className="inspector-toggle" onClick={()=>setInspectorOpen(!inspectorOpen)} aria-expanded={inspectorOpen} aria-controls="editor-inspector">{inspectorOpen?'Close options':'Page options'}</button><span className="save-state" role="status">{saving?'Saving…':dirty?'Unsaved changes':'Saved'}</span><button className="save-changes" disabled={saving||!dirty} onClick={()=>commit(false)}>Save draft</button><button className="dark" disabled={saving} onClick={()=>commit(true)}>Publish this page</button><a href={contextPath} target="_blank" rel="noreferrer">View live <ArrowUpRight size={15}/></a></div></div>
+ <div className="save-notice" role="status">{notice||'Edit page copy and layout here. Manage projects, articles and media in Studio.'}</div>
+ <div className="editor-layout"><aside id="editor-inspector" aria-label="Page options"><div className="studio-map"><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages</h2></div><div className="map-page-grid">{pageLinks.map(([path,label])=><a key={path} href={'/studio/layout?path='+encodeURIComponent(path)} className={path===contextPath?'active':''} onClick={e=>leave(e,e.currentTarget.href)}>{label}</a>)}</div><p className="form-note">Projects, journal, media, navigation and site settings have one home in Studio.</p><a href="/studio" onClick={e=>leave(e,'/studio')}>Open workspace ↗</a></div>
+ {(contextPath==='/'?['title','subtitle','intro','contactNote']:['title','intro','body']).map(field=><label key={field}>{field}<textarea rows={3} value={page[field]||''} placeholder="Use default text" onChange={e=>patch({[field]:e.target.value})}/></label>)}
+ {contextPath==='/'&&<div className="home-selections"><label>Featured projects</label>{[0,1,2].map(i=><label key={i}>Position {i+1}<select value={page.selectedProjects?.[i]||''} onChange={e=>{const ids=[...(page.selectedProjects||[])];ids[i]=e.target.value;patch({selectedProjects:ids});}}><option value="">Automatic</option>{projects.filter(isVisibleProject).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}
+ </aside><div className="editor-canvas" onClickCapture={e=>{if(e.target.closest("a")&&!e.target.closest("[data-editor-ui]"))e.preventDefault();}}><div className="canvas-context-bar" data-editor-ui><span>{contextPath}</span><small>Click page text to edit · Save draft · Publish this page</small></div>
+ <EditingPath.Provider value={contextPath}>
+ {contextPath==='/'?<Home projects={projects.filter(isVisibleProject)} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} pageOverride={page} editable onPagePatch={patch} onStatsChange={(id,v)=>setStats(list=>list.map(s=>s.id===id?{...s,...v}:s))} onClientChange={(id,v)=>setClients(list=>list.map(s=>s.id===id?{...s,...v}:s))} onClientsChange={setClients} onSectionsChange={setHomeSections} onFeaturedOrder={selectedProjects=>patch({selectedProjects})} onFeaturedChange={(i,id)=>{const ids=[...(page.selectedProjects||[])];ids[i]=id;patch({selectedProjects:ids});}}/>:contextPath==='/certificates'?<CredentialEditor items={certificateDraft} onChange={setCertificateDraft} onUpload={file=>optimizeImage(file)} onNotice={setNotice}/>:<><VisualCopy editable scope="site" copy={page.copy||{}} onChange={(key,value)=>patch({copy:{...page.copy,[key]:value}})}>{contextPath==='/about'?<About/>:contextPath==='/services'?<Services/>:contextPath==='/contact'?<Contact/>:contextPath==='/work'?<div className="page"><h1>{page.title||'Projects'}</h1><p>{page.intro||'Product thinking. Visual identities. Ideas that move.'}</p><p data-editor-ui>Project cards are managed in Studio → Projects.</p></div>:contextPath==='/journal'?<div className="page"><h1>{page.title||'Journal'}</h1><p>{page.intro||'Notes on design and making things.'}</p><p data-editor-ui>Articles are managed in Studio → Journal.</p></div>:<main className="page"><h1>{page.title||'Privacy'}</h1><p>{page.intro}</p><p>{page.body}</p></main>}</VisualCopy><PageModules blocks={page.blocks||[]} onChange={blocks=>patch({blocks})}/></>}
+ </EditingPath.Provider></div></div></div>;
 }
 function NotFound() {
   return (
@@ -1868,28 +967,18 @@ function App() {
           setCategories: setTaxonomy,
         }}
       >
-        <VisualCopy copy={pages["/site"]?.copy || {}} scope="site">
+        <VisualCopy copy={{...pages["/site"]?.copy,...pages[location.pathname]?.copy}} scope="site">
         <SiteMotion disabled={edit}/>
         <a className="skip" href="#main">
           Skip to content
         </a>
         {!edit && (
-          <header>
-            <Link className="logo" to="/" aria-label="Desartly home">
-              Desartly<span>®</span>
-            </Link>
-            <span className="header-name">
-              ALI KOMEILI
-              <br />
-              DESIGN PORTFOLIO
-            </span>
-            <nav>{mergeNavigation(Array.isArray(navItems) ? navItems : defaultNav).map(item => <SiteNavLink key={item.id || item.to} item={item} active={location.pathname === item.to} />)}</nav>
-          </header>
+          <PublicHeader items={Array.isArray(navItems)?navItems:defaultNav}/>
         )}
         <div id="main">
           {isWorkspace && location.pathname!=="/studio/layout" ? <LegacyStudioRedirect/> : isWorkspace ? (
             <OwnerGate>
-              <Link className="cms-legacy-back" to="/studio/pages">← Back to Studio</Link>
+
               <React.Suspense fallback={<p className="page">Loading editor…</p>}><OwnerWorkspace
                 {...{
                   projects,
@@ -1941,11 +1030,7 @@ function App() {
                   <main className="page narrow">
                     <h1>{pages["/privacy"]?.title || "Privacy, simply."}</h1>
                     <p>
-                      This local frontend preview stores edited content and
-                      inquiry drafts in your browser. It does not send inquiries
-                      or connect to analytics or cloud storage. Owner access
-                      uses a server-verified session cookie. A production
-                      privacy policy will be added before launch.
+                      {pages["/privacy"]?.body || "When you contact me, I use the details you share to discuss your project and prepare a proposal. If you choose the email option, your email app sends the message to Komeilipv@gmail.com. Requests submitted directly through this site are stored privately in my workspace. To ask about your information or request its removal, email Komeilipv@gmail.com. Owner access uses a secure session cookie."}
                     </p>
                   </main>
                 }

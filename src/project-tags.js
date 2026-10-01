@@ -1,8 +1,8 @@
-export const disciplines = ['Product', 'Branding', 'Advertising'];
+export const disciplines = ['Product', 'Branding', 'Communication Design'];
 export function projectDiscipline(project) {
  const value = String(project.discipline || project.category || 'Product');
- if (/brand|identity|packag/i.test(value)) return 'Branding';
- if (/advert|campaign/i.test(value)) return 'Advertising';
+ if (/communicat|advert|campaign|packag|touchpoint/i.test(value)) return 'Communication Design';
+ if (/brand|identity/i.test(value)) return 'Branding';
  return 'Product';
 }
 const knownIndustries = {flightio:'OTA','afc-qatar':'Sports & Events',airbnb:'Travel & Hospitality',digikala:'E-commerce',divar:'Classifieds',toypet:'Pet Care',myom:'Food & Beverage',noghteh:'Design & Creative Services','cafe-de-la-corte':'Food & Beverage','mci-5g':'Telecommunications'};
