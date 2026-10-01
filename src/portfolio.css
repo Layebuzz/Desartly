@@ -305,3 +305,21 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 .project-flightio-ota .case-image-pair figure{margin:0;min-width:0}
 .project-flightio-ota .case-image-pair img{display:block;width:100%;height:auto;object-fit:contain}
 @media(max-width:700px){.project-flightio-ota .case-image-pair{grid-template-columns:1fr}}
+
+/* AFC Qatar: editorial presentation, continuous page scroll. */
+.project-afc-qatar .project-heading{max-width:950px;padding-top:60px;padding-bottom:55px}
+.project-afc-qatar .project-heading h1{font-size:clamp(38px,5.1vw,72px);font-weight:500;letter-spacing:-.055em;max-width:16ch}
+.project-afc-qatar .project-heading p{max-width:55ch;color:#847b74;line-height:1.8}
+.project-afc-qatar .text-block{padding:0;margin:80px 0 48px;border:0;display:grid;grid-template-columns:1fr 1fr;gap:12%;align-items:start}
+.project-afc-qatar .text-block h2{font-size:clamp(30px,3.5vw,49px);line-height:1.12;letter-spacing:-.045em;font-weight:500;max-width:15ch;margin:19px 0 0;color:#382b32}
+.project-afc-qatar .text-block .eyebrow{font-size:9px;letter-spacing:.16em;color:#9a828e}
+.project-afc-qatar .text-block p{font-size:13px;line-height:1.95;color:#8c8077;max-width:48ch;padding-top:26px}
+.project-afc-qatar .html-block{max-width:none;width:100%;margin:0 0 90px;overflow:clip;border-radius:10px}
+.project-afc-qatar .html-block iframe.auto-height-preview{display:block;width:100%;max-height:none;border:0;overflow:hidden;background:#ebe6df}
+.project-afc-qatar .case-single-image{margin:0 0 85px;border-radius:8px;overflow:hidden;background:#eee7de}
+.project-afc-qatar .case-note{border-top:1px solid #e7ddd2;padding-top:35px;margin-top:40px;margin-bottom:90px}
+.project-afc-qatar .case-note h2{font-size:clamp(25px,2.7vw,38px)}
+@media(max-width:700px){.project-afc-qatar .project-heading{padding-top:30px;padding-bottom:35px}.project-afc-qatar .text-block{grid-template-columns:1fr;gap:12px;margin:48px 0 27px}.project-afc-qatar .text-block p{padding-top:5px;font-size:13px}.project-afc-qatar .text-block h2{font-size:34px;max-width:18ch}.project-afc-qatar .html-block{margin-bottom:55px;border-radius:6px}.project-afc-qatar .case-single-image{margin-bottom:48px}.project-afc-qatar .project-overview .project-overview-copy>.client-profile .client-profile-description{border-left:0}}
+
+.project-afc-qatar .project-overview-copy{background:#f7f1f3;border-color:#e9dfe3}
+.project-afc-qatar .project-overview .case-brief-data dl>div,.project-afc-qatar .project-overview .project-overview-copy>.client-profile,.project-afc-qatar .project-overview .project-overview-copy>.client-profile .client-profile-description{border-color:#e3d7dd}

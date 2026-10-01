@@ -1,21 +1,20 @@
 # AFC Qatar case study
 
-Database content, not an application import. `node content/afc-qatar/build.mjs` merges the three standalone HTML studies into `project.json`. This JSON is appended to both published and draft project arrays, with revision guards and a pre-publication backup. Existing portfolio content is preserved.
+Database content, not an application import. `node content/afc-qatar/build.mjs` merges two standalone HTML experiences into a ~50 KB project JSON. Guarded publication appends the project to draft and published arrays after backing up the database state. Other content is preserved.
 
-Only `afc-qatar` is added to the public project allowlist. `ClientProfile` accepts an optional label so Flightio is correctly identified as the project intermediary. No HTML, project JSON or new UI library is included in the browser JavaScript bundle. Fonts and WebP/AVIF media are loaded as assets by the relevant project view.
+AFC Qatar is the client; Flightio is credited as intermediary. The overview uses the shared portfolio card with a subtle burgundy tint. The cover contains only campaign artwork and the transparent AFC logo.
 
 ## Content and provenance
 
-- AFC and Flightio logos: supplied by the portfolio owner.
-- Stadium image: AI-generated illustrative campaign artwork using the built-in image tool; not a documentary tournament photo.
-- Cover: browser-rendered HTML composition over that artwork.
-- Wireframe: reconstructed SVG design study, not claimed as original research evidence.
-- Fixtures, categories and prices: illustrative prototype data. No purchases, reservations, live availability or conversion results.
-- User-provided visual reference: https://dribbble.com/shots/26778623-Football-team-page. Its page title and palette were accessible; the original artwork did not load during this session. No reference artwork is reproduced.
-- Fonts: Barlow Condensed, Caveat and Manrope from Google Fonts, with their OFL notices alongside the hosted font assets.
+- Owner-supplied AFC and Flightio logos, transparent cutouts generated with the image tool.
+- AI-generated sculpture campaign cover, Qatar-inspired architectural hero and graphite/burgundy wireframe image. Illustrative design assets, not documentary photography or original research evidence.
+- Browser-composed cover with optimized AVIF/WebP variants.
+- Instrument Serif and Manrope fonts, OFL notices in the asset folder.
+- Illustrative fixtures, categories and prices. No live purchases, reservations or measured conversion claims.
+- Reference direction: https://dribbble.com/shots/26778623-Football-team-page. No reference artwork is reproduced.
 
-Image prompt: Premium photorealistic football campaign background for AFC Asian Cup Qatar. Night-time Gulf stadium, deep burgundy and near-black, silver floodlights, a maroon-kit football player seen from behind on the right entering a green pitch, packed crowd and curved roof. Dark negative space on the left for typography. Editorial sports photography, no text, logos or UI.
+## Interaction and delivery
 
-## Verification
+The two sandboxed HTML blocks follow the parent page scroll and report their content height. Scroll reveals, gentle parallax, magnetic controls, seat selection, animated totals and saved encounter state respect reduced motion. No nested scrollbars or new UI dependencies. Images and fonts are external project assets; HTML stays out of the JavaScript bundle.
 
-Existing automated tests and production build pass. Browser checks cover the desktop and 390px mobile layout, team filters, dialog preview, stand selection, guest count and total, saved-team state, and embedded iframe sizing. The HTML respects reduced-motion preferences and uses native buttons/dialog keyboard behavior.
+Existing tests and production build pass. Browser verification covers desktop/mobile, client attribution, team filters, seat categories, guest count, totals, saved state and continuous iframe sizing.

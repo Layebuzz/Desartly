@@ -435,21 +435,48 @@ function HtmlPreview(props) {
 }
 function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
   const frameRef = React.useRef(null);
-  const [frameHeight, setFrameHeight] = useState(640);
+  const [frameHeight, setFrameHeight] = useState(() => window.matchMedia("(max-width:700px)").matches ? (block.mobileHeight || 640) : (block.previewHeight || 640));
   useEffect(() => {
     if (!block.autoHeight) return;
     const resize = event => {
       if (event.source !== frameRef.current?.contentWindow || event.data?.type !== "desartly:preview-size") return;
       const height = Number(event.data.height);
-      if (Number.isFinite(height) && height >= 100 && height <= 4000) setFrameHeight(Math.ceil(height));
+      if (Number.isFinite(height) && height >= 100 && height <= 16000) setFrameHeight(Math.ceil(height) + (block.scrollSync ? 2 : 0));
     };
     window.addEventListener("message", resize);
     return () => window.removeEventListener("message", resize);
-  }, [block.autoHeight]);
+  }, [block.autoHeight, block.scrollSync]);
+  useEffect(() => {
+    if (!block.scrollSync) return;
+    let frame = 0;
+    const send = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const node = frameRef.current;
+        if (!node) return;
+        node.contentWindow?.postMessage({type:"desartly:preview-viewport", top:-node.getBoundingClientRect().top, height:window.innerHeight}, "*");
+      });
+    };
+    const message = event => {
+      if (event.source !== frameRef.current?.contentWindow) return;
+      if (event.data?.type === "desartly:preview-ready") send();
+      if (event.data?.type === "desartly:preview-scroll") {
+        const top = Number(event.data.top);
+        const node = frameRef.current;
+        if (!node || !Number.isFinite(top) || top < 0 || top > node.clientHeight) return;
+        window.scrollTo({top:window.scrollY + node.getBoundingClientRect().top + top - 24, behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"});
+      }
+    };
+    window.addEventListener("scroll", send, {passive:true});
+    window.addEventListener("resize", send);
+    window.addEventListener("message", message);
+    send();
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", send); window.removeEventListener("resize", send); window.removeEventListener("message", message); };
+  }, [block.scrollSync]);
   const html = block.html || "<main style='font-family:system-ui;padding:32px;background:#f5f6fa;color:#202632'><p style='font-size:12px;letter-spacing:.08em;text-transform:uppercase'>HTML sample</p><h1 style='font-size:36px;margin:18px 0'>Your UX prototype lives here.</h1><button style='padding:12px 16px;border:1px solid #202632;background:white'>Try the interaction</button></main>";
   return <section className={"html-block" + (editable ? " html-block-editor" : "")}>
     {editable && <><label className="html-upload" data-editor-ui>Upload HTML file<input type="file" accept=".html,.htm,text/html" onChange={async e => { const file=e.target.files?.[0]; if (!file) return; if(file.size>2000000){e.target.setCustomValidity("Choose an HTML file under 2 MB.");e.target.reportValidity();return;} onChange?.(await file.text()); }}/></label><input className="html-block-title" aria-label="HTML sample title" value={block.title || "UX sample"} onChange={e=>onTitleChange?.(e.target.value)} /><textarea aria-label="HTML sample source" value={html} onChange={e=>onChange?.(e.target.value)} spellCheck={false} /></>}
-    <iframe ref={frameRef} loading="lazy" className={block.autoHeight?"auto-height-preview":undefined} style={block.autoHeight?{height:frameHeight}:undefined} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={html} />
+    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={block.autoHeight?{height:frameHeight}:undefined} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={html} />
   </section>;
 }
 function Footer() {
