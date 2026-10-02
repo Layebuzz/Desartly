@@ -54,6 +54,7 @@ import { CollectionLibrary, MediaLibrary } from "./ContentLibrary";
 import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
+import "./case-system.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
 import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
@@ -711,12 +712,12 @@ function Project({ projects }) {
       </div>}
       {p.blocks.filter(b=>b.type!=='text'||(b.text?.trim()&&!/Use this space|Describe your role|Write here\./.test(b.text))).map((b) =>
         b.type === "text" ? (
-          <section className={"text-block"+(b.layout==="chapter"?" case-chapter":b.layout==="statement"?" case-statement":b.layout==="interlude"?" case-interlude":b.layout==="note"?" case-note":"")} key={b.id}>
+          <section className={"text-block"+((!b.layout||b.layout==="chapter")?" case-chapter":b.layout==="statement"?" case-statement":b.layout==="interlude"?" case-interlude":b.layout==="note"?" case-note":"")} key={b.id}>
             <div>{b.chapter&&<span className="eyebrow">{b.chapter}</span>}<h2>{b.title}</h2></div>
             <p>{b.text}</p>
           </section>
         ) : b.type === "image" ? (
-          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy"/></figure>
+          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy" style={b.aspectRatio?{aspectRatio:b.aspectRatio,objectFit:b.fit||"cover"}:undefined}/></figure>
         ) : b.type === "markdown" ? <MarkdownContent source={b.markdown} key={b.id}/> : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (
