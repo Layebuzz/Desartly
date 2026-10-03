@@ -1,3 +1,4 @@
+import {WorkFilters} from './WorkFilters.jsx';
 import {ProposalContact} from './ProposalContact.jsx';
 import {previewHtml} from './cms/html-preview.js';
 import {isVisibleProject} from './cms/visibility.js';
@@ -640,24 +641,7 @@ function Work({ projects }) {
             "Product thinking. Visual identities. Ideas that move."}
         </p>
       </div>
-      <div className="work-filter-toolbar"><div className="filters discipline-filters" role="group" aria-label="Design discipline">
-        {["All projects", ...visibleCategories].map((c, i) => (
-          <button
-            key={c}
-            aria-pressed={active === (i ? slugify(c) : null)}
-            className={active === (i ? slugify(c) : null) ? "active" : ""}
-            onClick={() => setParams(i ? { category: slugify(c) } : {})}
-          >
-            {c}
-            <span className="filter-count">
-              {i
-                ? projects.filter((p) => matchesCategory(p, c)).length
-                : projects.length}
-            </span>
-          </button>
-        ))}
-      </div>
-      <label>Industry<select value={industry||''} onChange={e=>setParams({...active?{category:active}:{},...e.target.value?{industry:e.target.value}:{}})}><option value="">All industries</option>{industries.map(name=><option key={name} value={slugify(name)}>{name} ({disciplineProjects.filter(p=>projectIndustry(p)===name).length})</option>)}</select></label><div className="industry-filter-bar"><p role="status">{disciplineProjects.filter(p=>!industry||slugify(projectIndustry(p))===industry).length} projects <span>across {industry ? '1 industry' : industries.length+' industries'}</span></p>{(active||industry)&&<button className="filter-reset" onClick={()=>setParams({})}>Reset filters <X size={14}/></button>}</div></div>
+      <WorkFilters projects={projects} active={active} industry={industry} setParams={setParams}/>
       {!disciplineProjects.some(p=>!industry||slugify(projectIndustry(p))===industry)&&<p className="filter-empty">No projects in this selection. <button onClick={()=>setParams({})}>View all projects</button></p>}
       <AnimatePresence mode="wait" initial={false}>
       <motion.div key={(active || "all")+(industry||"")} className="cards work-results"
