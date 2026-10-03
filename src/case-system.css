@@ -19,7 +19,7 @@
 .project-page .case-single-image{margin:0 0 clamp(42px,7vw,106px)}
 .project-page .case-single-image img{display:block;width:100%;height:auto}
 /* Covers use a square box independent of neighbouring text height. */
-.project-card .cover,.intro-slide-visual,.project-overview-cover,.project-suggestion-cover,.cms-shell .cms-card-image{aspect-ratio:1/1;height:auto;min-height:0;align-self:start;position:relative;overflow:hidden}
+.project-card .cover,.intro-slide-visual,.project-overview-cover,.project-suggestion-cover,.cms-shell .cms-card-image{aspect-ratio:1/1;width:100%;height:auto;min-height:0;align-self:start;position:relative;overflow:hidden}
 .project-card .cover>img,.intro-slide-visual>img,.project-overview-cover>img,.project-suggestion-cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .project-suggestion-card{align-items:start;min-height:0}
 /* A single corner token for controls and bounded surfaces; circles remain circles. */
