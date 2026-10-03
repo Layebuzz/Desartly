@@ -19,7 +19,7 @@ export function materialize(site){
  if(!existingFlightio)site.projects.push(structuredClone(flightioPresentation));
  else if(existingFlightio.presentationVersion!==flightioPresentation.presentationVersion)Object.assign(existingFlightio,structuredClone(flightioPresentation));
  for(const project of site.projects||[]){
-  if(project.year===undefined||project.year===null){const years={divar:2025,toypet:2023,myom:2024,'cafe-de-la-corte':2022,noghteh:2021};project.year=String(years[project.id]||2021+[...project.id].reduce((sum,c)=>sum+c.charCodeAt(0),0)%5);}
+  if(project.year===undefined||project.year===null){const years={divar:2025,toypet:2023,myom:2024,'cafe-de-la-corte':2022,noghteh:2021};project.year=years[project.id]?String(years[project.id]):'';}
   if(project.id==='divar'){
    if(!Array.isArray(project.tags))project.tags=structuredClone(divarPresentation.tags);
    project.clientName=divarPresentation.clientName;project.clientLogo=divarPresentation.clientLogo;project.clientDescription=divarPresentation.clientDescription;

@@ -657,7 +657,7 @@ function Work({ projects }) {
           </button>
         ))}
       </div>
-      <label>Industry<select value={industry||''} onChange={e=>setParams({...active?{category:active}:{},...e.target.value?{industry:e.target.value}:{}})}><option value="">All industries</option>{industries.map(name=><option key={name} value={slugify(name)}>{name} ({disciplineProjects.filter(p=>projectIndustry(p)===name).length})</option>)}</select></label></div><div className="industry-filter-bar"><p role="status">{disciplineProjects.filter(p=>!industry||slugify(projectIndustry(p))===industry).length} projects <span>across {industry ? '1 industry' : industries.length+' industries'}</span></p>{(active||industry)&&<button className="filter-reset" onClick={()=>setParams({})}>Reset filters <X size={14}/></button>}</div>
+      <label>Industry<select value={industry||''} onChange={e=>setParams({...active?{category:active}:{},...e.target.value?{industry:e.target.value}:{}})}><option value="">All industries</option>{industries.map(name=><option key={name} value={slugify(name)}>{name} ({disciplineProjects.filter(p=>projectIndustry(p)===name).length})</option>)}</select></label><div className="industry-filter-bar"><p role="status">{disciplineProjects.filter(p=>!industry||slugify(projectIndustry(p))===industry).length} projects <span>across {industry ? '1 industry' : industries.length+' industries'}</span></p>{(active||industry)&&<button className="filter-reset" onClick={()=>setParams({})}>Reset filters <X size={14}/></button>}</div></div>
       {!disciplineProjects.some(p=>!industry||slugify(projectIndustry(p))===industry)&&<p className="filter-empty">No projects in this selection. <button onClick={()=>setParams({})}>View all projects</button></p>}
       <AnimatePresence mode="wait" initial={false}>
       <motion.div key={(active || "all")+(industry||"")} className="cards work-results"
@@ -1049,4 +1049,5 @@ function App() {
 }
 const root = createRoot(document.getElementById("root"));
 root.render(<SiteBootSkeleton/>);
-bootstrapCloud().finally(() => root.render(<BrowserRouter><App /></BrowserRouter>));
+function ContentUnavailable(){return <main className="content-unavailable" role="alert"><a href="/">Desartly</a><h1>A brief pause.</h1><p>The portfolio could not load. Please try again in a moment.</p><button className="button dark" onClick={()=>location.reload()}>Try again</button><a href="mailto:Komeilipv@gmail.com">Contact Ali</a></main>}
+bootstrapCloud().finally(() => root.render(cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<BrowserRouter><App /></BrowserRouter>));

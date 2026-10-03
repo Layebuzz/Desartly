@@ -32,3 +32,13 @@ body .cms-shell button,body .cms-shell .cms-button,body .cms-shell .cms-primary,
  .project-suggestion-copy p{display:none}
  .project-suggestion-cover{width:100%;aspect-ratio:1;height:auto}
 }
+/* Controls and surfaces share one radius; semantic circles are exempt. */
+body .proposal-form,body .proposal-services label,body .proposal-status,body .work-filter-toolbar,body .work-filter-toolbar .filters.discipline-filters,body .project-suggestion-cover,body .intro-slide-visual,body .composition-block img,body .case-single-image img{border-radius:var(--control-radius)}
+.work-filter-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:16px;border:1px solid #e1e3e9;background:#fafafd;margin-bottom:32px}
+.work-filter-toolbar .filters.discipline-filters{background:transparent;padding:0;border:0;box-shadow:none}
+.work-filter-toolbar>label{display:grid;gap:6px;font-size:11px}
+.work-filter-toolbar .industry-filter-bar{grid-column:1/-1;margin:0;padding:12px 0 0;border-top:1px solid #e1e3e9;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.work-filter-toolbar .industry-filter-bar p{margin:0}
+.work-filter-toolbar .filter-reset{min-height:44px}
+.content-unavailable{max-width:640px;margin:15vh auto;padding:32px}.content-unavailable h1{font-size:48px}.content-unavailable p{line-height:1.8}.content-unavailable .button{margin:24px 24px 24px 0;cursor:pointer}
+@media(max-width:1000px){.work-filter-toolbar{grid-template-columns:1fr}.work-filter-toolbar>label{grid-template-columns:auto 1fr;align-items:center}.work-filter-toolbar select{max-width:none}.work-filter-toolbar .industry-filter-bar{flex-wrap:wrap}}

@@ -1,10 +1,9 @@
-import {materialize} from './cms/materialize.js';
 export const cloud={ready:false,version:0,values:{},error:'',allowLocal:false};
 const fields={'pol-published':'projects','pol-draft':'projects','pol-categories':'categories','pol-certificates':'certificates','pol-certificates-draft':'certificates','pol-page-content':'pages','pol-nav':'nav','pol-stats':'stats','pol-clients':'clients','pol-blog-posts':'blogPosts','pol-home-sections':'homeSections'};
-function load(site){if(!site)return;materialize(site);for(const [key,field]of Object.entries(fields)){if(site[field]!==undefined)cloud.values[key]=site[field];}}
+function load(site){if(!site)return;for(const [key,field]of Object.entries(fields)){if(site[field]!==undefined)cloud.values[key]=site[field];}}
 export async function bootstrapCloud(){
  try{
-  const r=await fetch('/api/site',{signal:AbortSignal.timeout(6000)});if(!r.ok)throw Error('Cloud content unavailable');const data=await r.json();cloud.ready=true;
+  const r=await fetch('/api/site',{signal:AbortSignal.timeout(6000)});if(!r.ok)throw Error('Cloud content unavailable');const data=await r.json();if(!data.site||!Array.isArray(data.site.projects))throw Error('Published content unavailable');cloud.ready=true;
   const editing=/\/(edit|new)\/?$/.test(location.pathname)||location.pathname==='/admin'||location.pathname.startsWith('/studio')||location.pathname.startsWith('/preview/');
   cloud.allowLocal=editing;
   if(editing){const response=await fetch('/api/studio');if(response.ok){const state=await response.json();cloud.version=state.draftVersion||0;load(state.draftVersion?state.draft:data.site);return;}}

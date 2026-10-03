@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {"source": "/api/media/:id", "destination": "https://desartly.layebuzz.workers.dev/api/media/:id"},
+    {"source": "/api/:path*", "destination": "/api/backend?__route=/api/:path*"},
+    {"source": "/mcp", "destination": "/api/backend?__route=/mcp"},
+    {"source": "/((?!api/|assets/|projects/|brand/|fonts/).*)", "destination": "/index.html"}
+  ],
+  "headers": [
+    {"source": "/studio/:path*", "headers": [{"key":"X-Robots-Tag","value":"noindex, nofollow"},{"key":"Cache-Control","value":"no-store"}]},
+    {"source": "/login", "headers": [{"key":"X-Robots-Tag","value":"noindex, nofollow"}]}
+  ]
+}
