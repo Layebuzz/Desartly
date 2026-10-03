@@ -1,3 +1,4 @@
+import {FilterTabs} from './FilterTabs.jsx';
 import {WorkFilters} from './WorkFilters.jsx';
 import {ProposalContact} from './ProposalContact.jsx';
 import {previewHtml} from './cms/html-preview.js';
@@ -56,6 +57,7 @@ import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
 import "./case-system.css";
+import "./discovery.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
 import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
@@ -177,8 +179,9 @@ function SiteNavLink({ item, active }) {
 function PublicHeader({items}){
  const location=useLocation(),[open,setOpen]=useState(false);
  useEffect(()=>setOpen(false),[location.pathname]);
+ useEffect(()=>{if(!open)return;const key=e=>{if(e.key==='Escape'){setOpen(false);document.querySelector('.nav-more')?.focus();}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[open]);
  const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
- return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}>{open?'Close':'More'} <span aria-hidden="true">{open?'−':'+'}</span></button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.filter(item=>!['/work','/contact'].includes(item.to||item.url)).map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)}/>)}</div></header>;
+ return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}>{open?'Close':'More'} <span aria-hidden="true">{open?'−':'+'}</span></button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.filter(item=>!['/work','/contact'].includes(item.to||item.url)).map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const [selected, setSelected] = useState(null);
@@ -571,8 +574,8 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
 }
 function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
- return <section className="contact-band folio-contact compact-contact">
-   <div className="contact-sketch" aria-hidden="true"><img src="/brand/samurai/ready-stance.webp" alt="" width="100" height="100"/><svg viewBox="0 0 130 30" fill="none"><path d="M5 21C29 10 53 27 78 16S108 8 123 13M8 25C43 16 62 27 88 20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg></div>
+ return <section className="contact-band folio-contact compact-contact samurai-invitation">
+   <div className="contact-signal" aria-hidden="true"><span className="signal-orbit"/><span className="signal-cut"/><span className="signal-caption">間 / MA<br/>SPACE FOR THE NEXT MOVE</span></div>
    <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "A clear brief."} second={page.contactSubtitle ?? "A considered next move."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Share the idea. I’ll help shape the direction."}</p></div>
    <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Request a proposal</span><Arrow/></Link>
  </section>;
@@ -590,11 +593,12 @@ function Journal({ blogPosts }) {
   const chooseTopic = topic => setParams({...query ? {q:query} : {},...topic.id === "all" ? {} : {topic:topic.id}});
   return <main className="page journal-page">
     <div className="page-title"><span className="eyebrow">THE JOURNAL / {blogPosts.length} NOTES</span><h1>{page.title || "Notes from the practice."}</h1><p>{page.intro || "Small observations on product thinking, visual systems and the work between."}</p></div>
-    <div className="journal-layout">
-      <aside className="journal-topics" aria-label="Journal topics">
-        <label className="journal-search">Search notes<input type="search" aria-label="Search notes" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label><span className="eyebrow">TOPICS</span>
-        <div>{topics.map(topic => <button key={topic.id} type="button" className={activeTopic === topic.id ? "active" : ""} aria-pressed={activeTopic === topic.id} onClick={() => chooseTopic(topic)}><span>{topic.label}</span><span>{countFor(topic)}</span></button>)}</div>
-      </aside>
+    <section className="journal-discovery" aria-label="Filter journal">
+      <div className="work-explorer-top"><span className="work-explorer-label">FIELD NOTES</span><span className="work-explorer-result" role="status">{visiblePosts.length} notes{(query||activeTopic!=='all')&&<button onClick={()=>setParams({})}>Clear filters</button>}</span></div>
+      <div className="work-explorer-controls"><FilterTabs label="Journal topics" value={activeTopic} onChange={id=>chooseTopic({id})} items={topics.map(t=>({...t,count:countFor(t)}))}/>
+      <label className="journal-discovery-search"><span>Search the journal</span><input type="search" aria-label="Search notes" placeholder="An idea, a topic…" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label></div>
+    </section>
+    <div className="journal-layout journal-layout-full">
       <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post}/>) : <p className="empty-state">No notes in this topic yet.</p>}</div>
     </div>
   </main>;

@@ -47,3 +47,6 @@ body .proposal-form,body .proposal-services label,body .proposal-status,body .wo
 body .folio-contact,body .folio-contact a,body .contact-band,body .contact-band a,body .portfolio-action,body .blog-cover,body .blog-cover img,body .managed-cover,body .article-cover,body .certificate-card,body .certificate-image{border-radius:var(--control-radius);overflow:hidden}
 
 body .credential-cover{border-radius:var(--control-radius);overflow:hidden}
+/* Named legacy surfaces also use the shared corner token. */
+body .client-profile,body .project-edit-canvas .case-fields,body .about-certificates-card,body .credential-fields,body .credential-library-card,body .credential-library-image,body .credential-image-preview,body .credential-empty-state,body .resume-profile .honours-card,body .resume-profile .software-list{border-radius:var(--control-radius);overflow:hidden}
+body .credential-fields input:not([type=checkbox]),body .credential-fields textarea{border-radius:var(--control-radius)}

@@ -4,13 +4,113 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    {"source": "/api/media/:id", "destination": "https://desartly.layebuzz.workers.dev/api/media/:id"},
-    {"source": "/api/:path*", "destination": "/api/backend?__route=/api/:path*"},
-    {"source": "/mcp", "destination": "/api/backend?__route=/mcp"},
-    {"source": "/((?!api/|assets/|projects/|brand/|fonts/).*)", "destination": "/index.html"}
+    {
+      "source": "/robots.txt",
+      "destination": "/api/public?path=/robots.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/public?path=/sitemap.xml"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/api/public?path=/manifest.webmanifest"
+    },
+    {
+      "source": "/",
+      "destination": "/api/public?path=/"
+    },
+    {
+      "source": "/:page(work|journal|about|services|certificates|contact|privacy)",
+      "destination": "/api/public?path=/:page"
+    },
+    {
+      "source": "/:area(work|journal)/:slug",
+      "destination": "/api/public?path=/:area/:slug"
+    },
+    {
+      "source": "/api/media/:id",
+      "destination": "https://desartly.layebuzz.workers.dev/api/media/:id"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/backend?__route=/api/:path*"
+    },
+    {
+      "source": "/mcp",
+      "destination": "/api/backend?__route=/mcp"
+    },
+    {
+      "source": "/((?!api/|assets/|projects/|brand/|fonts/).*)",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
-    {"source": "/studio/:path*", "headers": [{"key":"X-Robots-Tag","value":"noindex, nofollow"},{"key":"Cache-Control","value":"no-store"}]},
-    {"source": "/login", "headers": [{"key":"X-Robots-Tag","value":"noindex, nofollow"}]}
-  ]
+    {
+      "source": "/studio/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/login",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/preview/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "api/public.js": {
+      "includeFiles": "dist/index.html"
+    }
+  }
 }

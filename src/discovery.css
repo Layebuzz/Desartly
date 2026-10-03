@@ -1,0 +1,33 @@
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-control:420ms;--discovery-text:clamp(14px,1.15vw,17px)}
+.discovery-tabs{display:flex;flex-wrap:wrap;gap:8px clamp(16px,2.4vw,36px);min-width:0}
+.discovery-tabs button{position:relative;display:flex;align-items:center;gap:9px;min-height:52px;padding:12px 0;border:0;background:transparent;color:var(--muted,#697080);font:400 var(--discovery-text)/1.5 "DM Sans",sans-serif;letter-spacing:-.025em;cursor:pointer;transition:color var(--motion-control) var(--motion-ease)}
+.discovery-tabs button sup{align-self:flex-start;margin-top:3px;color:#697080;font-size:10px;letter-spacing:0;font-variant-numeric:tabular-nums}
+.discovery-tabs button[aria-pressed=true],.discovery-tabs button:hover{color:var(--ink,#202632)}
+.discovery-tabs button i{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:6px;background:#8255db}
+.discovery-tabs button:focus-visible,.journal-discovery :focus-visible{outline:2px solid #8255db;outline-offset:5px}
+.work-explorer .industry-trigger{font-size:14px;font-weight:400;letter-spacing:-.015em}
+.work-explorer .industry-trigger svg{transition:transform var(--motion-control) var(--motion-ease)}
+.industry-popover{animation:discovery-enter .36s var(--motion-ease) both}
+@keyframes discovery-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.journal-discovery{padding-bottom:22px;margin-bottom:40px;border-bottom:1px solid var(--line,#dfe1e8)}
+.journal-discovery-search{display:grid;gap:6px;flex:0 0 260px;font-size:11px;color:var(--muted)}
+.journal-discovery-search input{width:100%;min-height:46px;border:1px solid var(--line);padding:10px 14px;background:#faf9fc;color:var(--ink);font:14px "DM Sans",sans-serif}
+.journal-layout.journal-layout-full{display:block}.journal-layout-full .blog-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.folio-contact.compact-contact.samurai-invitation{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(180px,.65fr) minmax(0,1.6fr) auto;gap:clamp(24px,4vw,64px);padding:clamp(32px,5vw,72px);border:1px solid #303543;background:#202632;color:#fff}
+.samurai-invitation .contact-signal{height:210px;position:relative;display:grid;place-items:center}
+.signal-orbit{width:152px;height:152px;border:1px solid #aca1c766;border-radius:50%;box-shadow:inset 0 0 44px #b19cd918;transition:transform .8s var(--motion-ease)}
+.signal-cut{position:absolute;width:200px;height:1px;background:#d9c8ff;transform:rotate(-48deg);box-shadow:0 0 22px #c3a4ff70;transition:transform .8s var(--motion-ease)}
+.signal-cut:after{content:'';position:absolute;right:0;top:-2px;width:5px;height:5px;border-radius:50%;background:#f2eaff}
+.signal-caption{position:absolute;bottom:-6px;left:0;font:9px/1.8 "DM Sans",sans-serif;letter-spacing:.15em;color:#b7adc9}
+.samurai-invitation:hover .signal-cut,.samurai-invitation:focus-within .signal-cut{transform:rotate(-38deg) translateX(8px)}
+.folio-contact.samurai-invitation>.contact-invitation{color:#f8f6fc}
+.folio-contact.samurai-invitation .eyebrow{color:#c9b7ee;letter-spacing:.12em}
+.folio-contact.samurai-invitation h2{font-size:clamp(30px,3.2vw,48px);line-height:1.13;letter-spacing:-.04em;max-width:23ch;margin:18px 0;text-wrap:balance}
+.folio-contact.samurai-invitation .contact-invitation p{color:#c1c4d0;font-size:15px;max-width:38ch}
+.folio-contact.compact-contact.samurai-invitation>a.contact-primary{background:#d9c8ff;color:#202632;border:1px solid transparent;min-width:180px;transition:background var(--motion-control) var(--motion-ease),transform var(--motion-control) var(--motion-ease)}
+.folio-contact.samurai-invitation>a.contact-primary:hover{background:#e7ddff;transform:translateY(-3px)}
+.samurai-invitation a:focus-visible{outline:2px solid #fff;outline-offset:6px}
+@media(max-width:1000px){.folio-contact.compact-contact.samurai-invitation{grid-template-columns:160px 1fr}.folio-contact.compact-contact.samurai-invitation>a.contact-primary{grid-column:2;justify-self:start}.samurai-invitation .contact-signal{grid-row:1/3}}
+@media(max-width:850px){.discovery-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;width:100%}.discovery-tabs button{justify-content:space-between}.journal-discovery-search{flex-basis:auto;width:100%}}
+@media(max-width:600px){.folio-contact.compact-contact.samurai-invitation{grid-template-columns:1fr;padding:30px;gap:24px}.samurai-invitation .contact-signal{height:140px;grid-row:auto;place-items:center end}.signal-orbit{width:110px;height:110px;margin-right:22px}.signal-cut{right:0;width:150px}.signal-caption{bottom:28px}.folio-contact.compact-contact.samurai-invitation>a.contact-primary{grid-column:1;justify-self:stretch}.journal-layout-full .blog-list{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.discovery-tabs *,.industry-popover,.signal-orbit,.signal-cut,.samurai-invitation a{animation:none!important;transition:none!important}.samurai-invitation:hover .signal-cut,.samurai-invitation:focus-within .signal-cut{transform:rotate(-48deg)}.folio-contact.samurai-invitation>a.contact-primary:hover{transform:none}}
