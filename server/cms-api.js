@@ -1,3 +1,4 @@
+import {mediaArchitecture,libraryFolders} from '../src/cms/media-architecture.js';
 import {personalities} from '../src/cms/growth-model.js';
 import {editorialStandard} from './editorial-standard.js';
 import { updatePage } from "./page-service.js";
@@ -29,6 +30,7 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
+  ["cms_media_architecture","Read the mandatory library folder and filename rules and allowed destinations before uploading.",{},[],true],
   ["cms_growth","Read portfolio coverage, achievements and next-project suggestions. Personality labels reflect design intent. Assign by analysis only when the owner explicitly requests it.",{},[],true],
   ["cms_editorial_standard","Read the mandatory portfolio copy standard, evidence rules and paragraph budgets.",{},[],true],
   [
@@ -130,6 +132,8 @@ const tools = [
     {
       name: { type: "string" },
       mimeType: { type: "string" },
+      folder: { type: "string", description:"Exact folder from cms_media_architecture. Create the document first." },
+      alt: { type: "string" },
       base64: { type: "string" },
     },
     ["name", "mimeType", "base64"],
@@ -199,7 +203,7 @@ export const contentSchema = {
     composition: {id:"unique-id",type:"composition",preset:1,images:[],imageRoles:[]},
   },
   workflow:
-    'Create or save a draft, preview it in /studio, then publish that document. Read the latest version before saving or publishing. Upload assets through cms_upload; never commit content to source code. HTML runs in a sandbox without access to CMS cookies. For autoHeight, post {type:"desartly:preview-size",height:document.body.scrollHeight} to parent. No original research or measured outcomes should be invented.',
+    'Create or save a draft, preview it in /studio, then publish that document. Read the latest version before saving or publishing. Read cms_media_architecture, create the content draft to establish its folder, and upload assets through cms_upload with folder and alt; never commit content to source code. HTML runs in a sandbox without access to CMS cookies. For autoHeight, post {type:"desartly:preview-size",height:document.body.scrollHeight} to parent. No original research or measured outcomes should be invented.',
 };
 export async function cmsResponse(request, env, store, media, transform) {
   const url = new URL(request.url),
@@ -281,6 +285,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       if (name === "cms_get") return readDocument(state, args.kind, args.id);
       if (name === "cms_media_list")
         return (state.media || []).map(({ variants, ...item }) => item);
+      if (name === "cms_media_architecture") return {...mediaArchitecture,allowedFolders:libraryFolders(state)};
       if (name === "cms_upload") {
         requireScope("write");
         if (typeof args.base64 !== "string" || args.base64.length > 5600000)
@@ -296,6 +301,8 @@ export async function cmsResponse(request, env, store, media, transform) {
           headers: {
             "Content-Type": String(args.mimeType),
             "X-File-Name": encodeURIComponent(String(args.name || "Upload")),
+            "X-Media-Folder":encodeURIComponent(String(args.folder||"Site assets")),
+            "X-Media-Alt":encodeURIComponent(String(args.alt||"")),
             Origin: url.origin,
           },
           body: bytes,

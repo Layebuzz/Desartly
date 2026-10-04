@@ -1,3 +1,4 @@
+import {validateFolder} from '../src/cms/media-architecture.js';
 import {mediaAction} from './media-service.js';
 import {webpSize} from './webp-size.js';
 import {proposalPayload,telegramProposalText} from './proposal-payload.js';
@@ -19,6 +20,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
  if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!(env.B2_BUCKET_ID&&env.B2_KEY_ID&&env.B2_APP_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
  if(path==='/api/studio/upload'&&request.method==='POST'){
+  const folder=validateFolder(state,decodeURIComponent(request.headers.get('X-Media-Folder')||'Site assets'));
   const bytes=await bounded(request,12*1024*1024);const type=request.headers.get('Content-Type')||'';const id=crypto.randomUUID();const name=decodeURIComponent(request.headers.get('X-File-Name')||'Upload').slice(0,180);let variants=[];
   if(['image/png','image/jpeg','image/webp','image/gif','image/avif'].includes(type)){
    if(!transform){if(type!=='image/webp'||new TextDecoder().decode(bytes.slice(0,4))!=='RIFF'||new TextDecoder().decode(bytes.slice(8,12))!=='WEBP')throw Object.assign(Error('Upload an optimized WebP image.'),{status:415});variants=[{...webpSize(bytes),bytes}];}else variants=await transform(bytes);for(const v of variants){Object.assign(v,webpSize(v.bytes));v.asset=await media.put(id+'-'+v.width+'.webp',v.bytes,'image/webp');v.size=v.bytes.byteLength;delete v.bytes;}
@@ -26,7 +28,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   }else if(type==='application/pdf'&&new TextDecoder().decode(bytes.slice(0,5))==='%PDF-')variants=[{width:0,size:bytes.length,asset:await media.put(id+'.pdf',bytes,type)}];
   else if((type==='video/mp4'&&new TextDecoder().decode(bytes.slice(4,8))==='ftyp')||(type==='video/webm'&&bytes[0]===0x1a&&bytes[1]===0x45&&bytes[2]===0xdf&&bytes[3]===0xa3))variants=[{width:0,size:bytes.length,asset:await media.put(id,bytes,type)}];
   else return json({error:'Choose a supported image, PDF, MP4 or WebM file.'},415);
-  const item={id,name,type:variants[0].width?'image/webp':type,url:'/api/media/'+id,variants,alt:'',folder:'Uploads',createdAt:new Date().toISOString()};await save({...state,media:[...state.media,item]});return json({item,revision:state.revision});
+  const item={id,name,type:variants[0].width?'image/webp':type,url:'/api/media/'+id,variants,alt:decodeURIComponent(request.headers.get('X-Media-Alt')||'').slice(0,300),folder,createdAt:new Date().toISOString()};await save({...state,media:[...state.media,item]});return json({item,revision:state.revision});
  }
  if(path.startsWith('/api/media/')&&request.method==='GET'){
   const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&(item.trashedAt||!references(state.published,id))))return json({error:'Media not found.'},404);
@@ -63,7 +65,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   }
   if(path==='/api/studio/media-action'){await save(mediaAction(state,body));return json({ok:true,revision:state.revision});}
   if(path==='/api/studio/media'){
-   const item=state.media.find(m=>m.id===body.id);if(!item)return json({error:'Media not found'},404);item.alt=String(body.alt||'').slice(0,300);item.folder=String(body.folder||'Uploads').slice(0,80);item.name=String(body.name||item.name).slice(0,180);await save(state);return json({ok:true});
+   const item=state.media.find(m=>m.id===body.id);if(!item)return json({error:'Media not found'},404);item.alt=String(body.alt||'').slice(0,300);item.folder=validateFolder(state,String(body.folder||item.folder||'Site assets'));item.name=String(body.name||item.name).slice(0,180);await save(state);return json({ok:true});
   }
   if(path==='/api/studio/inquiry'){
    await save({...state,inbox:body.remove?state.inbox.filter(i=>i.id!==body.id):state.inbox.map(i=>i.id===body.id?{...i,status:body.status==='done'?'done':'new'}:i)});return json({ok:true});

@@ -182,13 +182,18 @@ function SiteNavLink({ item, active }) {
   return <Link to={to} {...props}>{item.label}{item.arrow && <ArrowUpRight size={13} />}</Link>;
 }
 function PublicHeader({items}){
- const location=useLocation(),[open,setOpen]=useState(false);
+ const location=useLocation(),[open,setOpen]=useState(false),header=React.useRef(null);
  useEffect(()=>setOpen(false),[location.pathname]);
- useEffect(()=>{if(!open)return;const key=e=>{if(e.key==='Escape'){setOpen(false);document.querySelector('.nav-more')?.focus();}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[open]);
+ useEffect(()=>{if(!open)return;
+ const close=()=>{setOpen(false);header.current?.querySelector('.nav-more')?.focus();};
+ const key=e=>{if(e.key==='Escape'){e.preventDefault();close();}};
+ const outside=e=>{if(!header.current?.contains(e.target))setOpen(false);};
+ document.addEventListener('keydown',key);document.addEventListener('pointerdown',outside);
+ return()=>{document.removeEventListener('keydown',key);document.removeEventListener('pointerdown',outside);};},[open]);
  const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
- return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
+ return <header ref={header} className="public-header" onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setOpen(false);}}><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open} onClick={()=>setOpen(false)}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
-function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Contact',Mail]].map(([to,label,Icon])=><Link key={to} to={to} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
+function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Start project',ArrowUpRight]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
 function EntryPage(props){const [mobile]=useState(()=>window.matchMedia('(max-width:700px)').matches);return mobile?<Navigate to="/work" replace/>:<Home {...props}/>;}
 function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
@@ -639,7 +644,7 @@ function Work({ projects }) {
   const disciplineProjects = projects.filter(p=>!active||slugify(projectDiscipline(p))===active);
   const industries = [...new Set(disciplineProjects.map(projectIndustry).filter(Boolean))].sort();
   return (
-    <main className="page">
+    <main className="page work-page">
       <div className="page-title work-title-with-samurai">
         <img className="samurai-edge" src="/brand/samurai/edge-hang.webp" alt="" width="140" height="140" aria-hidden="true"/>
         <span className="eyebrow">
@@ -730,7 +735,7 @@ function About() {
   const page = usePage();
   return (
     <main className="page about">
-      <span className="eyebrow">ALI KOMEILI / THE PRACTICE</span>
+      <div className="page-title"><span className="eyebrow">ALI KOMEILI / THE PRACTICE</span>
       <h1>
         {page.title || (
           <>
@@ -739,7 +744,7 @@ function About() {
             <span>everything I do.</span>
           </>
         )}
-      </h1>
+      </h1></div>
       <div className="about-grid">
         <div className="portrait-art">
           <img src="/brand/samurai/drawing.webp" alt="The scribbled samurai, Ali Komeili’s personal design character" width="400" height="400"/><small>Ali Komeili<br/>Designer · Desartly</small>
@@ -800,7 +805,7 @@ function Services() {
   const { categories, categoryIds } = React.useContext(Taxonomy);
   return (
     <main className="page">
-      <span className="eyebrow">WAYS TO WORK TOGETHER</span>
+      <div className="page-title"><span className="eyebrow">WAYS TO WORK TOGETHER</span>
       <h1>
         {page.title || (
           <>
@@ -809,7 +814,7 @@ function Services() {
             to a considered result.
           </>
         )}
-      </h1>
+      </h1></div>
       <div className="services">
         {categories.map((c, i) => (
           <div key={c}>
@@ -839,11 +844,11 @@ function Certificates({ certificates }) {
   const page = usePage();
   return (
     <main className="page certificates-page">
-      <span className="eyebrow">LEARNING / CREDENTIALS</span>
+      <div className="page-title"><span className="eyebrow">LEARNING / CREDENTIALS</span>
       <h1>{page.title || "Always a student."}</h1>
       <p className="lead">
         A record of learning, practice and new perspectives.
-      </p>
+      </p></div>
       {certificates.length ? (
         <React.Suspense fallback={<p className="credential-loading">Loading credentials…</p>}><CredentialGallery certificates={certificates}/></React.Suspense>
       ) : (

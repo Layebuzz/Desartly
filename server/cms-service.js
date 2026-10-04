@@ -1,3 +1,4 @@
+import {libraryFolders} from '../src/cms/media-architecture.js';
 import {growthMetrics,personalities} from '../src/cms/growth-model.js';
 import { materialize } from "../src/cms/materialize.js";
 import {
@@ -141,7 +142,7 @@ export function cmsView(state) {
       documentSummary(state, "article", d),
     ),
     media: state.media || [],
-    mediaFolders: state.mediaFolders || [],
+    mediaFolders: libraryFolders(state),
     inbox: state.inbox || [],
     activity: state.cmsActivity || [],
     keys: (state.agentKeys || []).map(({ hash, ...key }) => key),

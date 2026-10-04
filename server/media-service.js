@@ -1,11 +1,14 @@
+import {libraryFolders,validateFolder,organiseMedia} from '../src/cms/media-architecture.js';
 import {references} from '../src/cms/schema.js';
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 export function mediaAction(state,body){
  if(body.revision!==state.revision)fail('The library changed. Refresh before trying again.',409);
- const next=structuredClone(state);next.mediaFolders||=[];
- const folder=String(body.folder||'Uploads').trim().replace(/^\/+|\/+$/g,'');
+ if(body.action==='organise')return organiseMedia(state);
+ const next=structuredClone(state);next.mediaFolders=libraryFolders(next);
+ const folder=String(body.folder||'Site assets').trim().replace(/^\/+|\/+$/g,'');
  if(!folder||folder.length>160||folder.split('/').some(p=>!p||p==='.'||p==='..'))fail('Use a valid folder path up to 160 characters.');
- if(body.action==='folder'){if(next.mediaFolders.includes(folder))fail('This folder already exists.');next.mediaFolders.push(folder);return next;}
+ if(['folder','move','copy'].includes(body.action))validateFolder(next,folder);
+ if(body.action==='folder')return next;
  if(!['rename','move','copy','trash','restore','delete'].includes(body.action))fail('Choose a supported file action.');
  if(!Array.isArray(body.ids)||!body.ids.length||body.ids.length>100)fail('Select between 1 and 100 files.');
  const ids=[...new Set(body.ids)],items=ids.map(id=>next.media.find(m=>m.id===id));if(items.some(m=>!m))fail('One of these files no longer exists.',404);
