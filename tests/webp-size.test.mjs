@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import sharp from 'sharp';import {webpSize} from '../server/webp-size.js';
+test('WebP dimensions match actual lossy, lossless and alpha output without claiming a target width',async()=>{for(const options of [{quality:80},{lossless:true},{quality:90}]){const data=await sharp({create:{width:319,height:117,channels:4,background:{r:30,g:20,b:60,alpha:.5}}}).webp(options).toBuffer();assert.deepEqual(webpSize(data),{width:319,height:117});}assert.throws(()=>webpSize(new Uint8Array(20)));});

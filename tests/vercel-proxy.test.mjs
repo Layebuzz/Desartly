@@ -27,3 +27,9 @@ test('proxy cannot become an open proxy and returns an explicit service failure'
  assert.equal((await proxy(new Request(base+'/api/backend?__route=https://attacker.example'))).status,404);
  assert.equal((await proxy(new Request(base+'/api/backend?__route=/api/site'),async()=>{throw Error('offline')})).status,502);
 });
+
+test('image uploads authenticate before decoding; invalid images return actionable errors',async()=>{
+ const req=()=>new Request('https://desartly.vercel.app/api/studio/upload',{method:'POST',headers:{Origin:'https://desartly.vercel.app','Content-Type':'image/png'},body:'not an image'});
+ let calls=0;let r=await proxy(req(),async()=>{calls++;return new Response('',{status:401});});assert.equal(r.status,401);assert.equal(calls,1);
+ r=await proxy(req(),async()=>new Response('{}'));assert.equal(r.status,415);
+});
