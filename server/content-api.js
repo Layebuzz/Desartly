@@ -1,4 +1,4 @@
-import {validateFolder} from '../src/cms/media-architecture.js';
+import {validateFolder,organiseMedia} from '../src/cms/media-architecture.js';
 import {mediaAction} from './media-service.js';
 import {webpSize} from './webp-size.js';
 import {proposalPayload,telegramProposalText} from './proposal-payload.js';
@@ -16,7 +16,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  if(privatePath&&!owner)return json({error:'Owner sign-in required.'},401);
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  let state=await store.read();
- const save=async next=>{state=await store.write(next,state.revision);return state;};
+ const save=async next=>{state=await store.write(organiseMedia(next),state.revision);return state;};
  if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
  if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!(env.B2_BUCKET_ID&&env.B2_KEY_ID&&env.B2_APP_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
  if(path==='/api/studio/upload'&&request.method==='POST'){

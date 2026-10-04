@@ -1029,7 +1029,7 @@ function App() {
                 path="/privacy"
                 element={
                   <main className="page narrow">
-                    <h1>{pages["/privacy"]?.title || "Privacy, simply."}</h1>
+                    <div className="page-title"><h1>{pages["/privacy"]?.title || "Privacy, simply."}</h1></div>
                     <p>
                       {pages["/privacy"]?.body || "When you contact me, I use the details you share to discuss your project and prepare a proposal. If you choose the email option, your email app sends the message to Komeilipv@gmail.com. Requests submitted directly through this site are stored privately in my workspace. To ask about your information or request its removal, email Komeilipv@gmail.com. Owner access uses a secure session cookie."}
                     </p>

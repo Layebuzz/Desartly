@@ -59,7 +59,7 @@
  .mobile-dock a.mobile-dock-primary[aria-current=page]{background:#5635a0;color:#fff}
  body:has(.mobile-dock){padding-bottom:calc(64px + env(safe-area-inset-bottom))}
  .mobile-dock a:focus-visible{outline:3px solid #8255db;outline-offset:2px}
- #main .page-title,#main .blog-post-heading,#main .proposal-intro,#main .project-overview-copy{padding:22px!important;border:1px solid #e3e3eb;border-radius:6px;background:#f8f7fa;margin-bottom:24px;min-width:0}
+ #main .page-title,#main .blog-post-heading,#main .proposal-intro,#main .project-heading,#main .project-overview-copy{padding:22px!important;border:1px solid #e3e3eb;border-radius:6px;background:#f8f7fa;margin-bottom:24px;min-width:0}
  #main .page-title h1,#main .blog-post-heading h1{font-size:34px;line-height:1.12;letter-spacing:-.045em;margin:12px 0}
  #main .page-title p,#main .blog-post-heading p{font-size:14px;line-height:1.65;margin:0;max-width:none}
  #main .page-title .samurai-edge{display:none}

@@ -1,4 +1,4 @@
-import {libraryFolders} from '../src/cms/media-architecture.js';
+import {libraryFolders,organiseMedia} from '../src/cms/media-architecture.js';
 import {growthMetrics,personalities} from '../src/cms/growth-model.js';
 import { materialize } from "../src/cms/materialize.js";
 import {
@@ -306,5 +306,5 @@ export function mutateDocument(
   ].slice(0, 80);
   validateSite(next.draft);
   validateSite(next.published);
-  return { state: next, id };
+  return { state: organiseMedia(next), id };
 }

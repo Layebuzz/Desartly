@@ -8,7 +8,7 @@ Version: 2026-10-04. Applies to all portfolio projects and MCP content agents.
 - Section heading: 3–9 words, sentence case. Each section advances a different idea.
 - Section paragraph: 25–65 words, usually 2–3 sentences. Keep one topic beside its corresponding image.
 - Use native text blocks and the shared Airbnb typography. Use `chapter`, `statement` and `note` layouts; do not put narrative typography inside custom HTML.
-- Keep client, collaborator and independent study distinct. Dark Matter is independent UGC for the 2024 Apple TV+ series.
+- Keep client, collaborator and independent study distinct. Dark Matter was commissioned by Apple TV+ and submitted as a pitch, as confirmed by the owner. Do not describe it as UGC or claim that the campaign launched.
 - Label mockups and stock mood references honestly. Never infer a real launch, production feasibility, client approval or business result from a visual.
 - Preserve image slots, layout, IDs and project facts when rewriting. Back up the current document; read the latest version before saving and publishing.
 
