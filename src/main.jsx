@@ -1,6 +1,6 @@
+import {BookCall,BookingLauncher} from './BookCall.jsx';
 import {FilterTabs} from './FilterTabs.jsx';
 import {WorkFilters} from './WorkFilters.jsx';
-import {ProposalContact} from './ProposalContact.jsx';
 import {previewHtml} from './cms/html-preview.js';
 import {isVisibleProject} from './cms/visibility.js';
 import React, { useState, useEffect } from "react";
@@ -170,9 +170,9 @@ const defaultNav = [
   { id: "journal", label: "Journal", to: "/journal" },
   { id: "about", label: "About", to: "/about" },
   { id: "certificates", label: "Certificates", to: "/certificates" },
-  { id: "contact", label: "Contact", to: "/contact", arrow: true },
+  { id: "contact", label: "Book a Call", to: "/contact", arrow: true },
 ];
-function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url)).map(item=>(item.to||item.url)==="/work"?{...item,label:"Projects"}:item);}
+function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url)).map(item=>(item.to||item.url)==="/work"?{...item,label:"Projects"}:(item.to||item.url)==='/contact'?{...item,label:'Book a Call'}:item);}
 function SiteNavLink({ item, active }) {
   const to = safeLink(item.to||item.url) || "/";
   const props = { 'aria-current':active?'page':undefined, className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
@@ -193,7 +193,7 @@ function PublicHeader({items}){
  const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
  return <header ref={header} className="public-header" onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setOpen(false);}}><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open} onClick={()=>setOpen(false)}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
-function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Start project',ArrowUpRight]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
+function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Book a call',ArrowUpRight]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
 function EntryPage(props){const [mobile]=useState(()=>window.matchMedia('(max-width:700px)').matches);return mobile?<Navigate to="/work" replace/>:<Home {...props}/>;}
 function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
@@ -559,7 +559,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     intro: <section className="folio-intro">
       <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Desartly · Portfolio</span></div>
       <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> PRODUCT · BRANDING · COMMUNICATION</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{(page.intro || "I’m Ali, an independent designer creating digital products, brand identities and communication—from campaigns to packaging.").replace(/branding and advertising/gi,"branding and communication design")}</p><div className="hero-actions"><Link to="/work" className="hero-work">View all projects <ArrowUpRight size={18}/></Link><Link to="/contact" className="hero-contact">Request a proposal <ArrowRight size={18}/></Link></div><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>Focus. Precision. Character.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
+        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> PRODUCT · BRANDING · COMMUNICATION</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{(page.intro || "I’m Ali, an independent designer creating digital products, brand identities and communication—from campaigns to packaging.").replace(/branding and advertising/gi,"branding and communication design")}</p><div className="hero-actions"><Link to="/work" className="hero-work">View all projects <ArrowUpRight size={18}/></Link><Link to="/contact" className="hero-contact">Book a call <ArrowRight size={18}/></Link></div><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>Focus. Precision. Character.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
         {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{projectDiscipline(activeProject)}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
         <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+projectDiscipline(project)} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{projectDiscipline(project)}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${projectDiscipline(activeProject)}` : ""}</span></div>
       </div>
@@ -589,7 +589,7 @@ function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
  return <section className="contact-band folio-contact compact-contact proposal-strip">
    <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "Have a project in mind?"} second={page.contactSubtitle ?? ""} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Share a short brief. We’ll clarify the scope and next steps."}</p></div>
-   <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Request a proposal</span><Arrow/></Link>
+   <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Book a call</span><Arrow/></Link>
  </section>;
 }
 
@@ -839,7 +839,7 @@ function Services() {
     </main>
   );
 }
-function Contact(){const page=usePage(),editingPath=React.useContext(EditingPath);return <ProposalContact page={page} previewOnly={Boolean(editingPath)}/>;}
+function Contact(){return <BookCall/>;}
 function Certificates({ certificates }) {
   const page = usePage();
   return (
@@ -907,7 +907,7 @@ function Editor({projects,certificates,contextPath='/',pages,setPages,stats,setS
  function commit(publish){flushSync(()=>document.activeElement?.blur());return latest.current(publish);}
  useEffect(()=>{const warn=e=>{if(dirty){e.preventDefault();e.returnValue='';}};const shortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){e.preventDefault();commit(false);}};window.addEventListener('beforeunload',warn);window.addEventListener('keydown',shortcut);return()=>{window.removeEventListener('beforeunload',warn);window.removeEventListener('keydown',shortcut);};},[dirty]);
  async function leave(e,url){if(dirty){e.preventDefault();if(await commit(false))window.location.assign(url);}}
- const pageLinks=[['/','Home'],['/work','Projects'],['/journal','Journal'],['/about','About'],['/contact','Contact'],['/certificates','Certificates'],['/services','Services'],['/privacy','Privacy']];
+ const pageLinks=[['/','Home'],['/work','Projects'],['/journal','Journal'],['/about','About'],['/contact','Book a Call'],['/certificates','Certificates'],['/services','Services'],['/privacy','Privacy']];
  return <div className={'editor page-studio '+(inspectorOpen?'inspector-open':'inspector-closed')}>
  <div className="editor-toolbar" data-editor-ui><div><a className="studio-return" href="/studio/pages" onClick={e=>leave(e,'/studio/pages')}><ArrowLeft size={16}/> Studio</a><b>Page editor</b><span className="local-badge">{pageLinks.find(([p])=>p===contextPath)?.[1]}</span></div><div><button className="inspector-toggle" onClick={()=>setInspectorOpen(!inspectorOpen)} aria-expanded={inspectorOpen} aria-controls="editor-inspector">{inspectorOpen?'Close options':'Page options'}</button><span className="save-state" role="status">{saving?'Saving…':dirty?'Unsaved changes':'Saved'}</span><button className="save-changes" disabled={saving||!dirty} onClick={()=>commit(false)}>Save draft</button><button className="dark" disabled={saving} onClick={()=>commit(true)}>Publish this page</button><a href={contextPath} target="_blank" rel="noreferrer">View live <ArrowUpRight size={15}/></a></div></div>
  <div className="save-notice" role="status">{notice||'Edit page copy and layout here. Manage projects, articles and media in Studio.'}</div>
@@ -960,7 +960,7 @@ function App() {
   const publicProjects = projects.filter(isVisibleProject);
   return (
     <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
-      {!edit&&<MobileNavigation/>}
+      {!edit&&<MobileNavigation/>}{!edit&&!location.pathname.startsWith('/studio')&&location.pathname!=='/contact'&&<BookingLauncher/>}
       <Taxonomy.Provider
         value={{
           categories: disciplines,
