@@ -29,7 +29,7 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
-  ["cms_growth","Read portfolio coverage, achievements and next-project suggestions. Personality labels must be supplied by the owner, never inferred.",{},[],true],
+  ["cms_growth","Read portfolio coverage, achievements and next-project suggestions. Personality labels reflect design intent. Assign by analysis only when the owner explicitly requests it.",{},[],true],
   ["cms_editorial_standard","Read the mandatory portfolio copy standard, evidence rules and paragraph budgets.",{},[],true],
   [
     "cms_presentation_guide",
@@ -254,7 +254,7 @@ export async function cmsResponse(request, env, store, media, transform) {
     };
     const execute = async (name, args = {}) => {
       requireScope("read");
-      if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One owner-selected primary personality per project. Never infer labels or consumer research results."};
+      if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One primary personality per project. Owner-authorized analysis may classify visible design intent; never claim consumer-research validation."};
       if (name === "cms_growth") return cmsView(state).growth;
       if (name === "cms_editorial_standard") return editorialStandard;
       if (name === "cms_presentation_guide") return presentationGuide(args);

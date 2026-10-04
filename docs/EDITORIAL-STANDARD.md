@@ -13,3 +13,5 @@ Version: 2026-10-04. Applies to all portfolio projects and MCP content agents.
 - Preserve image slots, layout, IDs and project facts when rewriting. Back up the current document; read the latest version before saving and publishing.
 
 MCP exposes this contract as `cms_editorial_standard`, includes it in `cms_presentation_guide`, and checks text budgets in `cms_review`. Warnings are editorial guidance rather than a quality score.
+
+Chapter labels are descriptive and unnumbered across all projects. Personality tags are private CMS metadata; owner-authorized design analysis is permitted, but does not represent validated consumer research.

@@ -582,9 +582,8 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
 }
 function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
- return <section className="contact-band folio-contact compact-contact samurai-invitation">
-   <div className="invitation-art" aria-hidden="true"><span className="invitation-noise">NOISE<br/>NOISE<br/>NOISE</span><img src="/brand/samurai/pencil-slash.webp" alt="" loading="lazy"/><span className="invitation-cut"/></div>
-   <div className="contact-invitation"><span className="eyebrow">A SHARP EYE. A CLEAR DIRECTION.</span><EditableHeading as="h2" first={page.contactTitle ?? "Less noise."} second={page.contactSubtitle ?? "More meaning."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Bring the knot. Let’s find the thread."}</p></div>
+ return <section className="contact-band folio-contact compact-contact proposal-strip">
+   <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "Have a project in mind?"} second={page.contactSubtitle ?? ""} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Share a short brief. We’ll clarify the scope and next steps."}</p></div>
    <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Request a proposal</span><Arrow/></Link>
  </section>;
 }
