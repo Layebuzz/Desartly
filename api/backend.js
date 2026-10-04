@@ -22,7 +22,7 @@ export async function proxy(request, send = fetch) {
     const raster=path==='/api/studio/upload'&&/^image\/(png|jpeg|webp|avif|gif)/.test(headers.get('content-type')||'');
     // Authenticate before image decoding; the content service still enforces write scopes.
     if(raster){
-      const auth=await send(new URL('/api/cms/state',backend),{headers,signal:AbortSignal.timeout(10000)});
+      const auth=await send(new URL('/api/cms/schema',backend),{headers,signal:AbortSignal.timeout(10000)});
       if(!auth.ok)return Response.json({error:'Sign in before uploading.'},{status:auth.status});
       const input=new Uint8Array(await request.arrayBuffer());body=await optimizeRaster(input);headers.set('content-type','image/webp');
     }
@@ -31,7 +31,7 @@ export async function proxy(request, send = fetch) {
       let rpc;try{rpc=JSON.parse(raw);}catch{}
       const args=rpc?.params?.arguments;
       if(rpc?.method==='tools/call'&&rpc.params?.name==='cms_upload'&&/^image\/(png|jpeg|webp|avif|gif)$/.test(args?.mimeType||'')){
-        const auth=await send(new URL('/api/cms/state',backend),{headers,signal:AbortSignal.timeout(10000)});
+        const auth=await send(new URL('/api/cms/schema',backend),{headers,signal:AbortSignal.timeout(10000)});
         if(!auth.ok)return Response.json({error:'An active CMS token is required.'},{status:auth.status});
         if(typeof args.base64!=='string'||args.base64.length>4200000)return Response.json({error:'MCP uploads must be smaller than 3 MB.'},{status:413});
         const output=await optimizeRaster(Buffer.from(args.base64,'base64'));

@@ -360,7 +360,7 @@ function AnimatedNumber({ value, editable = false, onBlur }) {
 }
 
 function StatsBand({ stats, editable = false, onChange }) {
-  const shown=editable?stats:stats.filter(stat=>Number.parseFloat(stat.value)>0);
+  const shown=editable?stats:stats.filter(stat=>Number.parseFloat(stat.value)>0&&!/replace with|add the year/i.test(stat.detail||'')).map(stat=>stat.id==='disciplines'?{...stat,value:String(disciplines.length),detail:disciplines.join(' · ')}:stat);
   if(!shown.length)return null;
   return (
     <section className="stats-band" aria-label="Selected practice statistics">
