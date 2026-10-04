@@ -112,5 +112,22 @@
     "api/public.js": {
       "includeFiles": "dist/index.html"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/blog",
+      "destination": "/journal",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/journal/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/resume",
+      "destination": "/about#resume",
+      "permanent": true
+    }
+  ]
 }

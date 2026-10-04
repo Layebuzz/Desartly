@@ -1,3 +1,5 @@
+import {personalities} from '../src/cms/growth-model.js';
+import {editorialStandard} from './editorial-standard.js';
 import { updatePage } from "./page-service.js";
 import {
   presentationGuide,
@@ -27,6 +29,8 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
+  ["cms_growth","Read portfolio coverage, achievements and next-project suggestions. Personality labels must be supplied by the owner, never inferred.",{},[],true],
+  ["cms_editorial_standard","Read the mandatory portfolio copy standard, evidence rules and paragraph budgets.",{},[],true],
   [
     "cms_presentation_guide",
     "Read the art-direction and live-benchmark workflow before creating every case study.",
@@ -122,7 +126,7 @@ const tools = [
   ["cms_media_list", "List reusable media assets.", {}, [], true],
   [
     "cms_upload",
-    "Upload a WebP image, safe SVG, PDF or video as base64 (max 4 MB decoded). Use its returned URL in content. Convert PNG/JPEG to WebP first.",
+    "Upload media as base64. On Vercel keep decoded files under 3 MB for JSON overhead. Raster images are optimized automatically; use the returned URL.",
     {
       name: { type: "string" },
       mimeType: { type: "string" },
@@ -152,6 +156,7 @@ export const contentSchema = {
   required: ["id", "title", "blocks"],
   projectFields: [
     "summary",
+    "brandPersonality",
     "discipline",
     "industry",
     "references",
@@ -249,7 +254,9 @@ export async function cmsResponse(request, env, store, media, transform) {
     };
     const execute = async (name, args = {}) => {
       requireScope("read");
-      if (name === "cms_schema") return contentSchema;
+      if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One owner-selected primary personality per project. Never infer labels or consumer research results."};
+      if (name === "cms_growth") return cmsView(state).growth;
+      if (name === "cms_editorial_standard") return editorialStandard;
       if (name === "cms_presentation_guide") return presentationGuide(args);
       if (name === "cms_benchmarks") return benchmarkSearch(args);
       if (name === "cms_grid_presets") return gridPresets();
@@ -368,7 +375,7 @@ export async function cmsResponse(request, env, store, media, transform) {
           capabilities: { tools: {} },
           serverInfo: { name: "desartly-cms", version: "1.0.0" },
           instructions:
-            "Before creating projects, call cms_presentation_guide, research current benchmarks and use varied grids from cms_grid_presets. Manage portfolio content without modifying website code. Draft first; publish only when requested. Access tokens have separate publish permission.",
+            "Before creating or rewriting projects, call cms_editorial_standard and cms_presentation_guide, research current benchmarks and use varied grids from cms_grid_presets. Manage portfolio content without modifying website code. Draft first; publish only when requested. Access tokens have separate publish permission.",
         };
       else if (rpc.method === "ping") result = {};
       else if (rpc.method === "tools/list")
@@ -447,6 +454,7 @@ export async function cmsResponse(request, env, store, media, transform) {
     }
     if (!body || typeof body !== "object" || Array.isArray(body))
       fail("Request body must be an object.", 400);
+    if(route === "growth"){if(!owner)fail("Owner access required.",403);const industry=String(body.industry||"").trim();if(!industry||industry.length>80)fail("Use an industry name up to 80 characters.");const industries=[...new Set([...(state.growthIndustries||[]),industry])];if(industries.length>60)fail("Keep at most 60 target industries.");await write({...state,growthIndustries:industries});return json({ok:true});}
     if (route === "document") {
       if (!owner) fail("Use MCP tools for agent content operations.", 403);
       return json(await execute("cms_" + body.action, body));

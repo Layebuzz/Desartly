@@ -22,6 +22,11 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
+  Menu,
+  Briefcase,
+  BookOpen,
+  UserRound,
+  Mail,
   ArrowUpRight,
   ArrowDown,
   ArrowRight,
@@ -170,7 +175,7 @@ const defaultNav = [
 function mergeNavigation(items){return items.filter(item=>!["/resume","/resume/"].includes(item.to||item.url)).map(item=>(item.to||item.url)==="/work"?{...item,label:"Projects"}:item);}
 function SiteNavLink({ item, active }) {
   const to = safeLink(item.to||item.url) || "/";
-  const props = { className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
+  const props = { 'aria-current':active?'page':undefined, className: [active ? "active" : "", to.split("?")[0] === "/contact" ? "nav-contact-primary" : ""].filter(Boolean).join(" ") };
   if (!to.startsWith("/")) {
     return <a href={to} {...props} target="_blank" rel="noopener noreferrer">{item.label}{item.arrow && <ArrowUpRight size={13} />}</a>;
   }
@@ -181,8 +186,11 @@ function PublicHeader({items}){
  useEffect(()=>setOpen(false),[location.pathname]);
  useEffect(()=>{if(!open)return;const key=e=>{if(e.key==='Escape'){setOpen(false);document.querySelector('.nav-more')?.focus();}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[open]);
  const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
- return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}>{open?'Close':'More'} <span aria-hidden="true">{open?'−':'+'}</span></button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.filter(item=>!['/work','/contact'].includes(item.to||item.url)).map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
+ return <header className="public-header"><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
+function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Contact',Mail]].map(([to,label,Icon])=><Link key={to} to={to} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
+function EntryPage(props){const [mobile]=useState(()=>window.matchMedia('(max-width:700px)').matches);return mobile?<Navigate to="/work" replace/>:<Home {...props}/>;}
+function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const [selected, setSelected] = useState(null);
   const dragIndex = React.useRef(null);
@@ -575,8 +583,8 @@ function EditableHeading({as:Tag="h1", first, second, editable, onChange, label=
 function ContactBand({ editable = false, page = {}, onPatch }) {
  const patch = field => e => onPatch?.({ [field]: e.currentTarget.innerText });
  return <section className="contact-band folio-contact compact-contact samurai-invitation">
-   <div className="contact-signal" aria-hidden="true"><span className="signal-orbit"/><span className="signal-cut"/><span className="signal-caption">間 / MA<br/>SPACE FOR THE NEXT MOVE</span></div>
-   <div className="contact-invitation"><span className="eyebrow">WORK WITH ALI KOMEILI</span><EditableHeading as="h2" first={page.contactTitle ?? "A clear brief."} second={page.contactSubtitle ?? "A considered next move."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Share the idea. I’ll help shape the direction."}</p></div>
+   <div className="invitation-art" aria-hidden="true"><span className="invitation-noise">NOISE<br/>NOISE<br/>NOISE</span><img src="/brand/samurai/pencil-slash.webp" alt="" loading="lazy"/><span className="invitation-cut"/></div>
+   <div className="contact-invitation"><span className="eyebrow">A SHARP EYE. A CLEAR DIRECTION.</span><EditableHeading as="h2" first={page.contactTitle ?? "Less noise."} second={page.contactSubtitle ?? "More meaning."} editable={editable} label="Contact heading" onChange={(contactTitle,contactSubtitle)=>onPatch?.({contactTitle,contactSubtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={patch("contactNote")}>{page.contactNote || "Bring the knot. Let’s find the thread."}</p></div>
    <Link to="/contact" className="portfolio-action contact-primary" onClick={e=>{if(editable)e.preventDefault();}}><span>Request a proposal</span><Arrow/></Link>
  </section>;
 }
@@ -593,14 +601,14 @@ function Journal({ blogPosts }) {
   const chooseTopic = topic => setParams({...query ? {q:query} : {},...topic.id === "all" ? {} : {topic:topic.id}});
   return <main className="page journal-page">
     <div className="page-title"><span className="eyebrow">THE JOURNAL / {blogPosts.length} NOTES</span><h1>{page.title || "Notes from the practice."}</h1><p>{page.intro || "Small observations on product thinking, visual systems and the work between."}</p></div>
-    <section className="journal-discovery" aria-label="Filter journal">
+    <div className="journal-editorial-layout"><aside className="journal-discovery" aria-label="Filter journal">
       <div className="work-explorer-top"><span className="work-explorer-label">FIELD NOTES</span><span className="work-explorer-result" role="status">{visiblePosts.length} notes{(query||activeTopic!=='all')&&<button onClick={()=>setParams({})}>Clear filters</button>}</span></div>
       <div className="work-explorer-controls"><FilterTabs label="Journal topics" value={activeTopic} onChange={id=>chooseTopic({id})} items={topics.map(t=>({...t,count:countFor(t)}))}/>
       <label className="journal-discovery-search"><span>Search the journal</span><input type="search" aria-label="Search notes" placeholder="An idea, a topic…" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label></div>
-    </section>
+    </aside>
     <div className="journal-layout journal-layout-full">
       <div className="blog-grid blog-list">{visiblePosts.length ? visiblePosts.map(post => <BlogCard key={post.id} post={post}/>) : <p className="empty-state">No notes in this topic yet.</p>}</div>
-    </div>
+    </div></div>
   </main>;
 }
 
@@ -948,6 +956,7 @@ function App() {
   const publicProjects = projects.filter(isVisibleProject);
   return (
     <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
+      {!edit&&<MobileNavigation/>}
       <Taxonomy.Provider
         value={{
           categories: disciplines,
@@ -993,13 +1002,13 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route
                 path="/"
-                element={<Home projects={publicProjects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
+                element={<EntryPage projects={publicProjects} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} />}
               />
               <Route path="/work" element={<Work projects={publicProjects} />} />
               <Route path="/journal" element={<Journal blogPosts={blogPosts} />} />
-              <Route path="/blog" element={<Journal blogPosts={blogPosts} />} />
+              <Route path="/blog" element={<LegacyJournal/>} />
               <Route path="/journal/:slug" element={<BlogPost blogPosts={blogPosts} />} />
-              <Route path="/blog/:slug" element={<BlogPost blogPosts={blogPosts} />} />
+              <Route path="/blog/:slug" element={<LegacyJournal/>} />
               <Route
                 path="/work/:slug"
                 element={<Project key={location.pathname} projects={publicProjects} />}

@@ -1,3 +1,4 @@
+import {mediaAction} from './media-service.js';
 import {webpSize} from './webp-size.js';
 import {proposalPayload,telegramProposalText} from './proposal-payload.js';
 import {materialize} from '../src/cms/materialize.js';
@@ -28,7 +29,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   const item={id,name,type:variants[0].width?'image/webp':type,url:'/api/media/'+id,variants,alt:'',folder:'Uploads',createdAt:new Date().toISOString()};await save({...state,media:[...state.media,item]});return json({item,revision:state.revision});
  }
  if(path.startsWith('/api/media/')&&request.method==='GET'){
-  const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&!references(state.published,id)))return json({error:'Media not found.'},404);
+  const id=path.slice('/api/media/'.length);const item=state.media.find(m=>m.id===id);if(!item||(!owner&&(item.trashedAt||!references(state.published,id))))return json({error:'Media not found.'},404);
   const width=Number(url.searchParams.get('w'))||1920;const variant=item.variants.find(v=>v.width>=width)||item.variants.at(-1);const response=await media.get(variant.asset);return new Response(response.body,{headers:{'Content-Type':item.type,'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; sandbox",'X-Content-Type-Options':'nosniff','Cache-Control':owner?'private, no-store':'public, max-age=3600',...(item.type==='application/pdf'?{'Content-Disposition':'attachment; filename="resume.pdf"'}:{})}});
  }
  if(path==='/api/config'&&request.method==='GET')return json({turnstileSiteKey:env.TURNSTILE_SITE_KEY||'',local:!!env.LOCAL,deliveryReady:!!(env.LOCAL||(env.PUBLIC_RATE_LIMITER&&env.TURNSTILE_SITE_KEY&&env.TURNSTILE_SECRET_KEY))});
@@ -60,6 +61,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   if(path==='/api/studio/restore'){
    const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
   }
+  if(path==='/api/studio/media-action'){await save(mediaAction(state,body));return json({ok:true,revision:state.revision});}
   if(path==='/api/studio/media'){
    const item=state.media.find(m=>m.id===body.id);if(!item)return json({error:'Media not found'},404);item.alt=String(body.alt||'').slice(0,300);item.folder=String(body.folder||'Uploads').slice(0,80);item.name=String(body.name||item.name).slice(0,180);await save(state);return json({ok:true});
   }

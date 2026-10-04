@@ -1,3 +1,4 @@
+import {growthMetrics,personalities} from '../src/cms/growth-model.js';
 import { materialize } from "../src/cms/materialize.js";
 import {
   disciplines,
@@ -80,6 +81,7 @@ export function validateDocument(kind, doc) {
   if (kind === "article" && doc.date && !/^\d{4}-\d{2}-\d{2}$/.test(doc.date))
     fail("Use YYYY-MM-DD for the date.");
   if (kind === "project") {
+    if(doc.brandPersonality&&!personalities.some(p=>p.id===doc.brandPersonality))fail("Choose one of the five brand personalities.");
     doc = {
       ...doc,
       discipline: projectDiscipline(doc),
@@ -115,6 +117,7 @@ export function documentSummary(state, kind, doc) {
     coverImage: doc.coverImage || "",
     category: kind === "project" ? projectDiscipline(doc) : doc.category || "",
     industry: kind === "project" ? projectIndustry(doc) : "",
+    brandPersonality:doc.brandPersonality||"",
     updatedAt: doc.updatedAt || "",
     version: doc._version || 0,
     status: documentStatus(state, kind, doc),
@@ -128,6 +131,7 @@ export function cmsView(state) {
     published: materialize(structuredClone(state.published)),
   };
   return {
+    growth:growthMetrics({projects:state.published.projects,inbox:state.inbox,industries:state.growthIndustries||[]}),
     revision: state.revision,
     draftVersion: state.draftVersion || 0,
     projects: (state.draft.projects || []).map((d) =>
@@ -137,6 +141,7 @@ export function cmsView(state) {
       documentSummary(state, "article", d),
     ),
     media: state.media || [],
+    mediaFolders: state.mediaFolders || [],
     inbox: state.inbox || [],
     activity: state.cmsActivity || [],
     keys: (state.agentKeys || []).map(({ hash, ...key }) => key),
