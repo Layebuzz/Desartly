@@ -631,7 +631,6 @@ function Work({ projects }) {
   const industry = params.get("industry");
   const disciplineProjects = projects.filter(p=>!active||slugify(projectDiscipline(p))===active);
   const industries = [...new Set(disciplineProjects.map(projectIndustry).filter(Boolean))].sort();
-  useEffect(() => { const previous=document.title; document.title="Projects — Desartly"; return () => { document.title=previous; }; }, []);
   return (
     <main className="page">
       <div className="page-title work-title-with-samurai">
@@ -948,7 +947,7 @@ function App() {
   const edit = isWorkspace || isStudio || location.pathname === "/login";
   const publicProjects = projects.filter(isVisibleProject);
   return (
-    <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings}/>
+    <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
       <Taxonomy.Provider
         value={{
           categories: disciplines,
