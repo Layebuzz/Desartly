@@ -23,3 +23,13 @@ test('page drafts stay private and stale or unsupported writes are rejected',()=
  assert.throws(()=>updatePage(next,{path:'/about',page:{},draftVersion:2}),e=>e.status===409);
  assert.throws(()=>updatePage(next,{path:'/site',page:{},draftVersion:3}));
 });
+test('hero slide settings round-trip through draft and page publication independently of selected cards',()=>{
+ const state=initialState();state.draftVersion=0;
+ const page={...state.draft.pages['/'],selectedProjects:['a','b','c'],heroSlides:[{id:'wide-1',projectId:'b',image:'/api/media/wide-image',alt:'Wide campaign',position:'75% 50%'}]};
+ const draft=updatePage(state,{path:'/',page,draftVersion:0});
+ assert.deepEqual(draft.draft.pages['/'].heroSlides,page.heroSlides);
+ assert.equal(draft.published.pages['/'].heroSlides,undefined);
+ const published=updatePage(draft,{path:'/',page,draftVersion:1,publish:true});
+ assert.deepEqual(published.published.pages['/'].heroSlides,page.heroSlides);
+ assert.deepEqual(published.published.pages['/'].selectedProjects,['a','b','c']);
+});

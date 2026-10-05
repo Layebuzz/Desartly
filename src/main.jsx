@@ -1,3 +1,4 @@
+import {HeroSlideEditor,resolveHeroSlides} from './HeroSlides.jsx';
 import {BookCall,BookingLauncher} from './BookCall.jsx';
 import {FilterTabs} from './FilterTabs.jsx';
 import {WorkFilters} from './WorkFilters.jsx';
@@ -63,6 +64,7 @@ import "./refinement.css";
 import "./portfolio.css";
 import "./case-system.css";
 import "./discovery.css";
+import "./hero.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
 import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
@@ -194,7 +196,7 @@ function PublicHeader({items}){
  return <header ref={header} className="public-header" onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setOpen(false);}}><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open} onClick={()=>setOpen(false)}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
 function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Book a call',ArrowUpRight]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
-function EntryPage(props){const [mobile]=useState(()=>window.matchMedia('(max-width:700px)').matches);return mobile?<Navigate to="/work" replace/>:<Home {...props}/>;}
+function EntryPage(props){return <Home {...props}/>;}
 function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
   const [selected, setSelected] = useState(null);
@@ -514,7 +516,7 @@ function Footer() {
   const patch=values=>setPages(current=>({...current,"/site":{...current["/site"],footer:{...footer,...values}}}));
   const patchItem=(id,values)=>patch({items:footer.items.map(item=>item.id===id?{...item,...values}:item)});
   return <footer className="desartly-footer">
-    <div className="personal-colophon"><img src="/brand/samurai/pencil.webp" alt="" width="96" height="96"/><span>Selected work by <Link to="/about">Ali Komeili</Link><small>Desartly is my independent design portfolio.</small></span></div>
+    <div className="personal-colophon"><span>Selected work by <Link to="/about">Ali Komeili</Link><small>Desartly is my independent design portfolio.</small></span></div>
     <Link to="/" className="logo">Desartly<span>®</span></Link>
     <p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({description:e.currentTarget.innerText})}>{footer.description}</p>
     <div className="footer-items">{footer.items.map((item,index)=><div className="footer-item" key={item.id}>
@@ -532,6 +534,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     ...categories.map(category => projects.find(project => matchesCategory(project, category))).filter(Boolean),
     ...projects,
   ].map(project => [project.id, project])).values()].slice(0, 3);
+  const slides = resolveHeroSlides(page, projects);
   const [slideIndex, setSlideIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [hovered, setHovered] = useState(false);
@@ -545,27 +548,27 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     preference.addEventListener("change", onPreference);
     return () => { document.removeEventListener("visibilitychange", onVisibility); preference.removeEventListener("change", onPreference); };
   }, []);
-  const rotating = !editable && autoPlay && !hovered && !focused && pageVisible && selected.length > 1;
+  const rotating = !editable && autoPlay && !hovered && !focused && pageVisible && slides.length > 1;
   useEffect(() => {
     if (!rotating) return;
-    const timer = window.setTimeout(() => setSlideIndex(i => (i + 1) % selected.length), 5000);
+    const timer = window.setTimeout(() => setSlideIndex(i => (i + 1) % slides.length), 5000);
     return () => window.clearTimeout(timer);
-  }, [rotating, slideIndex, selected.length]);
+  }, [rotating, slideIndex, slides.length]);
   const touchStart = React.useRef(null);
-  const activeIndex = selected.length ? slideIndex % selected.length : 0;
-  const activeProject = selected[activeIndex];
-  const moveSlide = delta => setSlideIndex(current => (current + delta + selected.length) % Math.max(1, selected.length));
+  const activeIndex = slides.length ? slideIndex % slides.length : 0;
+  const activeProject = slides[activeIndex]?.project;
+  const moveSlide = delta => setSlideIndex(current => (current + delta + slides.length) % Math.max(1, slides.length));
   const sectionMap = {
-    intro: <section className="folio-intro">
-      <div className="folio-kicker"><span className="eyebrow">ALI KOMEILI / INDEPENDENT DESIGNER</span><span>Desartly · Portfolio</span></div>
-      <div className="intro-slider" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Introduction to my design practice" onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==="ArrowRight"){e.preventDefault();moveSlide(1)}if(e.key==="ArrowLeft"){e.preventDefault();moveSlide(-1)}}} tabIndex={0} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="intro-slide-copy"><span className="eyebrow hero-discipline"><i aria-hidden="true"/> PRODUCT · BRANDING · COMMUNICATION</span><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{(page.intro || "I’m Ali, an independent designer creating digital products, brand identities and communication—from campaigns to packaging.").replace(/branding and advertising/gi,"branding and communication design")}</p><div className="hero-actions"><Link to="/work" className="hero-work">View all projects <ArrowUpRight size={18}/></Link><Link to="/contact" className="hero-contact">Book a call <ArrowRight size={18}/></Link></div><div className="hero-signature" aria-hidden="true"><img className="samurai-signature" src="/brand/samurai/drawing.webp" alt="" width="112" height="112"/><span>Ali Komeili<br/>Focus. Precision. Character.</span><svg viewBox="0 0 64 64"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg></div></div>
-        {activeProject && <Link className="intro-slide-visual" to={"/work/"+activeProject.id} onClick={e=>{if(editable)e.preventDefault();}} aria-label={"Explore "+activeProject.title} key={activeProject.id}>{activeProject.coverImage ? <img src={activeProject.coverImage} alt={activeProject.title} decoding="async"/> : <Art index={activeProject.cover}/>}<span className="hero-project-index" aria-hidden="true">FEATURED / {String(activeIndex+1).padStart(2,"0")}</span><span className="intro-slide-caption"><span>{projectDiscipline(activeProject)}</span><span>{activeProject.title} <ArrowUpRight size={17}/></span></span></Link>}
-        <div className="intro-slider-controls"><div className="intro-slide-tabs">{selected.map((project,i)=><button key={project.id} onClick={()=>setSlideIndex(i)} aria-label={"Show slide "+(i+1)+": "+projectDiscipline(project)} aria-pressed={i===activeIndex}><span>{String(i+1).padStart(2,"0")}</span><span>{projectDiscipline(project)}</span></button>)}</div><div className="intro-slide-arrows"><button aria-label={autoPlay ? "Pause slideshow" : "Play slideshow"} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay ? <Pause size={16}/> : <Play size={16}/>}</button><button aria-label="Previous introduction slide" onClick={()=>moveSlide(-1)} disabled={selected.length<2}><ArrowLeft size={18}/></button><button aria-label="Next introduction slide" onClick={()=>moveSlide(1)} disabled={selected.length<2}><ArrowRight size={18}/></button></div><span className="sr-only" aria-live={rotating ? "off" : "polite"}>{activeProject ? `Slide ${activeIndex+1} of ${selected.length}: ${projectDiscipline(activeProject)}` : ""}</span></div>
+    intro: <section className="folio-intro personal-hero">
+      <div className="hero-introduction"><div><Link to="/about" className="hero-owner">Ali Komeili<span>Independent designer</span></Link><span className="hero-practice">Product · Branding · Communication</span></div><div className="hero-editorial"><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "I shape digital products, distinctive brands and communication that connects."}</p></div></div>
+      <div className="portfolio-hero-stage" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Featured projects" tabIndex={0} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==='ArrowRight'){e.preventDefault();moveSlide(1)}if(e.key==='ArrowLeft'){e.preventDefault();moveSlide(-1)}}} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
+        <div className="hero-frames">{slides.map((slide,i)=><Link key={slide.key} className={'hero-frame '+(i===activeIndex?'is-active':'')} aria-hidden={i!==activeIndex} tabIndex={i===activeIndex?0:-1} to={'/work/'+slide.project.id} aria-label={'Explore '+slide.project.title} onClick={e=>{if(editable)e.preventDefault();}}>{slide.image?<img src={slide.image} alt={slide.alt||slide.project.title} style={{objectPosition:slide.position||'50% 50%'}} decoding="async" fetchPriority={i===0?'high':'auto'}/>:<Art index={slide.project.cover}/>}</Link>)}</div>
+        {activeProject&&<><span className="hero-counter">SELECTED WORK / {String(activeIndex+1).padStart(2,'0')} — {String(slides.length).padStart(2,'0')}</span><div className="hero-bottom"><Link className="hero-caption" to={'/work/'+activeProject.id}><span>{projectDiscipline(activeProject)}</span><strong>{activeProject.title}<ArrowUpRight size={22}/></strong></Link><BookingLauncher/></div></>}
       </div>
+      <div className="hero-controls"><div className="hero-pagination">{slides.map((slide,i)=><button key={slide.key} onClick={()=>setSlideIndex(i)} aria-label={'Show '+slide.project.title} aria-pressed={i===activeIndex}>{String(i+1).padStart(2,'0')}</button>)}</div><div className="hero-control-actions"><button aria-label={autoPlay?'Pause slideshow':'Play slideshow'} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay?<Pause size={17}/>:<Play size={17}/>}</button><button aria-label="Previous project" onClick={()=>moveSlide(-1)} disabled={slides.length<2}><ArrowLeft size={20}/></button><button aria-label="Next project" onClick={()=>moveSlide(1)} disabled={slides.length<2}><ArrowRight size={20}/></button></div><span className="sr-only" aria-live={rotating?'off':'polite'}>{activeProject?`Slide ${activeIndex+1} of ${slides.length}: ${activeProject.title}`:''}</span></div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
-      <div className="folio-section-label"><img className="samurai-peek" src="/brand/samurai/peek.webp" alt="" width="100" height="100"/><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
+      <div className="folio-section-label"><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>
       <div className="portfolio-section-heading"><h2>Selected projects.</h2><p>Product & AI · Branding · Communication Design</p></div>
       {editable ? <SortableGroup axis="x" className="cards home-project-grid editable-cards" values={selected} onReorder={order=>onFeaturedOrder?.(order.map(p=>p.id))}>{selected.map(p=><SortableBlock key={p.id} value={p}>{controls=><><button className="card-drag-handle drag-handle" data-editor-ui aria-label={`Reorder ${p.title}`} onPointerDown={e=>controls.start(e)}><GripVertical size={15}/> Move card</button><Card p={p}/></>}</SortableBlock>)}</SortableGroup> : <div className="cards home-project-grid">{selected.map(p=><Card key={p.id} p={p}/>)}</div>}
     </section>,
@@ -645,8 +648,8 @@ function Work({ projects }) {
   const industries = [...new Set(disciplineProjects.map(projectIndustry).filter(Boolean))].sort();
   return (
     <main className="page work-page">
-      <div className="page-title work-title-with-samurai">
-        <img className="samurai-edge" src="/brand/samurai/edge-hang.webp" alt="" width="140" height="140" aria-hidden="true"/>
+      <div className="page-title">
+
         <span className="eyebrow">
           THE PORTFOLIO / {projects.length} PROJECTS
         </span>
@@ -747,7 +750,7 @@ function About() {
       </h1></div>
       <div className="about-grid">
         <div className="portrait-art">
-          <img src="/brand/samurai/drawing.webp" alt="The scribbled samurai, Ali Komeili’s personal design character" width="400" height="400"/><small>Ali Komeili<br/>Designer · Desartly</small>
+          <div className="ali-wordmark">Ali<br/>Komeili<span>Independent designer<br/>Product · Branding · Communication</span></div>
         </div>
         <div>
           <h2>
@@ -913,6 +916,7 @@ function Editor({projects,certificates,contextPath='/',pages,setPages,stats,setS
  <div className="save-notice" role="status">{notice||'Edit page copy and layout here. Manage projects, articles and media in Studio.'}</div>
  <div className="editor-layout"><aside id="editor-inspector" aria-label="Page options"><div className="studio-map"><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages</h2></div><div className="map-page-grid">{pageLinks.map(([path,label])=><a key={path} href={'/studio/layout?path='+encodeURIComponent(path)} className={path===contextPath?'active':''} onClick={e=>leave(e,e.currentTarget.href)}>{label}</a>)}</div><p className="form-note">Projects, journal, media, navigation and site settings have one home in Studio.</p><a href="/studio" onClick={e=>leave(e,'/studio')}>Open workspace ↗</a></div>
  {(contextPath==='/'?['title','subtitle','intro','contactNote']:['title','intro','body']).map(field=><label key={field}>{field}<textarea rows={3} value={page[field]||''} placeholder="Use default text" onChange={e=>patch({[field]:e.target.value})}/></label>)}
+ {contextPath==='/'&&<HeroSlideEditor page={page} projects={projects.filter(isVisibleProject)} onChange={patch}/>}
  {contextPath==='/'&&<div className="home-selections"><label>Featured projects</label>{[0,1,2].map(i=><label key={i}>Position {i+1}<select value={page.selectedProjects?.[i]||''} onChange={e=>{const ids=[...(page.selectedProjects||[])];ids[i]=e.target.value;patch({selectedProjects:ids});}}><option value="">Automatic</option>{projects.filter(isVisibleProject).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}
  </aside><div className="editor-canvas" onClickCapture={e=>{if(e.target.closest("a")&&!e.target.closest("[data-editor-ui]"))e.preventDefault();}}><div className="canvas-context-bar" data-editor-ui><span>{contextPath}</span><small>Click page text to edit · Save draft · Publish this page</small></div>
  <EditingPath.Provider value={contextPath}>
@@ -960,7 +964,7 @@ function App() {
   const publicProjects = projects.filter(isVisibleProject);
   return (
     <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
-      {!edit&&<MobileNavigation/>}{!edit&&!location.pathname.startsWith('/studio')&&location.pathname!=='/contact'&&<BookingLauncher/>}
+      {!edit&&<MobileNavigation/>}
       <Taxonomy.Provider
         value={{
           categories: disciplines,
@@ -1039,7 +1043,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           )}
-          {!edit && <PagePosts projects={publicProjects} />}{!edit && <PageModules blocks={pages[location.pathname]?.blocks || []}/>} 
+          {!edit && <PagePosts projects={publicProjects} />}{!edit && <PageModules blocks={pages[location.pathname]?.blocks || []}/>}
         </div>
         {!edit && <Footer />}
         </VisualCopy>
