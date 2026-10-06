@@ -123,3 +123,32 @@
 @media(max-width:1200px){.cms-file-manager{grid-template-columns:190px minmax(0,1fr)}.cms-file-inspector{grid-column:1/-1;display:grid;grid-template-columns:180px 1fr 1fr;gap:18px;border-left:0;border-top:1px solid #e7e9ed}.cms-file-inspector-head{grid-column:1/-1;margin:0}.cms-file-inspector>img{grid-row:2/5}.cms-file-inspector-title{padding:0}.cms-file-inspector dl{border-top:0}.cms-file-inspector label{margin:0}}
 @media(max-width:800px){.cms-file-manager{display:block}.cms-file-tree{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid #e7e9ed}.cms-file-tree-label,.cms-file-tree .cms-file-add-folder{display:none}.cms-file-tree>button{flex:0 0 auto;width:auto!important}.cms-file-new{display:none!important}.cms-file-toolbar{flex-wrap:wrap}.cms-file-breadcrumb{width:100%}.cms-file-toolbar>label{order:2;flex-basis:100%}.cms-file-inspector{display:block}.cms-file-inspector>img{max-height:260px}.cms-preview-page-list>button{grid-template-columns:28px minmax(0,1fr) auto}.cms-preview-page-list code,.cms-preview-page-list .cms-status{display:none}}
 @media(max-width:560px){.cms-file-items.grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px;gap:8px}.cms-file-toolbar>select{display:none}.cms-file-view{margin-left:auto}.cms-preview-records>button{grid-template-columns:minmax(0,1fr) auto}.cms-preview-records>button>svg{display:none}}
+
+/* Live library: shared Figma layout, existing authenticated file operations. */
+.live-media-manager{grid-template-columns:190px minmax(0,1fr);gap:0;min-height:560px}
+.live-media-manager.has-inspector{grid-template-columns:190px minmax(0,1fr) 260px}
+.live-media-manager .asset-toolbar{margin:0;justify-content:flex-start;flex-wrap:wrap;font-size:11px}
+.live-media-manager .cms-file-tree button{justify-content:flex-start;min-height:44px}
+.live-media-manager .cms-file-tree button small{margin-left:auto}
+.live-media-manager .cms-file-view button[aria-pressed=true]{color:white;background:#303743}
+.live-media-items.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));padding:18px;gap:14px}
+.live-media-items .asset-card{padding:8px;border-radius:10px;border-color:#e7e9ed;transition:background .16s,border-color .16s}
+.live-media-items .asset-card:hover{background:#f7f8fa;border-color:#bbc5dc}
+.live-media-items .asset-card.selected{background:#f3f5fb;border-color:#5474e8;box-shadow:0 0 0 2px #5474e81a}
+.live-media-items .asset-card img{height:140px;background:#f0f1f3;border-radius:7px}
+.live-media-items .asset-card input{top:14px;left:14px}
+.live-media-items.list{display:grid;grid-template-columns:1fr;padding:12px 16px;gap:0}
+.live-media-items.list .asset-card{display:grid;grid-template-columns:24px 52px minmax(0,1fr);align-items:center;gap:12px;border:0;border-bottom:1px solid #eceef2;border-radius:0;padding:10px}
+.live-media-items.list .asset-card input{position:static}
+.live-media-items.list .asset-card img{height:52px;width:52px}
+.live-media-manager .cms-file-inspector>button{width:100%;margin-top:10px}
+.live-media-alt{margin-top:16px!important;color:#626a79;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.growth-matrix .growth-cell-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.growth-matrix .service-count{width:100%;min-height:36px;padding:5px 3px;gap:4px;border:1px solid #d8dfea;border-radius:6px;background:#edf1fc!important;color:#3156a1}
+.growth-matrix .service-count small{color:inherit}
+.growth-matrix .service-count.service-1{background:#eaf5ef!important;border-color:#c9e3d5;color:#286556}
+.growth-matrix .service-count.service-2{background:#fcf0e8!important;border-color:#eed8c8;color:#925131}
+.growth-matrix .service-count.is-empty{background:#f6f7f9!important;border-color:#e2e5eb;color:#707986}
+.growth-matrix .service-count:hover:not(.is-empty){outline:1px solid currentColor;outline-offset:1px}
+@media(max-width:1200px){.live-media-manager.has-inspector{grid-template-columns:170px minmax(0,1fr)}}
+@media(max-width:800px){.live-media-manager,.live-media-manager.has-inspector{display:block}.live-media-manager .cms-file-tree{flex-direction:row;flex-wrap:nowrap}.live-media-manager .cms-file-tree button{flex-shrink:0}.growth-matrix .service-count{min-height:32px}}
