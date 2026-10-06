@@ -6,9 +6,9 @@ export function mediaAction(state,body){
  if(body.action==='organise')return organiseMedia(state);
  const next=structuredClone(state);next.mediaFolders=libraryFolders(next);
  const folder=String(body.folder||'Site assets').trim().replace(/^\/+|\/+$/g,'');
- if(!folder||folder.length>160||folder.split('/').some(p=>!p||p==='.'||p==='..'))fail('Use a valid folder path up to 160 characters.');
- if(['folder','move','copy'].includes(body.action))validateFolder(next,folder);
- if(body.action==='folder')return next;
+ if(!folder||folder.length>160||/[\\\x00-\x1f\x7f]/.test(folder)||folder.split('/').some(p=>!p||p==='.'||p==='..'))fail('Use a valid folder path up to 160 characters.');
+ if(body.action==='folder'){if(!next.mediaFolders.includes(folder)){next.customMediaFolders=[...new Set([...(next.customMediaFolders||[]),folder])];next.mediaFolders=libraryFolders(next);}return next;}
+ if(['move','copy'].includes(body.action))validateFolder(next,folder);
  if(!['rename','move','copy','trash','restore','delete'].includes(body.action))fail('Choose a supported file action.');
  if(!Array.isArray(body.ids)||!body.ids.length||body.ids.length>100)fail('Select between 1 and 100 files.');
  const ids=[...new Set(body.ids)],items=ids.map(id=>next.media.find(m=>m.id===id));if(items.some(m=>!m))fail('One of these files no longer exists.',404);
