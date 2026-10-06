@@ -8,6 +8,25 @@ export function mediaAction(state,body){
  const folder=String(body.folder||'Site assets').trim().replace(/^\/+|\/+$/g,'');
  if(!folder||folder.length>160||/[\\\x00-\x1f\x7f]/.test(folder)||folder.split('/').some(p=>!p||p==='.'||p==='..'))fail('Use a valid folder path up to 160 characters.');
  if(body.action==='folder'){if(!next.mediaFolders.includes(folder)){next.customMediaFolders=[...new Set([...(next.customMediaFolders||[]),folder])];next.mediaFolders=libraryFolders(next);}return next;}
+ if(['move-folder','copy-folder'].includes(body.action)){
+  const source=String(body.source||'');
+  if(!next.mediaFolders.includes(source)||['Projects','Journal','Certificates','Site assets'].includes(source))fail('Choose a movable folder.');
+  if(folder===source||folder.startsWith(source+'/'))fail('A folder cannot be placed inside itself.');
+  if(next.mediaFolders.includes(folder))fail('A folder already exists at this destination.',409);
+  const inside=path=>path===source||path?.startsWith(source+'/');
+  const relocate=path=>folder+path.slice(source.length);
+  const paths=next.mediaFolders.filter(inside);
+  if(body.action==='move-folder'){
+   next.customMediaFolders=(next.customMediaFolders||[]).map(path=>inside(path)?relocate(path):path);
+   const locations={...(next.mediaFolderLocations||{})};
+   for(const site of [next.draft,next.published].filter(Boolean))for(const [field,prefix] of [['projects','Projects/'],['blogPosts','Journal/']])for(const doc of site[field]||[]){const original=prefix+doc.id;const current=locations[original]||original;if(inside(current))locations[original]=relocate(current);}
+   next.mediaFolderLocations=locations;
+   for(const item of next.media)if(inside(item.folder))item.folder=relocate(item.folder);
+  }else{
+   for(const item of [...next.media])if(!item.trashedAt&&inside(item.folder)){const id=crypto.randomUUID();next.media.push({...structuredClone(item),id,url:'/api/media/'+id,folder:relocate(item.folder),createdAt:new Date().toISOString()});}
+  }
+  next.customMediaFolders=[...new Set([...(next.customMediaFolders||[]),...paths.map(relocate),folder])];next.mediaFolders=libraryFolders(next);return next;
+ }
  if(['move','copy'].includes(body.action))validateFolder(next,folder);
  if(!['rename','move','copy','trash','restore','delete'].includes(body.action))fail('Choose a supported file action.');
  if(!Array.isArray(body.ids)||!body.ids.length||body.ids.length>100)fail('Select between 1 and 100 files.');

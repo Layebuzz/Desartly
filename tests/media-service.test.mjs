@@ -19,3 +19,18 @@ test('custom upload folders survive organisation and keep nested paths and conte
 test('new folders reject traversal, control characters and invalid paths',()=>{
  for(const folder of ['Campaign/../Secrets','Campaign//Print','Campaign\\Print','Campaign\u0000Print','x'.repeat(161)])assert.throws(()=>mediaAction(base(),{revision:3,action:'folder',folder}),/valid folder path/);
 });
+
+test('moving folders preserves nested media URLs, bytes and published references',()=>{
+ let s=base();s=mediaAction(s,{revision:3,action:'folder',folder:'Campaign/Print'});s.media[0].folder='Campaign/Print';s.published={coverImage:'/api/media/a'};
+ const next=mediaAction(s,{revision:3,action:'move-folder',source:'Campaign/Print',folder:'Site assets/Print'});
+ assert.equal(next.media[0].folder,'Site assets/Print');assert.equal(next.media[0].url,s.media[0].url);assert.deepEqual(next.media[0].variants,s.media[0].variants);assert.deepEqual(next.published,s.published);assert.ok(next.customMediaFolders.includes('Site assets/Print'));
+});
+test('moving a content-owned folder persists its location without recreating the old folder',()=>{
+ let s=mediaAction(base(),{revision:3,action:'move-folder',source:'Projects/test',folder:'Site assets/test'});
+ s=mediaAction(s,{revision:3,action:'organise'});assert.ok(s.mediaFolders.includes('Site assets/test'));assert.ok(!s.mediaFolders.includes('Projects/test'));
+});
+test('folder copies reuse bytes and reject cycles, collisions and stale revisions',()=>{
+ let s=base();s=mediaAction(s,{revision:3,action:'folder',folder:'Campaign'});s=mediaAction(s,{revision:3,action:'folder',folder:'Campaign/Print'});s.media[0].folder='Campaign/Print';
+ const copy=mediaAction(s,{revision:3,action:'copy-folder',source:'Campaign',folder:'Site assets/Campaign'});assert.equal(copy.media.length,2);assert.notEqual(copy.media[1].id,s.media[0].id);assert.equal(copy.media[1].variants[0].asset,s.media[0].variants[0].asset);assert.equal(copy.media[1].folder,'Site assets/Campaign/Print');
+ assert.throws(()=>mediaAction(s,{revision:3,action:'move-folder',source:'Campaign',folder:'Campaign/Child'}),/inside itself/);assert.throws(()=>mediaAction(s,{revision:3,action:'move-folder',source:'Campaign',folder:'Site assets'}),/already exists/);assert.throws(()=>mediaAction(s,{revision:2,action:'copy-folder',source:'Campaign',folder:'Copy'}),/library changed/);
+});
