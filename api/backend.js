@@ -1,5 +1,5 @@
 import {optimizeRaster} from '../server/optimize-upload.js';
-// Keep the existing D1/B2 content service authoritative on both deployments.
+// Keep the existing D1 content and media service authoritative on both deployments.
 const backend = 'https://desartly.layebuzz.workers.dev';
 export async function proxy(request, send = fetch) {
   const incoming = new URL(request.url);

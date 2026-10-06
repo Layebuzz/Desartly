@@ -47,6 +47,9 @@
     }
   ],
   "vars": {
-    "B2_BUCKET_ID": "fa243f3de5465324ab070112"
+    "B2_BUCKET_ID": "fa243f3de5465324ab070112",
+    "S3_ENDPOINT": "https://c237873.parspack.net",
+    "S3_BUCKET": "c237873",
+    "S3_REGION": "us-east-1"
   }
 }
