@@ -337,11 +337,3 @@ header nav a.nav-contact-primary{background:#161616;color:#fff;padding:13px 20px
 @media(max-width:1000px){.work-filter-toolbar{gap:12px}.work-filter-toolbar .filters.discipline-filters{flex-basis:100%}.work-filter-toolbar>label{margin-left:auto}.work-filter-toolbar select{max-width:100%}}
 @media(max-width:700px){.work-filter-toolbar>label{width:100%;justify-content:space-between}.work-filter-toolbar select{width:calc(100% - 64px)}.work-filter-toolbar{margin-bottom:12px}}
 
-/* Keep AuraLeaf's supplied imagery at a modest presentation size. */
-.project-page.project-auraleaf .case-image-pair,
-.project-page.project-auraleaf .case-image-quartet{margin-inline:auto;gap:clamp(12px,2vw,24px);align-items:start}
-.project-page.project-auraleaf .case-image-pair{max-width:620px;grid-template-columns:repeat(2,minmax(0,1fr))}
-.project-page.project-auraleaf .case-image-quartet{max-width:840px;grid-template-columns:repeat(3,minmax(0,1fr))}
-.project-page.project-auraleaf .case-image-pair img,
-.project-page.project-auraleaf .case-image-quartet img{height:auto;object-fit:contain}
-@media(max-width:700px){.project-page.project-auraleaf .case-image-quartet{grid-template-columns:repeat(2,minmax(0,1fr))}}
