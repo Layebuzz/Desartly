@@ -1,8 +1,8 @@
 /* Shared portfolio language, based on the Airbnb case study. */
-:root{--control-radius:6px;--case-heading:clamp(30px,3.7vw,52px);--case-body:clamp(16px,1.25vw,21px);--case-muted:#626875;--case-gap:clamp(24px,6vw,100px)}
+:root{--control-radius:6px;--case-heading:clamp(30px,3.7vw,52px);--case-body:clamp(16px,1.25vw,21px);--case-muted:var(--color-text-secondary);--case-gap:clamp(24px,6vw,100px)}
 .project-page .text-block{font-family:Manrope,Arial,sans-serif;max-width:none}
 .project-page .text-block.case-chapter{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:var(--case-gap);border-top:1px solid #dde0e4;padding:clamp(28px,4vw,60px) 0 0;margin:0 0 clamp(24px,4vw,54px)}
-.project-page .text-block.case-chapter .eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;line-height:1.5;letter-spacing:.13em;text-transform:uppercase;color:#626875}
+.project-page .text-block.case-chapter .eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;line-height:1.5;letter-spacing:.13em;text-transform:uppercase;color:var(--color-text-secondary)}
 .project-page .text-block.case-chapter .eyebrow:before{content:"";width:24px;height:1px;flex:none;background:#262c35}
 .project-page .text-block.case-chapter h2{font-size:var(--case-heading);font-weight:500;line-height:1.12;letter-spacing:-.04em;max-width:14ch;margin:18px 0 0;text-wrap:balance}
 .project-page .text-block.case-chapter p{font-size:var(--case-body);line-height:1.78;max-width:48ch;margin:28px 0 0;color:var(--case-muted)}

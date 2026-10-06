@@ -31,8 +31,6 @@ import {
   ArrowUpRight,
   ArrowDown,
   ArrowRight,
-  Pause,
-  Play,
   Plus,
   GripVertical,
   Trash2,
@@ -65,6 +63,7 @@ import "./portfolio.css";
 import "./case-system.css";
 import "./discovery.css";
 import "./hero.css";
+import "./design-system.css";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
 import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
@@ -536,36 +535,32 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   ].map(project => [project.id, project])).values()].slice(0, 3);
   const slides = resolveHeroSlides(page, projects);
   const [slideIndex, setSlideIndex] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const [pageVisible, setPageVisible] = useState(() => !document.hidden);
-  useEffect(() => {
-    const onVisibility = () => setPageVisible(!document.hidden);
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const onPreference = () => { if (preference.matches) setAutoPlay(false); };
-    document.addEventListener("visibilitychange", onVisibility);
-    preference.addEventListener("change", onPreference);
-    return () => { document.removeEventListener("visibilitychange", onVisibility); preference.removeEventListener("change", onPreference); };
-  }, []);
-  const rotating = !editable && autoPlay && !hovered && !focused && pageVisible && slides.length > 1;
-  useEffect(() => {
-    if (!rotating) return;
-    const timer = window.setTimeout(() => setSlideIndex(i => (i + 1) % slides.length), 5000);
-    return () => window.clearTimeout(timer);
-  }, [rotating, slideIndex, slides.length]);
-  const touchStart = React.useRef(null);
+  const [previousSlideIndex, setPreviousSlideIndex] = useState(null);
+  const [slideDirection, setSlideDirection] = useState(1);
   const activeIndex = slides.length ? slideIndex % slides.length : 0;
   const activeProject = slides[activeIndex]?.project;
-  const moveSlide = delta => setSlideIndex(current => (current + delta + slides.length) % Math.max(1, slides.length));
+  const selectSlide = (nextIndex, direction) => {
+    if (!slides.length || nextIndex === activeIndex) return;
+    setPreviousSlideIndex(activeIndex);
+    setSlideDirection(direction);
+    setSlideIndex(nextIndex);
+  };
+  useEffect(() => {
+    if (previousSlideIndex === null) return;
+    const timer = window.setTimeout(() => setPreviousSlideIndex(null), 900);
+    return () => window.clearTimeout(timer);
+  }, [previousSlideIndex, slideIndex]);
+  const touchStart = React.useRef(null);
+  const moveSlide = delta => selectSlide((activeIndex + delta + slides.length) % Math.max(1, slides.length), delta);
   const sectionMap = {
     intro: <section className="folio-intro personal-hero">
-      <div className="hero-introduction"><div><Link to="/about" className="hero-owner">Ali Komeili<span>Independent designer</span></Link><span className="hero-practice">Product · Branding · Communication</span></div><div className="hero-editorial"><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "I shape digital products, distinctive brands and communication that connects."}</p></div></div>
-      <div className="portfolio-hero-stage" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} role="region" aria-roledescription="carousel" aria-label="Featured projects" tabIndex={0} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==='ArrowRight'){e.preventDefault();moveSlide(1)}if(e.key==='ArrowLeft'){e.preventDefault();moveSlide(-1)}}} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
-        <div className="hero-frames">{slides.map((slide,i)=><Link key={slide.key} className={'hero-frame '+(i===activeIndex?'is-active':'')} aria-hidden={i!==activeIndex} tabIndex={i===activeIndex?0:-1} to={'/work/'+slide.project.id} aria-label={'Explore '+slide.project.title} onClick={e=>{if(editable)e.preventDefault();}}>{slide.image?<img src={slide.image} alt={slide.alt||slide.project.title} style={{objectPosition:slide.position||'50% 50%'}} decoding="async" fetchPriority={i===0?'high':'auto'}/>:<Art index={slide.project.cover}/>}</Link>)}</div>
-        {activeProject&&<><span className="hero-counter">SELECTED WORK / {String(activeIndex+1).padStart(2,'0')} — {String(slides.length).padStart(2,'0')}</span><div className="hero-bottom"><Link className="hero-caption" to={'/work/'+activeProject.id}><span>{projectDiscipline(activeProject)}</span><strong>{activeProject.title}<ArrowUpRight size={22}/></strong></Link><BookingLauncher/></div></>}
+      <div className="portfolio-hero-stage" role="region" aria-roledescription="carousel" aria-label="Featured projects" tabIndex={0} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==='ArrowRight'){e.preventDefault();moveSlide(1)}if(e.key==='ArrowLeft'){e.preventDefault();moveSlide(-1)}}} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
+        <div className="hero-frames">{slides.map((slide,i)=>{const state=i===activeIndex?'is-active':i===previousSlideIndex?`is-exiting is-${slideDirection>0?'forward':'backward'}`:`is-idle is-${slideDirection>0?'forward':'backward'}`;return <Link key={slide.key} className={'hero-frame '+state} aria-hidden={i!==activeIndex} tabIndex={i===activeIndex?0:-1} to={'/work/'+slide.project.id} aria-label={'Explore '+slide.project.title} onClick={e=>{if(editable)e.preventDefault();}}>{slide.image?<img src={slide.image} alt={slide.alt||slide.project.title} style={{objectPosition:slide.position||'50% 50%'}} decoding="async" fetchPriority={i===0?'high':'auto'}/>:<Art index={slide.project.cover}/>}</Link>})}</div>
+        {activeProject&&<><span className="hero-counter">FEATURED PROJECT&nbsp;&nbsp; {String(activeIndex+1).padStart(2,'0')} / {String(slides.length).padStart(2,'0')}</span><div className="hero-bottom"><Link className="hero-caption" to={'/work/'+activeProject.id}><span>{projectDiscipline(activeProject)}</span><strong>{activeProject.title}<ArrowUpRight size={22}/></strong><small>View case study</small></Link></div></>}
+        {slides.length>1&&<><div className="hero-slider-arrows"><button aria-label="Previous project" onClick={()=>moveSlide(-1)}><ArrowLeft size={20}/></button><button aria-label="Next project" onClick={()=>moveSlide(1)}><ArrowRight size={20}/></button></div><div className="hero-dots" role="group" aria-label="Choose featured project">{slides.map((slide,i)=><button key={slide.key} onClick={()=>selectSlide(i,i>activeIndex?1:-1)} aria-label={'Show '+slide.project.title} aria-pressed={i===activeIndex}/>)}</div></>}
+        <span className="sr-only" aria-live="polite">{activeProject?`Slide ${activeIndex+1} of ${slides.length}: ${activeProject.title}`:''}</span>
       </div>
-      <div className="hero-controls"><div className="hero-pagination">{slides.map((slide,i)=><button key={slide.key} onClick={()=>setSlideIndex(i)} aria-label={'Show '+slide.project.title} aria-pressed={i===activeIndex}>{String(i+1).padStart(2,'0')}</button>)}</div><div className="hero-control-actions"><button aria-label={autoPlay?'Pause slideshow':'Play slideshow'} onClick={()=>setAutoPlay(v=>!v)}>{autoPlay?<Pause size={17}/>:<Play size={17}/>}</button><button aria-label="Previous project" onClick={()=>moveSlide(-1)} disabled={slides.length<2}><ArrowLeft size={20}/></button><button aria-label="Next project" onClick={()=>moveSlide(1)} disabled={slides.length<2}><ArrowRight size={20}/></button></div><span className="sr-only" aria-live={rotating?'off':'polite'}>{activeProject?`Slide ${activeIndex+1} of ${slides.length}: ${activeProject.title}`:''}</span></div>
+      <div className="hero-introduction"><div><span className="hero-introduction-label">DESIGN PRACTICE / TEHRAN</span><Link to="/about" className="hero-owner">Ali Komeili<span>Independent multidisciplinary designer</span></Link><span className="hero-practice">Product & AI · Brand identity · Communication</span></div><div className="hero-editorial"><EditableHeading first={page.title ?? "Useful products."} second={page.subtitle ?? "Distinct identities."} editable={editable} label="Hero heading" onChange={(title,subtitle)=>onPagePatch?.({title,subtitle})}/><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onPagePatch?.({intro:e.currentTarget.innerText})}>{page.intro || "I shape digital products, distinctive brands and communication that connects."}</p><div className="hero-booking"><BookingLauncher/></div><div className="hero-actions"><Link to="/work">Explore selected work <Arrow/></Link><Link to="/contact">Start a project <ArrowUpRight size={16}/></Link></div></div></div>
     </section>,
     selected: <section className="folio-selected" id="selected-work">
       <div className="folio-section-label"><span>01 / SELECTED WORK</span><Link to="/work"><span>All projects</span> <Arrow/></Link></div>

@@ -5,7 +5,7 @@
 .client-profile-body{display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 .client-profile-identity{display:flex;align-items:center;gap:20px;min-width:0}
 .client-profile .client-profile-logo{display:block;flex:0 0 76px;width:76px;height:76px;object-fit:contain;margin:0;border-radius:0;background:transparent}
-.client-profile-name{font-size:26px;line-height:1.15;font-weight:500;letter-spacing:-.035em;color:#202632;overflow-wrap:anywhere}
+.client-profile-name{font-size:26px;line-height:1.15;font-weight:500;letter-spacing:-.035em;color:var(--color-text);overflow-wrap:anywhere}
 .client-profile .client-profile-description{margin:0;padding:22px 0 0;border-top:1px solid #e7e8ea;font-size:13px;line-height:1.75;color:#616772;overflow-wrap:anywhere}
 @container(max-width:500px){.client-profile-body{grid-template-columns:1fr;gap:20px}.client-profile .client-profile-description{padding:18px 0 0;border-left:0;border-top:1px solid #e7e8ea}.client-profile .client-profile-logo{flex-basis:64px;width:64px;height:64px}}
 @media(max-width:700px){.client-profile{padding:22px}.client-profile-heading{margin-bottom:20px}.client-profile-name{font-size:24px}}
