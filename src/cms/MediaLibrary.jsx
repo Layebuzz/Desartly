@@ -14,7 +14,7 @@ export function MediaLibrary({state,refresh,notify,onError,uploadFile}){
  const [query,setQuery]=useState(''),[folder,setFolder]=useState('All files'),[ids,setIds]=useState([]),[busy,setBusy]=useState(false),[dialog,setDialog]=useState(null),[value,setValue]=useState('');
  const selected=ids.length===1?state.media.find(m=>m.id===ids[0]):null;
  useDialogLifecycle(Boolean(dialog),()=>setDialog(null));
- const folders=[...new Set(['Certificates','Site assets',...(state.mediaFolders||[]),...state.media.filter(m=>!m.trashedAt).map(m=>m.folder).filter(Boolean)])].sort();
+ const folders=[...new Set([...roots,...(state.mediaFolders||[]),...state.media.filter(m=>!m.trashedAt).map(m=>m.folder).filter(Boolean)])].sort();
  const inFolder=(m,f)=>f==='All files'||m.folder===f||m.folder?.startsWith(f+'/');
  const visibleRoots=[...new Set([...roots,...folders.map(f=>f.split('/')[0])])];
  const folderCards=folder==='Trash'?[]:folder==='All files'?visibleRoots:[...new Set(folders.filter(f=>f.startsWith(folder+'/')).map(f=>folder+'/'+f.slice(folder.length+1).split('/')[0]))];

@@ -2,10 +2,10 @@ import {isVisibleProject} from './visibility.js';
 const uses=(value,id)=>JSON.stringify(value||{}).includes('/api/media/'+id);
 export function libraryFolders(state){
  const sites=[state.draft||state,state.published||{}];
- return [...new Set([...(state.customMediaFolders||[]),...sites.flatMap(s=>(s.projects||[]).filter(p=>isVisibleProject(p)||(!p.archived&&p.managed)).map(p=>state.mediaFolderLocations?.['Projects/'+p.id]||'Projects/'+p.id)),...sites.flatMap(s=>(s.blogPosts||s.articles||[]).filter(p=>!p.archived).map(p=>state.mediaFolderLocations?.['Journal/'+p.id]||'Journal/'+p.id)),'Certificates','Site assets'])].sort();
+ return [...new Set([...(state.customMediaFolders||[]),...sites.flatMap(s=>(s.projects||[]).filter(p=>isVisibleProject(p)||(!p.archived&&p.managed)).map(p=>state.mediaFolderLocations?.['Projects/'+p.id]||'Projects/'+p.id)),...sites.flatMap(s=>(s.blogPosts||s.articles||[]).filter(p=>!p.archived).map(p=>state.mediaFolderLocations?.['Journal/'+p.id]||'Journal/'+p.id)),'Projects','Journal','Certificates','Site assets'])].sort();
 }
 export function validateFolder(state,folder){
- if(!libraryFolders(state).includes(folder))throw Object.assign(Error('Choose a project, article, Certificates or Site assets folder. Create the content first; its folder is automatic.'),{status:400});
+ if(!libraryFolders(state).includes(folder))throw Object.assign(Error('Choose a site folder or a registered custom folder. Create the content first; its folder is automatic.'),{status:400});
  return folder;
 }
 export function mediaOwnerFolder(state,item){
@@ -16,7 +16,7 @@ export function mediaOwnerFolder(state,item){
   if(uses(site.certificates,item.id))return 'Certificates';
  }
  // Preserve ownership of replacement assets still needed by previous revisions.
- const prior=folders.find(folder=>item.folder===folder||item.folder?.startsWith(folder+'/'));
+ const prior=folders.filter(folder=>item.folder===folder||item.folder?.startsWith(folder+'/')).sort((a,b)=>b.length-a.length)[0];
  return prior||(/certificat/i.test(item.folder||'')?'Certificates':'Site assets');
 }
 export function organiseMedia(state){
