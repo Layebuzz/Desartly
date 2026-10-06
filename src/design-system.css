@@ -512,7 +512,3 @@ select:focus-visible,
     transition-duration: 0.01ms !important;
   }
 }
-
-.hero-booking { margin-top: var(--space-5); }
-.hero-booking .booking-launcher { position: static; max-width: 100%; display: inline-flex; }
-@media(max-width:600px) { .hero-booking .booking-launcher { display:flex; width:100%; justify-content:space-between; gap:8px; } }
