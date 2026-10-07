@@ -123,6 +123,7 @@ export function documentSummary(state, kind, doc) {
   return {
     id: doc.id,
     title: doc.title,
+    language: doc.language || "en",
     coverImage: doc.coverImage || "",
     category: kind === "project" ? projectDiscipline(doc) : doc.category || "",
     industry: kind === "project" ? projectIndustry(doc) : "",

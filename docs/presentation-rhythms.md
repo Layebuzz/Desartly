@@ -27,3 +27,8 @@ These are structural references, not layouts to copy. Each project needs a diffe
 The case now opens with a broader mascot-free campaign chapter: a home discovery scene, paired electronics and listing-promotion visuals, then a smaller automotive visual. The AI chapter follows with a clear hero, paired character applications and an expression family. Human context and a category component close the case. All image backgrounds are red; white is reserved for the rounded application-component card. No decorative connecting tracks or slides. The ladder character has two arms with clear shoulder-to-wrist connections.
 
 All presentation imagery is recreated from references. User boards are not displayed directly. No captions, fabricated metrics or invented results. Natural proportions preserve complete subjects. Check desktop and mobile, loaded image height and skeleton removal after every presentation.
+
+
+## Social presentation system — owner references, October 7
+
+The three owner-supplied PDF references inform visual rhythm, not literal copying. Use warm neutral surfaces, a restrained floating footer, rounded content cards and original image proportions. Persian text is Vazirmatn with zero tracking. Landscape project editions retain their complete narrative. Portrait project editions are strictly: visual cover → one project profile → image-only sequence plus footer. Paired panorama panels preserve the entire source image at its original ratio; reserve a separate footer area. Do not insert text-only story or closing slides in portrait project exports. Article editions retain explanatory text and charts, using compact narrative cards alongside imagery. Native PDF text and vector logos remain selectable/sharp.

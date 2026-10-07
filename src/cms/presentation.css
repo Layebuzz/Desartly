@@ -11,3 +11,5 @@
 .cms-shell .announcement-field:has(textarea[lang=fa])>span{font-family:'Vazirmatn Variable',sans-serif;text-align:right}.cms-shell .announcement-panel textarea[lang=fa]{font-family:'Vazirmatn Variable',sans-serif!important}.cms-shell .announcement-heading .cms-eyebrow{font-size:11px;letter-spacing:.13em}.cms-shell .announcement-panel .announcement-badge{font-size:12px;padding:8px 12px}
 .cms-shell .announcement-views button[aria-pressed=true]{background:#102b23!important;color:#fff!important;border-color:#102b23}.cms-shell .announcement-views button[aria-pressed=false]{background:#fff;color:#202632}.cms-shell .readiness-audit-notes{margin:12px 0}.cms-shell .readiness-audit-notes p{font-size:12px;line-height:1.7}
 .presentation-checklist .readiness-item input:disabled{opacity:1;cursor:default}.presentation-checklist .readiness-item{cursor:default}
+
+.cms-shell .presentation-formats button[aria-pressed=true]{background:#102b23!important;color:white!important;border-color:#102b23}.cms-shell .presentation-formats button[aria-pressed=false]{background:#fff;color:#52625b}
