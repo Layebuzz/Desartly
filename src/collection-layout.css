@@ -59,3 +59,6 @@
 @media(max-width:700px){
  .mobile-dock a[aria-current=page]::after{top:calc(50% + 15px);bottom:auto}
 }
+@media(max-width:700px){
+ .mobile-dock a[aria-current=page]::after{width:14px;height:2px;top:calc(50% + 16px);bottom:auto;border-radius:1px;left:50%;transform:translateX(-50%)}
+}
