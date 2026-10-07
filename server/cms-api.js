@@ -176,6 +176,7 @@ export const contentSchema = {
     "outcome",
     "credits",
     "announcement",
+    "presentationReview",
     "sample",
   ],
   articleFields: ["excerpt", "category", "date", "coverImage", "heroImage"],
