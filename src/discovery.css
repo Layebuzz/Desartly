@@ -133,3 +133,9 @@
  .journal-discovery-search input{font-size:16px;min-height:50px;border-radius:12px;background:#f6f7fa}
  .journal-editorial-layout{gap:28px}
 }
+
+/* One mobile navigation surface and one entrance spacing for public pages. */
+@media(max-width:700px){
+ .public-header .site-navigation,.public-header .secondary-navigation{display:none!important}
+ #main main.page,#main main.folio-home,#main main.project-page{padding-top:56px}
+}
