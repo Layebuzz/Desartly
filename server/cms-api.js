@@ -180,7 +180,7 @@ export const contentSchema = {
     "presentationReview",
     "sample",
   ],
-  articleFields: ["excerpt", "category", "date", "coverImage", "heroImage"],
+  articleFields: ["excerpt", "category", "date", "author", "language", "tags", "relatedProject", "coverImage", "heroImage", "announcement", "presentation"],
   blocks: {
     text: { id: "unique-id", type: "text", title: "Heading", text: "Body" },
     image: {
@@ -203,10 +203,11 @@ export const contentSchema = {
       markdown: "## Heading\nBody",
     },
     grid: { id: "unique-id", type: "grid", preset: 1, images: [] },
+    chart: {id:"unique-id",type:"chart",chartType:"bar",title:"Metric comparison",labels:["A","B"],values:[60,80],unit:"%",sample:true,source:"Synthetic UI test data",insight:"What the visualization demonstrates"},
     composition: {id:"unique-id",type:"composition",preset:1,images:[],imageRoles:[]},
   },
   workflow:
-    'Create or save a draft, preview it in /studio, then publish that document. Read the latest version before saving or publishing. Read cms_media_architecture, create the content draft to establish its folder, and upload assets through cms_upload with folder and alt; never commit content to source code. HTML runs in a sandbox without access to CMS cookies. For autoHeight, post {type:"desartly:preview-size",height:document.body.scrollHeight} to parent. No original research or measured outcomes should be invented.',
+    'Create or save a draft, preview it in /studio, then publish that document. Read the latest version before saving or publishing. Read cms_media_architecture, create the content draft to establish its folder, and upload assets through cms_upload with folder and alt; never commit content to source code. HTML runs in a sandbox without access to CMS cookies. For autoHeight, post {type:"desartly:preview-size",height:document.body.scrollHeight} to parent. No original research or measured outcomes should be invented. Owner-requested synthetic chart tests must set sample:true and clearly label their source as synthetic.',
 };
 export async function cmsResponse(request, env, store, media, transform) {
   const url = new URL(request.url),

@@ -63,11 +63,13 @@ export function validateDocument(kind, doc) {
       fail("Every block needs a unique text ID.");
     ids.add(block.id);
     if (
-      !["text", "image", "html", "markdown", "grid", "composition"].includes(
+      !["text", "image", "html", "markdown", "grid", "composition","chart"].includes(
         block.type,
       )
     )
       fail("Unsupported content block: " + block.type);
+    if(block.type==='chart'&&['title','description','unit','source','insight'].some(k=>block[k]!==undefined&&typeof block[k]!=='string'))fail('Chart labels and descriptions must be text.');
+    if(block.type==='chart' && (!['bar','line','funnel','radar','scanpath','metrics'].includes(block.chartType)||!Array.isArray(block.labels)||!Array.isArray(block.values)||block.labels.length!==block.values.length||block.labels.length<1||block.labels.length>12||(block.chartType==='radar'&&(block.labels.length<3||block.labels.length>8||block.values.some(x=>x>100)))||block.labels.some(x=>typeof x!=='string')||block.values.some(x=>!Number.isFinite(x)||x<0)||(block.points!==undefined&&(!Array.isArray(block.points)||block.points.length!==block.labels.length||block.points.some(p=>!Array.isArray(p)||p.length!==2||p.some(x=>!Number.isFinite(x)||x<0||x>640))))))fail('Invalid chart data.');
     if (block.type === "html" && block.component !== "divar-categories" && typeof block.html !== "string")
       fail("HTML blocks need HTML content.");
   }

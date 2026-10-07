@@ -62,12 +62,9 @@ export function GrowthDashboard({ state }) {
   if (!g) return <p>Loading portfolio progress…</p>;
 
   const allAchievements = [...(g.progress?.achievements||[]),...g.achievements];
-  const visibleAchievements = showAll
-    ? allAchievements
-    : allAchievements
-        .slice()
-        .sort((a, b) => Number(Boolean(b.xp))-Number(Boolean(a.xp)) || b.current / b.target - a.current / a.target)
-        .slice(0, 6);
+  const journeyTracks=['projects','industries','disciplines','topics','credentials','credentialTopics'];
+  const spotlight=journeyTracks.map(track=>{const list=allAchievements.filter(a=>a.id.startsWith('journey-'+track+'-'));return list.find(a=>a.current<a.target)||list.at(-1);}).filter(Boolean);
+  const visibleAchievements=showAll?allAchievements:spotlight.length?spotlight:allAchievements.slice(0,6);
 
   return (
     <>
