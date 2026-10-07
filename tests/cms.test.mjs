@@ -11,6 +11,7 @@ import { publicSite } from "../src/cms/schema.js";
 import { tintFromPixels, pastel } from "../src/project-tint.js";
 const document = {
   id: "test-project",
+  brandPersonality: "competence",
   title: "Test project",
   blocks: [{ id: "intro", type: "text", title: "Intro", text: "Hello" }],
   coverImage: "/projects/test.webp",
@@ -386,3 +387,7 @@ test("MCP teaches benchmark provenance and exposes all twenty layouts without pu
   }
   assert.equal((await store.read()).published.projects.length, 0);
 });
+
+test('project personality is required for saving and publishing',()=>{for(const brandPersonality of [undefined,'','unknown'])assert.throws(()=>validateDocument('project',{...document,brandPersonality}),/brand personality is required/);assert.doesNotThrow(()=>validateDocument('project',document));});
+
+test('project mutations cannot create, clear or publish an absent personality',()=>{const state=start();assert.throws(()=>mutateDocument(state,{action:'create',kind:'project',document:{...document,brandPersonality:''}}),/personality is required/);const created=mutateDocument(state,{action:'create',kind:'project',document}).state;const doc=created.draft.projects[0];assert.throws(()=>mutateDocument(created,{action:'save',kind:'project',id:doc.id,version:doc._version,document:{...doc,brandPersonality:''}}),/personality is required/);const legacy=structuredClone(created);delete legacy.draft.projects[0].brandPersonality;assert.throws(()=>mutateDocument(legacy,{action:'publish',kind:'project',id:doc.id,version:doc._version}),/personality is required/);});

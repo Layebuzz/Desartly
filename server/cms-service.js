@@ -88,7 +88,7 @@ export function validateDocument(kind, doc) {
   if (kind === "article" && doc.date && !/^\d{4}-\d{2}-\d{2}$/.test(doc.date))
     fail("Use YYYY-MM-DD for the date.");
   if (kind === "project") {
-    if(doc.brandPersonality&&!personalities.some(p=>p.id===doc.brandPersonality))fail("Choose one of the five brand personalities.");
+    if(!personalities.some(p=>p.id===doc.brandPersonality))fail("A primary brand personality is required. Choose one of the five brand personalities.");
     doc = {
       ...doc,
       discipline: projectDiscipline(doc),

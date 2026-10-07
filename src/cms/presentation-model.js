@@ -15,7 +15,7 @@ for(const source of project.blocks||[]){const block=source.type==='html'&&source
 if(['image','grid','composition'].includes(block.type)){const images=block.type==='image'?[block.image]:(block.images||[]);if(!images.some(Boolean))continue;const text=pending.pop();flush();const preset=Number(block.preset)||1;const frames=block.type==='image'?[{x:880,y:80,w:960,h:960}]:presentationFrames(preset);if(images.length>frames.length)warnings.push(`Section ${block.title||block.id}: extra images will continue on additional slides.`);
 for(let offset=0;offset<images.length;offset+=frames.length){slides.push({type:'images',title:plain(text?.title||block.title),label:plain(text?.chapter)||'PROJECT PRESENTATION',text:shortCopy(text?.text||text?.markdown||block.caption),frames,images:images.slice(offset,offset+frames.length),fit:'contain',preset:block.type==='image'?0:preset});}
 }else{flush();warnings.push(`Interactive section ${block.title||block.id||block.type} needs a static image to appear in the PDF.`);}}
-flush();if(!cover)warnings.push('Add a project cover before downloading.');slides.push({type:'closing',title:'Let’s stay connected.',text:'Follow my design journey.',projectTitle:title,id:project.id});return {slides,warnings};}
+flush();if(!cover)warnings.push('Add a project cover before downloading.');slides.push({type:'closing',title:'Let’s stay connected.',text:'Follow my design journey.',projectTitle:title,id:project.id});return {slides:slides.map((slide,i)=>({...slide,pageNumber:i+1,totalPages:slides.length})),warnings};}
 
 export const INSTAGRAM_PAGE={width:1080,height:1350};
 export function buildInstagramPresentation(project){
