@@ -18,12 +18,13 @@ for(let offset=0;offset<images.length;offset+=frames.length){slides.push({type:'
 flush();if(!cover)warnings.push('Add a project cover before downloading.');slides.push({type:'closing',title:'Let’s stay connected.',text:'Follow my design journey.',projectTitle:title,id:project.id});return {slides,warnings};}
 
 export const INSTAGRAM_PAGE={width:1080,height:1350};
-export function buildInstagramPresentation(project,dimensions={}){
- const result=buildPresentation(project),slides=result.slides.slice(0,2).map(s=>({...s}));
- // The portrait edition is a visual narrative: one profile, then source images only.
- for(const slide of result.slides){if(slide.type!=='images')continue;const images=slide.images.filter(Boolean),size=dimensions[images[0]];
-  if(slide.preset===0&&images.length===1&&size&&size.width>size.height){for(let panel=0;panel<2;panel++)slides.push({...slide,type:'panorama',title:'',text:'',label:'',images,panel});}
-  else for(let i=0;i<images.length;i+=2)slides.push({...slide,images:images.slice(i,i+2),title:'',text:'',label:'',continuation:i>0});
+export function buildInstagramPresentation(project){
+ const result=buildPresentation(project),slides=[];
+ const narrative=slide=>{const words=plain(slide.text).split(' '),chunks=[];let chunk='';for(const word of words){if(chunk.length+word.length>580){chunks.push(chunk);chunk='';}chunk+=(chunk?' ':'')+word;}if(chunk)chunks.push(chunk);for(const [i,text] of chunks.entries())slides.push({...slide,type:'story',images:undefined,text,title:i?slide.title+' · continued':slide.title});};
+ for(const slide of result.slides){
+  if(slide.type==='images'){if(slide.text||slide.title)narrative({...slide,text:slide.text||'',title:slide.title||'Project detail'});for(const image of slide.images.filter(Boolean))slides.push({...slide,images:[image],title:'',text:'',label:'',fit:'contain'});}
+  else if(slide.type==='story')narrative(slide);
+  else slides.push({...slide});
  }
  return {warnings:result.warnings,slides:slides.map((slide,i)=>({...slide,projectTitle:project.title,discipline:slide.discipline||projectDiscipline(project),pageNumber:i+1,totalPages:slides.length}))};
 }
