@@ -101,3 +101,8 @@
  .mobile-dock a:active{background:#f0f0f4}.mobile-dock a[aria-current=page]:active{background:#343845}
  .mobile-dock a:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
 }
+
+@media(max-width:700px){
+ .mobile-dock a.mobile-dock-primary{background:#5635a0;color:#fff;box-shadow:0 3px 9px #5635a029}
+ .mobile-dock a.mobile-dock-primary:active{background:#40267b}
+}
