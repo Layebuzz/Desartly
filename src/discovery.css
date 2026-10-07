@@ -119,3 +119,4 @@
  .mobile-dock a.mobile-dock-primary svg{width:24px;height:24px}
  .mobile-dock a[aria-current=page]:not(.mobile-dock-primary):active{background:#f3f2f6}
 }
+@media(max-width:700px){.mobile-dock a.mobile-dock-primary span,.mobile-dock a.mobile-dock-primary[aria-current=page] span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);font-size:0}}
