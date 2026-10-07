@@ -1,3 +1,4 @@
+import {mediaBackupResponse} from './media-backup.js';
 import { authResponse, isOwner, ownerPath } from "./owner-auth.js";
 import { contentResponse } from "./content-api.js";
 import { D1Store } from "./content-store.js";
@@ -8,6 +9,7 @@ export default {
     const auth = await authResponse(request, env);
     if (auth) return auth;
     const url = new URL(request.url);
+    const backup=await mediaBackupResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env));if(backup)return backup;
     const cms=await cmsResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),null);
     if(cms)return cms;
     if(url.pathname.startsWith("/api/")) return contentResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),env.IMAGES ? async bytes => Promise.all([640,1280,2560].map(async width=>{const output=await env.IMAGES.input(new Blob([bytes]).stream()).transform({width,fit:"scale-down"}).output({format:"image/webp",quality:92});return {width,bytes:new Uint8Array(await output.response().arrayBuffer())};})) : null);

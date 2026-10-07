@@ -16,7 +16,7 @@ test('S3 request encodes keys and signs the exact body and canonical request',as
   const key=mac(mac(mac(mac('AWS4secret',day),'us-east-1'),'s3'),'aws4_request');
   const signature=mac(key,'AWS4-HMAC-SHA256\n'+date+'\n'+scope+'\n'+hash(canonical)).toString('hex');
   assert.equal(h.get('authorization'),`AWS4-HMAC-SHA256 Credential=key/${scope}, SignedHeaders=${names}, Signature=${signature}`);
-  assert.equal(h.get('Content-Type'),'image/webp');assert.equal(options.redirect,'error');return new Response('');
+  assert.equal(h.get('Content-Type'),'image/webp');assert.equal(options.redirect,'manual');return new Response('');
  });
  await s3Request({...new S3Media(env).config,contentType:'image/webp'},'PUT','desartly/a b/ف.webp',new Uint8Array([1,2,3]),{z:2,a:1});
 });
@@ -53,3 +53,5 @@ test('migration route is unavailable without the temporary secret',async()=>{
  assert.equal((await migrationResponse(request,env,null)).status,404);
  assert.equal((await migrationResponse(request,{...env,MEDIA_MIGRATION_TOKEN:'x'.repeat(50)},null)).status,404);
 });
+
+test('storage rejects redirects without forwarding credentials',async t=>{let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;return new Response(null,{status:307,headers:{Location:'https://other.test'}});});await assert.rejects(s3Request(new S3Media(env).config,'GET','desartly/file'),/redirect rejected/);assert.equal(calls,1);});

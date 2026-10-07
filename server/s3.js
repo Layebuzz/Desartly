@@ -15,7 +15,9 @@ export async function s3Request(config,method,key='',body,query={}){
  const signing=await hmac(await hmac(await hmac(await hmac('AWS4'+config.secretKey,day),region),'s3'),'aws4_request');
  if(body)headers.set('Content-Type',config.contentType||'application/octet-stream');
  headers.set('Authorization','AWS4-HMAC-SHA256 Credential='+config.accessKey+'/'+scope+', SignedHeaders='+names+', Signature='+hex(await hmac(signing,toSign)));
- return fetch(url,{method,headers,...(body?{body}:{}),redirect:'error',signal:AbortSignal.timeout(30000)});
+ const response=await fetch(url,{method,headers,...(body?{body}:{}),redirect:'manual',signal:AbortSignal.timeout(30000)});
+ if(response.status>=300&&response.status<400)throw Object.assign(Error('Storage redirect rejected.'),{status:503});
+ return response;
 }
 
 async function checked(response){

@@ -1,3 +1,4 @@
+import {mediaBackupResponse} from './media-backup.js';
 import {cmsResponse} from "./cms-api.js";
 import sharp from "sharp";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -27,6 +28,7 @@ export function ownerAccessPlugin() {
             : { body: req, duplex: "half" }),
         });
         let response = await authResponse(request, env);
+        if(!response) response=await mediaBackupResponse(request,env,store,store);
         if(!response) response=await cmsResponse(request,env,store,store,null);
         if (!response && requestUrl.pathname.startsWith("/api/")) response = await contentResponse(request, env, store, store, async bytes => {
           const input = sharp(bytes, {limitInputPixels: 40000000}).rotate();
