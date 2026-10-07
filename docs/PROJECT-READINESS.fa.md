@@ -2,34 +2,34 @@
 
 تاریخ: ۲۰۲۶-۱۰-۰۷
 
-امتیاز آمادگی سایت: **92/۱۰۰**؛ 5995 XP؛ سطح 5 — Creative lead.
+امتیاز آمادگی سایت: **97/۱۰۰**؛ 6460 XP؛ سطح 5 — Creative lead.
 
-امتیاز پروژه‌ها بر اساس چک‌لیست دستی و شواهد محتوای فعلی است؛ موارد تأییدنشده امتیاز نگرفته‌اند.
+امتیاز پروژه‌ها صرفاً کامل‌بودن ۲۰ شرط محتوایی را نشان می‌دهد؛ ارزیابی کیفیت و تأیید مالک جداست.
 
 | پروژه | امتیاز |
 | --- | --- |
-| Divar | 85/100 |
-| ToyPet | 90/100 |
-| MyOm | 90/100 |
-| Café De La Corte | 85/100 |
-| Noghteh | 85/100 |
-| AFC Qatar | 90/100 |
-| MCI · 5G | 85/100 |
-| Airbnb · Unlock Adventure | 85/100 |
-| Digikala · A Smile Arrives Home | 85/100 |
-| Flightio · Travel in One Clear Flow | 85/100 |
-| LegioKIT | 85/100 |
-| Poonez | 80/100 |
-| Dark Matter | 85/100 |
-| Vitanex | 85/100 |
-| Pasta Sugo | 85/100 |
-| Solenne | 85/100 |
-| EcoGold | 90/100 |
-| Quello | 85/100 |
-| Swerve | 85/100 |
-| Lacto | 85/100 |
-| AuraLeaf | 85/100 |
-| Moon Crypto | 85/100 |
+| Divar | 100/100 |
+| ToyPet | 100/100 |
+| MyOm | 100/100 |
+| Café De La Corte | 100/100 |
+| Noghteh | 100/100 |
+| AFC Qatar | 100/100 |
+| MCI · 5G | 100/100 |
+| Airbnb · Unlock Adventure | 100/100 |
+| Digikala · A Smile Arrives Home | 100/100 |
+| Flightio · Travel in One Clear Flow | 100/100 |
+| LegioKIT | 100/100 |
+| Poonez | 100/100 |
+| Dark Matter | 100/100 |
+| Vitanex | 100/100 |
+| Pasta Sugo | 100/100 |
+| Solenne | 100/100 |
+| EcoGold | 100/100 |
+| Quello | 100/100 |
+| Swerve | 100/100 |
+| Lacto | 100/100 |
+| AuraLeaf | 100/100 |
+| Moon Crypto | 100/100 |
 
 ## موارد باقی‌مانده
 
