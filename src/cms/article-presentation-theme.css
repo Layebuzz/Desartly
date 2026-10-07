@@ -1,5 +1,5 @@
 /* Editorial editions: monochrome typography, imagery and a single brand accent. */
-.slide{--inset:64px;--ink:#202124;--muted:#686a6d;background:#fafafa;color:var(--ink);padding:var(--inset)}
+.slide{--inset:64px;--ink:var(--editorial-ink);--muted:var(--editorial-muted);background:var(--editorial-surface);color:var(--ink);padding:var(--inset)}
 .slide *{letter-spacing:0!important;word-spacing:normal!important;font-kerning:normal}
 .head{height:32px;font-size:20px;color:var(--muted)}
 .foot{left:var(--inset);right:var(--inset);bottom:var(--inset);height:76px;padding:20px 24px;border:1px solid #e6e6e6;border-radius:18px;background:#fff;color:var(--ink);font-size:20px;box-shadow:none;gap:24px}
@@ -34,3 +34,8 @@ p{font-size:34px;line-height:1.8;font-weight:400;color:#494b4e;text-wrap:pretty}
 .portrait.chart .article-chart h2{font-size:42px}.portrait.chart .article-chart p{font-size:28px}.portrait.chart .article-chart footer{font-size:20px}
 .full .picture,.portrait.full .picture{height:auto;min-height:0;flex:1}
 .portrait .foot>span:nth-child(2){font-size:16px}
+
+/* Clip the image itself, including images fitted inside taller frames. */
+.picture img{width:auto;height:auto;max-width:100%;max-height:100%;border-radius:var(--editorial-image-radius)}
+.cover .picture img,.identity .picture img{width:100%;height:100%;object-fit:cover}
+.portrait.cover .picture img{border-radius:0}
