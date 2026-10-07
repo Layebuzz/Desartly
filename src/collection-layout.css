@@ -49,3 +49,9 @@
  #main :is(.work-page,.journal-page){padding-top:24px}
  .mobile-dock a[aria-current=page]{background:transparent;color:var(--color-text-secondary)}
 }
+
+@media(max-width:700px){
+ .mobile-dock a{position:relative}
+ .mobile-dock a[aria-current=page]::after{content:'';position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:currentColor;pointer-events:none}
+ .mobile-dock a.mobile-dock-primary[aria-current=page]{background:#242936;color:white}
+}
