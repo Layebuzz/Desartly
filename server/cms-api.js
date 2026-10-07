@@ -1,3 +1,4 @@
+import {reviewArticle} from './article-review.js';
 import {mediaArchitecture,libraryFolders} from '../src/cms/media-architecture.js';
 import {personalities} from '../src/cms/growth-model.js';
 import {editorialStandard} from './editorial-standard.js';
@@ -63,8 +64,8 @@ const tools = [
   ],
   [
     "cms_review",
-    "Review a project draft for presentation rhythm and reference provenance.",
-    { id: { type: "string" } },
+    "Review project or article draft content and presentation readiness.",
+    { id: { type: "string" }, kind: { enum: ["project", "article"] } },
     ["id"],
     true,
   ],
@@ -267,8 +268,8 @@ export async function cmsResponse(request, env, store, media, transform) {
       if (name === "cms_benchmarks") return benchmarkSearch(args);
       if (name === "cms_grid_presets") return gridPresets();
       if (name === "cms_review")
-        return reviewPresentation(
-          readDocument(state, "project", args.id).document,
+        return (args.kind === "article" ? reviewArticle : reviewPresentation)(
+          readDocument(state, args.kind === "article" ? "article" : "project", args.id).document,
         );
       if (name === "cms_list") {
         const view = cmsView(state);
@@ -446,8 +447,8 @@ export async function cmsResponse(request, env, store, media, transform) {
     if (route === "review" && request.method === "GET") {
       requireScope("read");
       return json(
-        reviewPresentation(
-          readDocument(state, "project", url.searchParams.get("id")).document,
+        (url.searchParams.get("kind") === "article" ? reviewArticle : reviewPresentation)(
+          readDocument(state, url.searchParams.get("kind") === "article" ? "article" : "project", url.searchParams.get("id")).document,
         ),
       );
     }

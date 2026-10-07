@@ -1,0 +1,2 @@
+import {articleReadiness} from '../src/cms/article-readiness.js';
+export function reviewArticle(doc){const readiness=articleReadiness(doc);return {readiness,readyForVisualReview:readiness.score===100,issues:readiness.items.filter(i=>!i.checked).map(i=>i.guidance),requiredManualChecks:['Cover and supporting images load','Persian text reads correctly at mobile widths','Saved PDFs reflect the current article','Source descriptions and project claims are accurate'],note:'This score measures populated content fields; it does not certify editorial quality.'};}

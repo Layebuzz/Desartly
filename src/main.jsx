@@ -57,6 +57,7 @@ import {
   optimizeImage,
 } from "./data";
 import "./style.css";
+import "@fontsource-variable/vazirmatn/index.css";
 import { CoverManager } from "./CoverManager";
 import { CredentialEditor } from "./CredentialEditor";
 import { CollectionLibrary, MediaLibrary } from "./ContentLibrary";
@@ -341,7 +342,7 @@ function Card({ p, editable = false, onTitleChange, priority = false }) {
 
 function BlogCard({ post, editable = false, onChange }) {
   return (
-    <Link className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
+    <Link lang={post.language} dir={post.language==='fa'?'rtl':undefined} className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
       <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt="" loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
       <div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
       <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.innerText})}>{post.title}</h3>
@@ -633,7 +634,7 @@ function BlogPost({ blogPosts }) {
   const { slug } = useParams();
   const post = blogPosts.find(item => item.id === slug);
   if (!post) return <NotFound />;
-  return <main className="blog-post-page"><Link className="back" to="/journal"><ArrowLeft size={16}/> All notes</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></div>{(post.heroImage||post.coverImage)&&<div className="blog-post-cover"><img src={post.heroImage||post.coverImage} alt={post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : ["grid","composition"].includes(block.type) ? <Grid key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}</main>;
+  return <main className="blog-post-page" lang={post.language} dir={post.language==='fa'?'rtl':undefined}><Link className="back" to="/journal"><ArrowLeft size={16}/> {post.language==='fa'?'همهٔ مقاله‌ها':'All notes'}</Link><div className="blog-post-heading"><span className="eyebrow">{post.category || "NOTES"} / {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p>{post.author&&<div className="article-byline"><span>{post.author}</span>{post.readingTime&&<span>{post.language==='fa'?post.readingTime.toLocaleString('fa')+' دقیقه مطالعه':post.readingTime+' min read'}</span>}</div>}</div>{(post.heroImage||post.coverImage)&&<div className="blog-post-cover"><img src={post.heroImage||post.coverImage} alt={post.coverAlt||post.title} decoding="async" /></div>}{(post.blocks || []).map(block => block.type === "markdown" ? <section className="blog-copy" key={block.id}><MarkdownContent source={block.markdown}/></section> : block.type === "html" ? <HtmlPreview key={block.id} block={block}/> : ["grid","composition"].includes(block.type) ? <Grid key={block.id} block={block}/> : block.type === "image" ? <figure className="blog-image" key={block.id}>{block.image ? <img src={block.image} alt={block.alt || ""}/> : <Art index={(post.cover || 0)+1}/>}<figcaption>{block.caption}</figcaption></figure> : <section className="blog-copy" key={block.id}><h2>{block.title}</h2><p>{block.text}</p></section>)}{post.relatedProject&&<section className="blog-copy article-related"><Link to={'/work/'+post.relatedProject}>{post.language==='fa'?'مشاهدهٔ پروژهٔ کامل':'View the full project'} <ArrowUpRight size={18}/></Link></section>}</main>;
 }
 function BlogEditorBlocks({ blocks = [], onPatch, onMove, onRemove, onUpload, onReorder }) {
   return <SortableGroup axis="y" values={blocks} onReorder={onReorder} className="blog-editor-blocks">{blocks.map((block, index) => <SortableBlock value={block} key={block.id}>{controls => <>
