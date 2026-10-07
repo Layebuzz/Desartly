@@ -106,3 +106,16 @@
  .mobile-dock a.mobile-dock-primary{background:#5635a0;color:#fff;box-shadow:0 3px 9px #5635a029}
  .mobile-dock a.mobile-dock-primary:active{background:#40267b}
 }
+@media(max-width:700px){
+ .work-page{padding-top:40px}
+ .mobile-dock{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:8px 10px;max-width:390px;border-radius:26px;background:rgba(255,255,255,.97);border:1px solid #e9e9ef;box-shadow:0 6px 24px #22252e10;min-height:72px}
+ .mobile-dock a,.mobile-dock a[aria-current=page]{position:relative;flex:initial;min-width:0;width:100%;height:54px;min-height:54px;padding:0;gap:0;background:transparent;color:#747985;box-shadow:none;outline:none;border-radius:18px}
+ .mobile-dock a[aria-current=page]{color:#252832}
+ .mobile-dock a span,.mobile-dock a[aria-current=page] span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);font-size:0}
+ .mobile-dock a[aria-current=page]:not(.mobile-dock-primary):after{content:'';position:absolute;bottom:4px;left:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#252832}
+ .mobile-dock a svg{width:23px;height:23px;stroke-width:1.7}
+ .mobile-dock a.mobile-dock-primary,.mobile-dock a.mobile-dock-primary[aria-current=page]{width:52px;height:52px;min-height:52px;justify-self:center;padding:0;border-radius:18px;background:#6540ae;color:#fff;box-shadow:0 4px 12px #6540ae24;outline:none}
+ .mobile-dock a.mobile-dock-primary[aria-current=page]{background:#4f2e91}
+ .mobile-dock a.mobile-dock-primary svg{width:24px;height:24px}
+ .mobile-dock a[aria-current=page]:not(.mobile-dock-primary):active{background:#f3f2f6}
+}
