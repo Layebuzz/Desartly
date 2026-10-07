@@ -738,14 +738,13 @@ function About() {
     <section className="about-opening" aria-labelledby="about-title">
       <div className="about-opening-meta"><span className="eyebrow">ALI KOMEILI / THE PRACTICE</span><span>Independent designer</span></div>
       <div className="about-opening-grid">
-        <h1 id="about-title">{page.title || <>Curiosity connects<br/>everything I do.</>}</h1>
+        <h1 id="about-title">{page.title || <>Curiosity connects everything I do.</>}</h1>
         <div className="about-opening-copy"><span className="about-small-label">A PRACTICE ACROSS DISCIPLINES</span><p>{page.intro}</p><div className="about-opening-actions"><a href="#experience">Explore my experience <Arrow/></a><Link to="/contact">Let’s talk <Arrow/></Link></div></div>
       </div>
       <div className="about-practice-line"><span>{page.practice}</span><p>{page.availability}</p><Link to="/work">See selected work <Arrow/></Link></div>
     </section>
     <section className="about-story profile-section"><span className="eyebrow">HOW I WORK</span><p>{page.body}</p></section>
-    <section className="embedded-resume" id="resume"><ResumeProfile profile={page.resumeProfile} sectionOrder={page.sectionOrder} hiddenSections={page.hiddenSections} afterExperience={<AboutProjects id="selected-work" page={page} projects={projects}/>} afterExpertise={<PracticeRadar id="practice-map" page={page}/>} beforeLearning={<AboutCertificates id="selected-credentials" page={page} certificates={certificates}/>}/></section>
-    <Link className="about-certificates-card" to="/certificates"><div><span className="eyebrow">CONTINUING THE PRACTICE</span><h2>Learning, with proof.</h2><p>Explore my certificates in design, creative technology and human-centred experiences.</p><span className="certificate-card-action">View my certificates <Arrow/></span></div><ArrowUpRight size={48} strokeWidth={1}/></Link>
+    <section className="embedded-resume" id="resume"><ResumeProfile profile={page.resumeProfile} labels={page} sectionOrder={page.sectionOrder} hiddenSections={page.hiddenSections} afterExperience={<AboutProjects id="selected-work" page={page} projects={projects}/>} afterExpertise={<PracticeRadar id="practice-map" page={page}/>} beforeLearning={<AboutCertificates id="selected-credentials" page={page} certificates={certificates}/>}/></section>
     <ContactBand/>
   </main>;
 }
