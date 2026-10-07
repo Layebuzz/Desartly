@@ -101,7 +101,8 @@ function SiteMotion({ disabled = false }) {
       if (cancelled) return;
       const revealTargets = document.querySelectorAll([
         "#main main > .page-title",
-        "#main main > section",
+        "#main main > section:not(.embedded-resume)",
+        "#main .embedded-resume .profile-section",
         "#main .cards:not(.work-results) > a",
         "#main .home-project-grid > a",
         "#main .blog-grid > a",
@@ -116,7 +117,7 @@ function SiteMotion({ disabled = false }) {
         element.style.transform = "translateY(22px)";
         const stop = inView(element, () => {
           animate(element, { opacity: 1, y: 0 }, { duration: .72, delay: Math.min(index % 4, 3) * .035, ease: [.22, 1, .36, 1] });
-        }, { margin: "0px 0px -7% 0px", amount: .08 });
+        }, { margin: "0px 0px -7% 0px", amount: 0 });
         cleanups.push(stop);
       });
 

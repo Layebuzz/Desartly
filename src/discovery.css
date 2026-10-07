@@ -46,7 +46,7 @@
  #main .page-title,#main .blog-post-heading,#main .proposal-intro,#main .project-heading,#main .project-overview-copy{padding:22px!important;border:1px solid #e3e3eb;border-radius:6px;background:#f8f7fa;margin-bottom:24px;min-width:0}
  #main .page-title h1,#main .blog-post-heading h1{font-size:34px;line-height:1.12;letter-spacing:-.045em;margin:12px 0}
  #main .page-title p,#main .blog-post-heading p{font-size:14px;line-height:1.65;margin:0;max-width:none}
- #main .work-page{padding-top:12px}
+ #main .work-page{padding-top:56px}
  #main .work-page .page-title{padding:18px 20px!important;margin-bottom:16px}
  #main .work-page .page-title h1{font-size:30px;margin:8px 0}
  #main .work-page .page-title .eyebrow{font-size:9px}
@@ -120,3 +120,16 @@
  .mobile-dock a[aria-current=page]:not(.mobile-dock-primary):active{background:#f3f2f6}
 }
 @media(max-width:700px){.mobile-dock a.mobile-dock-primary span,.mobile-dock a.mobile-dock-primary[aria-current=page] span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);font-size:0}}
+
+/* Shared mobile header and journal rhythm. */
+@media(max-width:700px){
+ .public-header{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px;gap:0!important;min-height:80px;padding-block:18px!important}
+ .public-header .logo{grid-column:2;grid-row:1;justify-self:center;font-size:29px}
+ .public-header .site-navigation{grid-column:3;grid-row:1;justify-self:end}
+ #main .journal-page{padding-top:32px}
+ .journal-page>.page-title,.journal-discovery .work-explorer-top,.journal-discovery .discovery-tabs,.journal-discovery-search>span{display:none}
+ .journal-editorial-layout .journal-discovery{padding:0;margin:0}
+ .journal-discovery .work-explorer-controls{gap:0}
+ .journal-discovery-search input{font-size:16px;min-height:50px;border-radius:12px;background:#f6f7fa}
+ .journal-editorial-layout{gap:28px}
+}

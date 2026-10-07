@@ -103,3 +103,28 @@
 @media(prefers-reduced-motion:reduce){.about-editorial *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 @media print{.about-editorial .resume-index,.about-editorial .contact-band{display:none}.about-editorial .profile-section{break-inside:avoid}.about-project-grid{grid-template-columns:repeat(3,1fr);grid-auto-flow:row;overflow:visible}.about-certificate-grid{grid-template-columns:repeat(4,1fr);grid-auto-flow:row;overflow:visible}}
 .about-media-fallback{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;height:100%;width:100%;padding:22px;color:var(--about-secondary)}.about-media-fallback>span{font-size:10px;letter-spacing:.05em;line-height:1.6}.about-media-fallback strong{font-size:22px;letter-spacing:-.035em;line-height:1.35;text-align:left;max-width:18ch}.about-certificate-grid .about-media-fallback{padding:8px}.about-certificate-grid .about-media-fallback strong{font-size:15px;letter-spacing:-.015em}
+
+/* Mobile modules follow a single reading column, with compact certificate pairs. */
+@media(max-width:700px){
+ #main .about-editorial{width:calc(100% - 32px);padding:32px 0 65px}
+ .about-editorial .about-opening,.about-editorial .profile-section,.about-editorial .contact-band{padding:20px;margin-bottom:20px;min-width:0}
+ .about-opening-grid,.about-practice-line,.about-editorial .about-story,.about-editorial .expertise-grid,.about-editorial .learning-columns,.about-editorial .impact-list,.about-editorial .about-radar-layout{grid-template-columns:minmax(0,1fr)}
+ .about-editorial .about-opening h1{font-size:30px;line-height:1.25;letter-spacing:-.03em}
+ .about-editorial .profile-section-heading h3,.about-editorial .contact-band h2{font-size:22px;line-height:1.4}
+ .about-editorial .resume-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;padding:0 4px 20px}
+ .about-editorial .resume-index a{min-width:0;font-size:12px;gap:8px}
+ .about-project-grid,.about-certificate-grid{grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;scroll-snap-type:none;padding:0;gap:24px}
+ .about-project-grid{grid-template-columns:minmax(0,1fr)}
+ .about-certificate-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
+ .about-certificate-grid h4{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+ .about-certificate-grid small{font-size:11px;margin-top:10px}
+ .about-certificate-grid>a>div{padding:8px;aspect-ratio:1.25}
+ .about-chart-module{max-width:100%;padding:12px}
+ .about-editorial .training-heading{flex-wrap:wrap;gap:4px}
+ .about-editorial .training-heading h4{margin-bottom:4px}
+ .about-editorial .honours-card,.about-editorial .training-list,.about-editorial .expertise-grid article{padding:16px}
+ .about-editorial .experience-entry{grid-template-columns:20px minmax(0,1fr)}
+ .about-editorial .experience-entry>p{grid-column:2}
+ .about-editorial .experience-heading h4{font-size:18px}
+ .about-editorial .contact-band{flex-direction:column;align-items:flex-start}
+}
