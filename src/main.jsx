@@ -660,15 +660,12 @@ function PageModules({blocks = [], onChange}) {
   return <div className="page-modules"><BlogEditorBlocks blocks={blocks} onPatch={patch} onReorder={onChange} onRemove={id=>onChange(blocks.filter(b=>b.id!==id))} onMove={(i,d)=>{const next=[...blocks];[next[i+d],next[i]]=[next[i],next[i+d]];onChange(next);}} onUpload={async(id,e)=>{if(e.target.files[0])patch(id,{image:await optimizeImage(e.target.files[0])});}}/><div className="canvas-insert" data-editor-ui><span>Add a module</span>{['text','image','html','markdown'].map(type=><button key={type} onClick={()=>onChange([...blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',caption:'',html:''}])}><Plus size={14}/>{type==='html'?'HTML file / prototype':type}</button>)}</div></div>;
 }
 function Work({ projects }) {
-  const [projectOrder] = useState(() => {
-    const ids = projects.map(project => project.id);
-    for (let i = ids.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [ids[i], ids[j]] = [ids[j], ids[i]];
-    }
-    return new Map(ids.map((id, index) => [id, index]));
-  });
-  const orderedProjects = [...projects].sort((a, b) => (projectOrder.get(a.id) ?? projects.length) - (projectOrder.get(b.id) ?? projects.length));
+  const projectOrder = React.useRef(new Map());
+  // Assign ranks when data arrives; filters preserve the order until the page reloads.
+  for (const project of projects) {
+    if (!projectOrder.current.has(project.id)) projectOrder.current.set(project.id, Math.random());
+  }
+  const orderedProjects = [...projects].sort((a, b) => projectOrder.current.get(a.id) - projectOrder.current.get(b.id));
   const reducedMotion = useReducedMotion();
   const page = usePage();
   const { categories } = React.useContext(Taxonomy);
