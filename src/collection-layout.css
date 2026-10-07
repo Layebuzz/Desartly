@@ -40,3 +40,12 @@
  #main .journal-layout-full .blog-list{gap:36px}
  #main .journal-layout-full .blog-card[lang=fa]{font-family:'Vazirmatn Variable',Vazirmatn,sans-serif;letter-spacing:0}
 }
+
+/* Mobile collections start directly with their cards. */
+@media(max-width:700px){
+ #main :is(.work-page,.journal-page)>.page-title,
+ #main .work-page>.work-explorer,
+ #main .journal-page .journal-discovery{display:none!important}
+ #main :is(.work-page,.journal-page){padding-top:24px}
+ .mobile-dock a[aria-current=page]{background:transparent;color:var(--color-text-secondary)}
+}
