@@ -1,0 +1,18 @@
+import {composition} from '../layouts.js';
+import templates from './presentation-layouts.js';
+import {projectDiscipline,projectIndustry} from '../project-tags.js';
+export const PAGE={width:1920,height:1280};
+const plain=value=>String(value||'').replace(/<[^>]*>/g,'').replace(/[#*_`]/g,'').replace(/\s+/g,' ').trim();
+export function shortCopy(value,max=340){const text=plain(value);if(text.length<=max)return text;const chunk=text.slice(0,max-1);const sentence=Math.max(chunk.lastIndexOf('. '),chunk.lastIndexOf('! '),chunk.lastIndexOf('? '));return sentence>max/2?chunk.slice(0,sentence+1):chunk.slice(0,chunk.lastIndexOf(' '))+'…';}
+// Match source CMS slot centres to the guide's frames, preserving image order.
+export function presentationFrames(preset){const source=composition(preset),target=templates[preset]||templates[1];const bounds={x:Math.min(...target.map(b=>b.x)),y:Math.min(...target.map(b=>b.y))};bounds.w=Math.max(...target.map(b=>b.x+b.w))-bounds.x;bounds.h=Math.max(...target.map(b=>b.y+b.h))-bounds.y;const unused=new Set(target.map((_,i)=>i));return source.boxes.map(b=>{const x=(b.x+b.w/2)/source.width,y=(b.y+b.h/2)/source.height;let best=-1,distance=Infinity;for(const i of unused){const t=target[i],d=Math.hypot((t.x+t.w/2-bounds.x)/bounds.w-x,(t.y+t.h/2-bounds.y)/bounds.h-y);if(d<distance){best=i;distance=d;}}unused.delete(best);return target[best];});}
+export function buildPresentation(project){const slides=[],warnings=[];const title=plain(project.title)||'Untitled project';const cover=project.heroImage||project.coverImage;
+slides.push({type:'cover',title,image:cover,discipline:projectDiscipline(project),industry:projectIndustry(project)});
+slides.push({type:'identity',title,summary:shortCopy(project.summary,500),fields:[['Client',project.clientName],['Discipline',projectDiscipline(project)],['Industry',projectIndustry(project)],['Role',project.role],['Deliverables',project.deliverables],['Challenge',project.challenge],['Credits',project.credits]].filter(([,v])=>plain(v)).map(([label,value])=>({label,value:shortCopy(value,260)}))});
+let pending=[];
+const flush=()=>{for(const b of pending)slides.push({type:'story',title:plain(b.title)||'The project',label:plain(b.chapter)||'PROJECT STORY',text:shortCopy(b.text||b.markdown,900)});pending=[];};
+for(const block of project.blocks||[]){if(block.hidden||block.visible===false)continue;if(['text','markdown'].includes(block.type)){pending.push(block);continue;}
+if(['image','grid','composition'].includes(block.type)){const images=block.type==='image'?[block.image]:(block.images||[]);if(!images.some(Boolean))continue;const text=pending.pop();flush();const preset=Number(block.preset)||1;const frames=block.type==='image'?[{x:880,y:80,w:960,h:960}]:presentationFrames(preset);if(images.length>frames.length)warnings.push(`Section ${block.title||block.id}: extra images will continue on additional slides.`);
+for(let offset=0;offset<images.length;offset+=frames.length){slides.push({type:'images',title:plain(text?.title||block.title),label:plain(text?.chapter)||'PROJECT PRESENTATION',text:shortCopy(text?.text||text?.markdown||block.caption),frames,images:images.slice(offset,offset+frames.length),fit:block.type==='image'&&!block.aspectRatio?'contain':'cover',preset:block.type==='image'?0:preset});}
+}else{flush();warnings.push(`Interactive section ${block.title||block.id||block.type} needs a static image to appear in the PDF.`);}}
+flush();if(!cover)warnings.push('Add a project cover before downloading.');slides.push({type:'closing',title:'Let’s stay connected.',text:'Follow my design journey.',projectTitle:title,id:project.id});return {slides,warnings};}
