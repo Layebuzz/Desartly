@@ -1,0 +1,31 @@
+/* Collection layouts and project controls share a quiet, compact rhythm. */
+.journal-layout-full .blog-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:36px 22px}
+.journal-editorial-layout{grid-template-columns:210px minmax(0,1fr);gap:36px}
+.journal-layout-full .blog-list .blog-card h2,.journal-layout-full .blog-list h3{font-size:20px;line-height:1.4}
+#main .work-page .work-explorer{display:block;padding:20px;margin-bottom:32px;border:1px solid var(--color-border,#e2e5eb);border-radius:12px;background:#fff}
+#main .work-page .work-explorer-top{margin-bottom:18px;gap:12px}
+#main .work-page .work-explorer-controls{display:flex;gap:24px;align-items:center}
+#main .work-page .discovery-tabs{display:flex;flex-wrap:wrap;gap:8px;flex:1}
+#main .work-page .discovery-tabs button{min-height:44px;padding:10px 14px;border:1px solid var(--color-border,#e2e5eb);border-radius:6px;font-size:13px;letter-spacing:0;gap:12px}
+#main .work-page .discovery-tabs button[aria-pressed=true]{background:var(--color-text,#202632);color:white;border-color:var(--color-text,#202632)}
+#main .work-page .discovery-tabs button[aria-pressed=true] sup{color:inherit;opacity:.75}
+#main .work-page .discovery-tabs button i{display:none}
+#main .work-page .discovery-tabs button sup{align-self:center;margin:0;font-size:10px}
+#main .work-page .industry-trigger{min-height:56px;border-radius:6px;background:#f6f7f9;letter-spacing:0}
+#main .work-page .industry-trigger small{color:var(--color-text-secondary)}
+#main .work-page .industry-options button[aria-pressed=true]{background:#f1f3f6}
+@media(max-width:1100px){.journal-layout-full .blog-list{grid-template-columns:repeat(2,minmax(0,1fr))}#main .work-page .work-explorer-controls{flex-direction:column;align-items:stretch}#main .work-page .work-industry{flex-basis:auto}}
+@media(max-width:700px){
+ #main .journal-page>.page-title,#main .work-page>.page-title{display:block;padding:12px 0 28px!important;margin:0}
+ #main :is(.journal-page,.work-page)>.page-title h1{font-size:36px;line-height:1.15;margin:12px 0}
+ #main :is(.journal-page,.work-page)>.page-title p{font-size:14px;line-height:1.7}
+ #main .journal-page .journal-discovery{display:none}
+ .journal-layout-full .blog-list{grid-template-columns:1fr}
+ #main .work-page .work-explorer{display:block;padding:16px;margin-bottom:24px}
+ #main .work-page .discovery-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ #main .work-page .discovery-tabs button{justify-content:space-between;padding:9px 10px;font-size:12px}
+ #main .work-page .work-explorer-controls{gap:16px}
+ #main .work-page .work-explorer-top{flex-wrap:wrap;margin-bottom:16px}
+ #main .work-page .industry-popover{left:0;right:0;width:100%;max-width:100%}
+}
+@media(max-width:700px){#main :is(.journal-page,.work-page)>.page-title{background:transparent;border:0;border-radius:0;box-shadow:none}#main .work-page .work-explorer{margin-top:8px}}

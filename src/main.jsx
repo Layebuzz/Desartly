@@ -72,6 +72,10 @@ import "./discovery.css";
 import "./hero.css";
 import "./article-system.css";
 import "./design-system.css";
+import "./footer.css";
+import "./journal-sidebar.css";
+import "./collection-layout.css";
+import {journalTopicId, journalSearchText} from "./journal-topics.js";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
 import { projectTags, matchesCategory, disciplines, projectDiscipline, projectIndustry } from "./project-tags.js";
 import { ProjectTagsEditor } from "./ProjectTagsEditor.jsx";
@@ -528,13 +532,16 @@ function Footer() {
   const patch=values=>setPages(current=>({...current,"/site":{...current["/site"],footer:{...footer,...values}}}));
   const patchItem=(id,values)=>patch({items:footer.items.map(item=>item.id===id?{...item,...values}:item)});
   return <footer className="desartly-footer">
+    <ContactBand page={pages["/"] || {}} editable={editable} onPatch={values=>setPages(current=>({...current,"/":{...current["/"],...values}}))}/>
+    <div className="footer-details">
     <div className="personal-colophon"><span>Selected work by <Link to="/about">Ali Komeili</Link><small>Desartly is my independent design portfolio.</small></span></div>
     <Link to="/" className="logo">Desartly<span>®</span></Link>
     <p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({description:e.currentTarget.innerText})}>{footer.description}</p>
-    <div className="footer-items">{footer.items.map((item,index)=><div className="footer-item" key={item.id}>
+    <div className="footer-items" role="navigation" aria-label="Footer navigation">{footer.items.map((item,index)=><div className="footer-item" key={item.id}>
       {editable?<><span contentEditable suppressContentEditableWarning onBlur={e=>patchItem(item.id,{label:e.currentTarget.innerText})}>{item.label}</span><div className="footer-item-tools" data-editor-ui><input aria-label="Footer link destination" placeholder="Link (optional)" value={item.url||""} onChange={e=>patchItem(item.id,{url:e.target.value})}/><button aria-label="Move footer item up" disabled={!index} onClick={()=>{const items=[...footer.items];[items[index-1],items[index]]=[items[index],items[index-1]];patch({items});}}>↑</button><button aria-label="Remove footer item" onClick={()=>patch({items:footer.items.filter(i=>i.id!==item.id)})}>×</button></div></>:safeLink(item.url)?<a href={safeLink(item.url)}>{item.label}</a>:<span>{item.label}</span>}
     </div>)}{editable&&<button data-editor-ui onClick={()=>patch({items:[...footer.items,{id:crypto.randomUUID(),label:"New item",url:""}]})}>+ Add footer item</button>}</div>
     <small contentEditable={editable} suppressContentEditableWarning onBlur={e=>patch({copyright:e.currentTarget.innerText})}>{footer.copyright}</small>
+    </div>
   </footer>;
 }
 function Home({ projects, stats = initialStats, clients = initialClients, blogPosts = initialBlogPosts, homeSections = initialHomeSections, editable = false, onPagePatch, onProjectTitleChange, onStatsChange, onClientChange, onClientsChange, onBlogChange, pageOverride, onSectionsChange, onCoverChange, onFeaturedChange, onFeaturedOrder }) {
@@ -595,7 +602,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   const patchSection = (id, values) => onSectionsChange?.(normalizedSections.map(section=>section.id===id?{...section,...values}:section));
   const renderSection = section => sectionMap[section.id] || (section.type === 'html' ? <HtmlPreview block={section} editable={editable} onChange={html=>patchSection(section.id,{html})} onTitleChange={title=>patchSection(section.id,{title})}/> : section.type === 'image' ? <figure className="custom-image"><img src={section.image || undefined} alt={section.title || ''}/>{editable && <input data-editor-ui type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])patchSection(section.id,{image:await optimizeImage(e.target.files[0])});}}/>}<figcaption contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</figcaption></figure> : <section className="blog-copy"><h2 contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{title:e.currentTarget.innerText})}>{section.title}</h2><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>patchSection(section.id,{text:e.currentTarget.innerText})}>{section.text}</p></section>);
   if (!editable&&mobileEntry&&new URLSearchParams(homeLocation.search).get('view')!=='home') return <Work projects={shuffledProjects}/>;
-  if (!editable) return <main className="folio-home">{normalizedSections.filter(s=>s.visible!==false).map(section=><React.Fragment key={section.id}>{renderSection(section)}</React.Fragment>)}</main>;
+  if (!editable) return <main className="folio-home">{normalizedSections.filter(s=>s.visible!==false && s.id!=="contact").map(section=><React.Fragment key={section.id}>{renderSection(section)}</React.Fragment>)}</main>;
   return <main className="folio-home home-canvas"><SortableGroup axis="y" values={normalizedSections} onReorder={onSectionsChange}>{normalizedSections.map((section,index)=><SortableBlock key={section.id} value={section}>{controls=><div className={section.visible===false?'canvas-section is-hidden':'canvas-section'}><div className="canvas-section-tools" data-editor-ui><button className="drag-handle" aria-label={`Drag ${section.label || section.type}`} onPointerDown={e=>controls.start(e)}><GripVertical size={16}/></button><strong>{section.label || section.type}</strong><button disabled={index===0} onClick={()=>{const next=[...normalizedSections];[next[index-1],next[index]]=[next[index],next[index-1]];onSectionsChange(next);}}>↑</button><button disabled={index===normalizedSections.length-1} onClick={()=>{const next=[...normalizedSections];[next[index+1],next[index]]=[next[index],next[index+1]];onSectionsChange(next);}}>↓</button><button onClick={()=>patchSection(section.id,{visible:section.visible===false})}>{section.visible===false?'Show':'Hide'}</button>{section.type && <button onClick={()=>onSectionsChange(normalizedSections.filter(s=>s.id!==section.id))}>Remove</button>}</div>{renderSection(section)}{section.id==='intro' && activeProject && onCoverChange && <div className="canvas-insert" data-editor-ui><label>Replace square cover<input type="file" accept="image/*" onChange={async e=>{if(e.target.files[0])onCoverChange?.(activeProject.id,await optimizeImage(e.target.files[0],{purpose:"cover",aspect:1}));}}/></label></div>}{section.id==='selected' && <div className="canvas-insert" data-editor-ui>{selected.map((project,i)=><label key={i}>Card {i+1}<select aria-label={`Featured card ${i+1}`} value={project.id} onChange={e=>onFeaturedChange?.(i,e.target.value)}>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}</div>}</SortableBlock>)}</SortableGroup><div className="canvas-insert" data-editor-ui><span>Add a section</span>{['text','image','html'].map(type=><button key={type} onClick={()=>onSectionsChange([...normalizedSections,{id:crypto.randomUUID(),type,visible:true,title:'New section',text:'Write here.'}])}><Plus size={14}/>{type === 'html'?'HTML prototype':type}</button>)}</div></main>;
 }
 function EditableHeading({as:Tag="h1", first, second, editable, onChange, label="Heading"}) {
@@ -616,15 +623,15 @@ function Journal({ blogPosts }) {
   const activeTopic = params.get("topic") || "all";
   const query = params.get("q") || "";
   const topicLabels = Array.from(new Set(blogPosts.map(post => post.category || "Notes")));
-  const topics = [{ id: "all", label: "All notes" }, ...topicLabels.map(label => ({ id: slugify(label), label }))];
-  const visiblePosts = blogPosts.filter(post => (activeTopic === "all" || slugify(post.category || "Notes") === activeTopic) && `${post.title} ${post.excerpt}`.toLowerCase().includes(query.toLowerCase()));
-  const countFor = topic => topic.id === "all" ? blogPosts.length : blogPosts.filter(post => slugify(post.category || "Notes") === topic.id).length;
+  const topics = [{ id: "all", label: "All notes" }, ...topicLabels.map(label => ({ id: journalTopicId(label), label }))];
+  const visiblePosts = blogPosts.filter(post => (activeTopic === "all" || journalTopicId(post.category || "Notes") === activeTopic) && journalSearchText(`${post.title} ${post.excerpt} ${post.category || ""}`).includes(journalSearchText(query)));
+  const countFor = topic => topic.id === "all" ? blogPosts.length : blogPosts.filter(post => journalTopicId(post.category || "Notes") === topic.id).length;
   const chooseTopic = topic => setParams({...query ? {q:query} : {},...topic.id === "all" ? {} : {topic:topic.id}});
   return <main className="page journal-page">
     <div className="page-title"><span className="eyebrow">THE JOURNAL / {blogPosts.length} NOTES</span><h1>{page.title || "Notes from the practice."}</h1><p>{page.intro || "Small observations on product thinking, visual systems and the work between."}</p></div>
     <div className="journal-editorial-layout"><aside className="journal-discovery" aria-label="Filter journal">
       <div className="work-explorer-top"><span className="work-explorer-label">FIELD NOTES</span><span className="work-explorer-result" role="status">{visiblePosts.length} notes{(query||activeTopic!=='all')&&<button onClick={()=>setParams({})}>Clear filters</button>}</span></div>
-      <div className="work-explorer-controls"><FilterTabs label="Journal topics" value={activeTopic} onChange={id=>chooseTopic({id})} items={topics.map(t=>({...t,count:countFor(t)}))}/>
+      <div className="work-explorer-controls"><div className="journal-topic-list" role="group" aria-label="Journal topics">{topics.map(topic=><button type="button" key={topic.id} aria-pressed={activeTopic===topic.id} onClick={()=>chooseTopic(topic)}><span lang={/[\u0600-\u06ff]/.test(topic.label)?"fa":undefined} dir="auto">{topic.label}</span><span className="journal-topic-count">{countFor(topic)}</span></button>)}</div>
       <label className="journal-discovery-search"><span>Search the journal</span><input type="search" aria-label="Search notes" placeholder="An idea, a topic…" value={query} onChange={e=>setParams({...activeTopic === "all" ? {} : {topic:activeTopic},...e.target.value ? {q:e.target.value} : {}},{replace:true})}/></label></div>
     </aside>
     <div className="journal-layout journal-layout-full">
@@ -651,6 +658,15 @@ function PageModules({blocks = [], onChange}) {
   return <div className="page-modules"><BlogEditorBlocks blocks={blocks} onPatch={patch} onReorder={onChange} onRemove={id=>onChange(blocks.filter(b=>b.id!==id))} onMove={(i,d)=>{const next=[...blocks];[next[i+d],next[i]]=[next[i],next[i+d]];onChange(next);}} onUpload={async(id,e)=>{if(e.target.files[0])patch(id,{image:await optimizeImage(e.target.files[0])});}}/><div className="canvas-insert" data-editor-ui><span>Add a module</span>{['text','image','html','markdown'].map(type=><button key={type} onClick={()=>onChange([...blocks,{id:crypto.randomUUID(),type,title:'New section',text:'Write here.',caption:'',html:''}])}><Plus size={14}/>{type==='html'?'HTML file / prototype':type}</button>)}</div></div>;
 }
 function Work({ projects }) {
+  const [projectOrder] = useState(() => {
+    const ids = projects.map(project => project.id);
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    return new Map(ids.map((id, index) => [id, index]));
+  });
+  const orderedProjects = [...projects].sort((a, b) => (projectOrder.get(a.id) ?? projects.length) - (projectOrder.get(b.id) ?? projects.length));
   const reducedMotion = useReducedMotion();
   const page = usePage();
   const { categories } = React.useContext(Taxonomy);
@@ -680,7 +696,7 @@ function Work({ projects }) {
         initial={{ opacity: reducedMotion ? 1 : 0 }}
         animate={{ opacity: 1, transition: { duration: reducedMotion ? 0 : .18, ease: "easeOut" } }}
         exit={{ opacity: reducedMotion ? 1 : 0, transition: { duration: reducedMotion ? 0 : .1, ease: "easeIn" } }}>
-        {projects
+        {orderedProjects
           .filter(
             (p) =>
               (!active || slugify(projectDiscipline(p)) === active) && (!industry || slugify(projectIndustry(p)) === industry),
@@ -744,7 +760,6 @@ function Project({ projects }) {
       )}
       {p.relatedNote&&<Link className="related-note" to={"/journal/"+p.relatedNote}>Read the thinking behind this work <Arrow/></Link>}
       {suggestions.length>0&&<section className="project-suggestions" aria-label="More projects"><div className="project-suggestions-heading"><small>KEEP EXPLORING</small><span>{suggestions.length} SELECTED PROJECTS</span></div><div className="project-suggestion-grid">{suggestions.map(item=><Link className="project-suggestion-card" to={"/work/"+item.id} key={item.id}><div className="project-suggestion-cover">{item.coverImage?<img src={item.coverImage} alt="" loading="lazy" decoding="async"/>:<Art index={item.cover}/>}</div><div className="project-suggestion-copy"><small>{projectTags(item).join(" / ")}</small><div><h2>{item.title}</h2><ArrowUpRight size={22}/></div><p>{item.summary}</p></div></Link>)}</div></section>}
-      <ContactBand/>
     </main>
   );
 }
@@ -762,7 +777,6 @@ function About() {
     </section>
     <section className="about-story profile-section"><span className="eyebrow">HOW I WORK</span><p>{page.body}</p></section>
     <section className="embedded-resume" id="resume"><ResumeProfile profile={page.resumeProfile} labels={page} sectionOrder={page.sectionOrder} hiddenSections={page.hiddenSections} afterExperience={<AboutProjects id="selected-work" page={page} projects={projects}/>} afterExpertise={<PracticeRadar id="practice-map" page={page}/>} beforeLearning={<AboutCertificates id="selected-credentials" page={page} certificates={certificates}/>}/></section>
-    <ContactBand/>
   </main>;
 }
 
@@ -823,7 +837,6 @@ function Services() {
           </div>
         ))}
       </div>
-      <ContactBand />
     </main>
   );
 }

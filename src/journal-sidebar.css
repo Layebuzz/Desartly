@@ -1,0 +1,17 @@
+.journal-editorial-layout .journal-discovery{padding:22px;border:1px solid var(--color-border,#e2e5eb);border-radius:12px;background:#fff}
+.journal-discovery .work-explorer-top{display:flex;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--color-border,#e2e5eb);margin-bottom:20px}
+.journal-discovery .work-explorer-label{font-size:10px;letter-spacing:.12em}
+.journal-discovery .work-explorer-result{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12px}
+.journal-discovery .work-explorer-result button{font:inherit;background:transparent;border:0;padding:6px 0;min-height:32px;color:var(--color-action,#6554d8);cursor:pointer}
+.journal-discovery .work-explorer-controls{display:flex;flex-direction:column;gap:20px}
+.journal-discovery-search{order:-1;min-width:0}
+.journal-discovery-search>span{font-size:11px}
+.journal-discovery-search input{min-height:44px;border-radius:6px;background:#f6f7f9;font-family:'DM Sans','Vazirmatn Variable',sans-serif;font-size:13px;letter-spacing:0}
+.journal-topic-list{display:grid;gap:4px}
+.journal-topic-list button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;min-height:44px;padding:10px 12px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--color-text-secondary,#626979);font:500 13px/1.6 'DM Sans',sans-serif;text-align:start;cursor:pointer}
+.journal-topic-list button:hover{background:#f6f7f9;color:var(--color-text,#202632)}
+.journal-topic-list button[aria-pressed=true]{background:var(--color-text,#202632);color:#fff}
+.journal-topic-list [lang=fa]{font-family:'Vazirmatn Variable',Vazirmatn,sans-serif;letter-spacing:0}
+.journal-topic-count{font-size:11px;font-variant-numeric:tabular-nums;opacity:.75}
+.journal-discovery :is(button,input):focus-visible{outline:2px solid var(--color-focus,#6554d8);outline-offset:2px}
+@media(max-width:700px){.journal-editorial-layout .journal-discovery{padding:16px}.journal-discovery .work-explorer-top{display:flex}.journal-discovery-search>span{display:block}.journal-discovery .work-explorer-controls{gap:16px}.journal-topic-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.journal-topic-list button{border-color:var(--color-border,#e2e5eb);font-size:12px}.journal-discovery-search input{font-size:16px}}
