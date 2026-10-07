@@ -33,3 +33,12 @@ test('hero slide settings round-trip through draft and page publication independ
  assert.deepEqual(published.published.pages['/'].heroSlides,page.heroSlides);
  assert.deepEqual(published.published.pages['/'].selectedProjects,['a','b','c']);
 });
+
+test('About sections, selected media, full biography and radar survive scoped draft and publication',()=>{
+ const state=initialState(),before=structuredClone(state.published);
+ const page={title:'Connected practice',body:'A detailed biography',selectedProjects:['swerve'],selectedCertificates:['credential-1'],sectionOrder:['experience','practice-map','learning'],hiddenSections:['impact'],radar:[{label:'Brand',value:80},{label:'UX',value:60},{label:'AI',value:70}],resumeProfile:{experience:[{company:'Studio',role:'Designer',description:'Detailed experience'}],training:['Course one','Course two']}};
+ const draft=updatePage(state,{path:'/about',page,draftVersion:0});
+ assert.deepEqual(draft.draft.pages['/about'],page);assert.deepEqual(draft.published,before);
+ const live=updatePage(draft,{path:'/about',page,draftVersion:1,publish:true});
+ assert.deepEqual(live.published.pages['/about'],page);for(const key of ['projects','certificates','nav'])assert.deepEqual(live.published[key],before[key]);
+});

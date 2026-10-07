@@ -1,3 +1,4 @@
+import {resolveAbout,AboutSettings,AboutProjects,AboutCertificates,PracticeRadar} from './AboutSections.jsx';
 import {HeroSlideEditor,resolveHeroSlides} from './HeroSlides.jsx';
 import {BookCall,BookingLauncher} from './BookCall.jsx';
 import {FilterTabs} from './FilterTabs.jsx';
@@ -731,17 +732,19 @@ function Project({ projects }) {
   );
 }
 function About() {
-  const page = usePage();
+  const {pages,projects=[],certificates=[]}=React.useContext(PageContent);
+  const page=resolveAbout(usePage(),pages["/resume"]?.resumeProfile);
   return <main className="page about about-editorial">
     <section className="about-opening" aria-labelledby="about-title">
       <div className="about-opening-meta"><span className="eyebrow">ALI KOMEILI / THE PRACTICE</span><span>Independent designer</span></div>
       <div className="about-opening-grid">
         <h1 id="about-title">{page.title || <>Curiosity connects<br/>everything I do.</>}</h1>
-        <div className="about-opening-copy"><span className="about-small-label">A PRACTICE ACROSS DISCIPLINES</span><p>My practice brings together product design, AI agents, branding and advertising. I’m interested in the space where a useful experience meets a distinct visual voice.</p><div className="about-opening-actions"><a href="#experience">Explore my experience <Arrow/></a><Link to="/contact">Let’s talk <Arrow/></Link></div></div>
+        <div className="about-opening-copy"><span className="about-small-label">A PRACTICE ACROSS DISCIPLINES</span><p>{page.intro}</p><div className="about-opening-actions"><a href="#experience">Explore my experience <Arrow/></a><Link to="/contact">Let’s talk <Arrow/></Link></div></div>
       </div>
-      <div className="about-practice-line"><span>I think in systems.<br/>I care about the details.</span><p>I’m open to joining thoughtful teams and collaborating on independent projects.</p><Link to="/work">See selected work <Arrow/></Link></div>
+      <div className="about-practice-line"><span>{page.practice}</span><p>{page.availability}</p><Link to="/work">See selected work <Arrow/></Link></div>
     </section>
-    <Resume embedded/>
+    <section className="about-story profile-section"><span className="eyebrow">HOW I WORK</span><p>{page.body}</p></section>
+    <section className="embedded-resume" id="resume"><ResumeProfile profile={page.resumeProfile} sectionOrder={page.sectionOrder} hiddenSections={page.hiddenSections} afterExperience={<AboutProjects id="selected-work" page={page} projects={projects}/>} afterExpertise={<PracticeRadar id="practice-map" page={page}/>} beforeLearning={<AboutCertificates id="selected-credentials" page={page} certificates={certificates}/>}/></section>
     <Link className="about-certificates-card" to="/certificates"><div><span className="eyebrow">CONTINUING THE PRACTICE</span><h2>Learning, with proof.</h2><p>Explore my certificates in design, creative technology and human-centred experiences.</p><span className="certificate-card-action">View my certificates <Arrow/></span></div><ArrowUpRight size={48} strokeWidth={1}/></Link>
     <ContactBand/>
   </main>;
@@ -882,6 +885,7 @@ function Editor({projects,certificates,contextPath='/',pages,setPages,stats,setS
  <div className="save-notice" role="status">{notice||'Edit page copy and layout here. Manage projects, articles and media in Studio.'}</div>
  <div className="editor-layout"><aside id="editor-inspector" aria-label="Page options"><div className="studio-map"><div className="map-heading"><span>DESARTLY STUDIO</span><h2>Pages</h2></div><div className="map-page-grid">{pageLinks.map(([path,label])=><a key={path} href={'/studio/layout?path='+encodeURIComponent(path)} className={path===contextPath?'active':''} onClick={e=>leave(e,e.currentTarget.href)}>{label}</a>)}</div><p className="form-note">Projects, journal, media, navigation and site settings have one home in Studio.</p><a href="/studio" onClick={e=>leave(e,'/studio')}>Open workspace ↗</a></div>
  {(contextPath==='/'?['title','subtitle','intro','contactNote']:['title','intro','body']).map(field=><label key={field}>{field}<textarea rows={3} value={page[field]||''} placeholder="Use default text" onChange={e=>patch({[field]:e.target.value})}/></label>)}
+ {contextPath==='/about'&&<AboutSettings page={page} onChange={patch} projects={projects.filter(isVisibleProject)} certificates={certificates} fallback={pages['/resume']?.resumeProfile}/>}
  {contextPath==='/'&&<HeroSlideEditor page={page} projects={projects.filter(isVisibleProject)} onChange={patch}/>}
  {contextPath==='/'&&<div className="home-selections"><label>Featured projects</label>{[0,1,2].map(i=><label key={i}>Position {i+1}<select value={page.selectedProjects?.[i]||''} onChange={e=>{const ids=[...(page.selectedProjects||[])];ids[i]=e.target.value;patch({selectedProjects:ids});}}><option value="">Automatic</option>{projects.filter(isVisibleProject).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</div>}
  </aside><div className="editor-canvas" onClickCapture={e=>{if(e.target.closest("a")&&!e.target.closest("[data-editor-ui]"))e.preventDefault();}}><div className="canvas-context-bar" data-editor-ui><span>{contextPath}</span><small>Click page text to edit · Save draft · Publish this page</small></div>
@@ -929,7 +933,7 @@ function App() {
   const edit = isWorkspace || isStudio || location.pathname === "/login";
   const publicProjects = projects.filter(isVisibleProject);
   return (
-    <PageContent.Provider value={{ pages, setPages }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
+    <PageContent.Provider value={{ pages, setPages,projects:publicProjects,certificates }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
       {!edit&&<MobileNavigation/>}
       <Taxonomy.Provider
         value={{
