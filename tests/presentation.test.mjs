@@ -8,3 +8,8 @@ test('short copy ends at sentence boundaries where possible',()=>{assert.equal(s
 
 import {pdfFontStyle} from '../src/cms/presentation-renderer.js';
 test('native PDF preserves browser-normalized bold weights',()=>{assert.equal(pdfFontStyle('bold 108px PresentationManrope'),'bold');assert.equal(pdfFontStyle('700 108px PresentationManrope'),'bold');assert.equal(pdfFontStyle('30px PresentationManrope'),'normal');});
+
+import {buildInstagramPresentation,INSTAGRAM_PAGE} from '../src/cms/presentation-model.js';
+test('Instagram uses portrait dimensions and preserves images with readable profile batches',()=>{assert.deepEqual(INSTAGRAM_PAGE,{width:1080,height:1350});const project={title:'Demo',summary:'An identity.',clientName:'Client',role:'Designer',deliverables:'Identity',challenge:'Positioning',credits:'Studio',blocks:[{type:'grid',preset:5,images:['/a','/b','/c','/d']}]};const before=structuredClone(project),{slides}=buildInstagramPresentation(project);assert.deepEqual(slides.filter(s=>s.type==='images').flatMap(s=>s.images),['/a','/b','/c','/d']);assert.ok(slides.filter(s=>s.type==='images').every(s=>s.images.length<=2));assert.ok(slides.filter(s=>s.type==='identity').every(s=>s.fields.length<=3));assert.ok(slides.every((s,i)=>s.pageNumber===i+1&&s.totalPages===slides.length));assert.deepEqual(project,before);});
+
+test('Instagram image captions use a complete opening sentence',()=>{const {slides}=buildInstagramPresentation({title:'Demo',blocks:[{type:'text',title:'Idea',text:'A clear opening sentence. More detail follows.'},{type:'image',image:'/a'}]});assert.equal(slides.find(s=>s.type==='images').text,'A clear opening sentence.');});
