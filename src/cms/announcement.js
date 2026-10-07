@@ -1,0 +1,2 @@
+export function announcementText(value={}){return [value.fa?.trim(),value.en?.trim(),value.hashtags?.trim()].filter(Boolean).join('\n\n');}
+export function validateAnnouncement(value){if(value===undefined)return;if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Announcement must contain Persian and English text.');for(const key of ['fa','en','hashtags','notes'])if(value[key]!==undefined&&(typeof value[key]!=='string'||value[key].length>16000))throw Error('Announcement '+key+' must be text of at most 16,000 characters.');}

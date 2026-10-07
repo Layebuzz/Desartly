@@ -1,3 +1,4 @@
+import {validateAnnouncement} from '../src/cms/announcement.js';
 import {libraryFolders,organiseMedia} from '../src/cms/media-architecture.js';
 import {growthMetrics,personalities} from '../src/cms/growth-model.js';
 import { materialize } from "../src/cms/materialize.js";
@@ -49,6 +50,7 @@ export function validateDocument(kind, doc) {
     (!Array.isArray(doc.references) || doc.references.length > 30)
   )
     fail("Use at most 30 benchmark references.");
+  validateAnnouncement(doc.announcement);
   if (JSON.stringify(doc).length > 600000)
     fail("Document exceeds 600 KB. Upload images to the media library.");
   const ids = new Set();
@@ -107,6 +109,7 @@ export function documentStatus(state, kind, doc) {
     const c = { ...p };
     delete c._version;
     delete c.updatedAt;
+    delete c.announcement;
     return JSON.stringify(c);
   };
   return clean(doc) === clean(live) ? "Published" : "Changed";
