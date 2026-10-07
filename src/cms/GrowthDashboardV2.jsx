@@ -1,3 +1,4 @@
+import {SiteProgress} from './SiteProgress.jsx';
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -60,11 +61,12 @@ export function GrowthDashboard({ state }) {
   const [showAll, setShowAll] = useState(false);
   if (!g) return <p>Loading portfolio progress…</p>;
 
+  const allAchievements = [...(g.progress?.achievements||[]),...g.achievements];
   const visibleAchievements = showAll
-    ? g.achievements
-    : g.achievements
+    ? allAchievements
+    : allAchievements
         .slice()
-        .sort((a, b) => b.current / b.target - a.current / a.target)
+        .sort((a, b) => Number(Boolean(b.xp))-Number(Boolean(a.xp)) || b.current / b.target - a.current / a.target)
         .slice(0, 6);
 
   return (
@@ -93,6 +95,7 @@ export function GrowthDashboard({ state }) {
         </div>
       </section>
 
+      <SiteProgress progress={g.progress}/>
       <div className="growth-discipline-stats">
         {serviceKeys.map((key, index) => {
           const count = g.counts?.[key] || 0;
@@ -273,7 +276,7 @@ export function GrowthDashboard({ state }) {
                   total={8}
                   label={achievement.title}
                 />
-                <small>{achievement.current}/{achievement.target}</small>
+                <small>{achievement.current}/{achievement.target}{achievement.xp?` · ${achievement.xp} XP`:""}</small>
               </article>
             );
           })}

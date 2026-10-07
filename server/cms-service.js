@@ -138,7 +138,7 @@ export function cmsView(state) {
     published: materialize(structuredClone(state.published)),
   };
   return {
-    growth:growthMetrics({projects:state.published.projects,inbox:state.inbox,industries:state.growthIndustries||[]}),
+    growth:growthMetrics({projects:state.published.projects,draftProjects:state.draft.projects,articles:state.draft.blogPosts,certificates:state.draft.certificates,pages:state.draft.pages,inbox:state.inbox,industries:state.growthIndustries||[]}),
     revision: state.revision,
     draftVersion: state.draftVersion || 0,
     projects: (state.draft.projects || []).map((d) =>
