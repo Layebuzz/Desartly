@@ -60,6 +60,7 @@ import { CollectionLibrary, MediaLibrary } from "./ContentLibrary";
 import { VisualCopy } from "./VisualCopy";
 import "./refinement.css";
 import "./portfolio.css";
+import "./about.css";
 import "./case-system.css";
 import "./discovery.css";
 import "./hero.css";
@@ -731,51 +732,21 @@ function Project({ projects }) {
 }
 function About() {
   const page = usePage();
-  return (
-    <main className="page about">
-      <div className="page-title"><span className="eyebrow">ALI KOMEILI / THE PRACTICE</span>
-      <h1>
-        {page.title || (
-          <>
-            <span>Curiosity connects</span>
-            <br />
-            <span>everything I do.</span>
-          </>
-        )}
-      </h1></div>
-      <div className="about-grid">
-        <div className="portrait-art">
-          <div className="ali-wordmark">Ali<br/>Komeili<span>Independent designer<br/>Product · Branding · Communication</span></div>
-        </div>
-        <div>
-          <h2>
-            <span>I’m Ali Komeili.</span>
-            <br /><span>I think in systems.</span>
-            <br /><span>I care about the details.</span>
-          </h2>
-          <p>
-            My practice brings together product design, AI agents, branding and
-            advertising. I’m interested in the space where a useful experience
-            meets a distinct visual voice.
-          </p>
-          <p>
-            I’m open to joining thoughtful teams and collaborating on
-            independent projects.
-          </p>
-          <Link className="portfolio-action" to="/about#resume">
-            <span>View resume</span> <Arrow />
-          </Link>
-        </div>
+  return <main className="page about about-editorial">
+    <section className="about-opening" aria-labelledby="about-title">
+      <div className="about-opening-meta"><span className="eyebrow">ALI KOMEILI / THE PRACTICE</span><span>Independent designer</span></div>
+      <div className="about-opening-grid">
+        <h1 id="about-title">{page.title || <>Curiosity connects<br/>everything I do.</>}</h1>
+        <div className="about-opening-copy"><span className="about-small-label">A PRACTICE ACROSS DISCIPLINES</span><p>My practice brings together product design, AI agents, branding and advertising. I’m interested in the space where a useful experience meets a distinct visual voice.</p><div className="about-opening-actions"><a href="#experience">Explore my experience <Arrow/></a><Link to="/contact">Let’s talk <Arrow/></Link></div></div>
       </div>
-      <Resume embedded/>
-      <Link className="about-certificates-card" to="/certificates">
-        <div><span className="eyebrow">CONTINUING THE PRACTICE</span><h2>Learning, with proof.</h2><p>Explore my certificates in design, creative technology and human-centred experiences.</p><span className="certificate-card-action">View my certificates <Arrow /></span></div>
-        <div className="certificate-card-art" aria-hidden="true"><span>AK</span><span>DESIGN / LEARNING</span><span>↗</span></div>
-      </Link>
-      <ContactBand />
-    </main>
-  );
+      <div className="about-practice-line"><span>I think in systems.<br/>I care about the details.</span><p>I’m open to joining thoughtful teams and collaborating on independent projects.</p><Link to="/work">See selected work <Arrow/></Link></div>
+    </section>
+    <Resume embedded/>
+    <Link className="about-certificates-card" to="/certificates"><div><span className="eyebrow">CONTINUING THE PRACTICE</span><h2>Learning, with proof.</h2><p>Explore my certificates in design, creative technology and human-centred experiences.</p><span className="certificate-card-action">View my certificates <Arrow/></span></div><ArrowUpRight size={48} strokeWidth={1}/></Link>
+    <ContactBand/>
+  </main>;
 }
+
 function Resume({embedded=false}) {
   const {pages}=React.useContext(PageContent);const page=pages["/resume"]||{};const Tag=embedded?"section":"main";const Heading=embedded?"h2":"h1";
   return (
