@@ -459,6 +459,7 @@ function Grid({ block, cover = 0 }) {
       {boxes.map((box, i) => (
         <div
           key={i}
+          data-fit={block.images?.[i] ? (block.fits?.[i] === "cover" ? "cover" : "contain") : undefined}
           style={{
             left: (box.x / width) * 100 + "%",
             top: (box.y / height) * 100 + "%",
@@ -748,7 +749,7 @@ function Project({ projects }) {
             <p>{b.text}</p>
           </section>
         ) : b.type === "image" ? (
-          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy" data-fit={b.fit === "cover" ? "cover" : "contain"} style={{aspectRatio:b.aspectRatio || undefined,objectFit:b.fit === "cover" ? "cover" : "contain"}}/></figure>
+          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy" data-fit={b.fit === "cover" ? "cover" : "contain"} style={{aspectRatio:b.fit === "cover" ? (b.aspectRatio || undefined) : undefined,objectFit:b.fit === "cover" ? "cover" : "contain"}}/></figure>
         ) : b.type === "markdown" ? <MarkdownContent source={b.markdown} key={b.id}/> : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (

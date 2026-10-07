@@ -5,3 +5,12 @@
 .project-page .case-single-image>img[data-fit=cover]{height:auto!important;object-fit:cover}
 .project-card .cover[data-fit=contain] img,.project-overview-cover[data-fit=contain]>img{object-fit:contain!important}
 @media(max-width:700px){.project-page .project-natural-grid{grid-template-columns:1fr;gap:16px}}
+
+/* Fit the image element itself so its corners follow the visible artwork. */
+.project-page .composition-layout>div[data-fit=contain]{display:flex;align-items:center;justify-content:center;background:transparent!important}
+.project-page .composition-layout>div[data-fit=contain]>img{width:auto!important;height:auto!important;max-width:100%;max-height:100%;border-radius:var(--control-radius,8px);flex:none}
+.project-page .case-single-image:has(>img[data-fit=contain]){background:transparent!important}
+.project-page .case-single-image>img[data-fit=contain]{aspect-ratio:auto!important;border-radius:var(--control-radius,8px)}
+.project-overview-cover[data-fit=contain],.project-card .cover[data-fit=contain]{background:transparent!important}
+.project-overview-cover[data-fit=contain]>img,.project-card .cover[data-fit=contain]>img{inset:0;margin:auto;width:auto!important;height:auto!important;max-width:100%;max-height:100%;aspect-ratio:auto;border-radius:var(--control-radius,8px)}
+.project-natural-grid img,.case-image-pair img,.case-image-quartet img{border-radius:var(--control-radius,8px)}
