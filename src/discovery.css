@@ -81,3 +81,13 @@
  body:has(.mobile-dock){padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 }
 @media(prefers-reduced-motion:reduce){.mobile-dock a{transition:none}}
+
+@media(max-width:700px){
+ .work-page>.work-explorer{display:none}
+ .mobile-dock{left:50%;right:auto;transform:translateX(-50%);width:calc(100% - 24px);max-width:420px;box-sizing:border-box;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:8px;border-radius:26px;align-items:center;isolation:isolate}
+ .mobile-dock a{min-width:0;height:54px;min-height:54px;padding:0;border-radius:18px;justify-content:center;letter-spacing:0;font-size:10px;white-space:nowrap}
+ .mobile-dock a.mobile-dock-primary{width:54px;height:54px;justify-self:center;border-radius:18px;background:#5635a0;color:white;box-shadow:0 4px 10px #5635a025;font-size:0;gap:0}
+ .mobile-dock a.mobile-dock-primary span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+ .mobile-dock a.mobile-dock-primary svg{width:24px;height:24px;stroke-width:1.8}
+ .mobile-dock a.mobile-dock-primary[aria-current=page]{background:#35205f;outline:2px solid #d7c8f2;outline-offset:2px}
+}

@@ -25,6 +25,8 @@ import {
 } from "react-router-dom";
 import {
   Menu,
+  House,
+  CalendarDays,
   Briefcase,
   BookOpen,
   UserRound,
@@ -196,7 +198,7 @@ function PublicHeader({items}){
  const links=mergeNavigation(items||defaultNav).filter(n=>n.visible!==false);
  return <header ref={header} className="public-header" onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setOpen(false);}}><Link className="logo" to="/" aria-label="Desartly home">Desartly<span>®</span></Link><span className="header-name">ALI KOMEILI<br/>DESIGN PORTFOLIO</span><nav className="site-navigation" aria-label="Main navigation">{links.map(item=><span className={['/work','/contact'].includes(item.to||item.url)?'nav-essential':'nav-secondary'} key={item.id||item.to}><SiteNavLink item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/></span>)}<button className="nav-more" aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} aria-controls="secondary-navigation" onClick={()=>setOpen(!open)}><span>{open?'Close':'Menu'}</span>{open?<X size={20}/>:<Menu size={20}/>}</button></nav><div id="secondary-navigation" className="secondary-navigation" hidden={!open} onClick={()=>setOpen(false)}>{links.map(item=><SiteNavLink key={item.id||item.to} item={item} active={location.pathname===(item.to||item.url)||((item.to||item.url)!=="/"&&location.pathname.startsWith((item.to||item.url)+"/"))}/>)}</div></header>;
 }
-function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/work','Projects',Briefcase],['/journal','Journal',BookOpen],['/about','About',UserRound],['/contact','Book a call',ArrowUpRight]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={(to==='/work'&&pathname==='/')||pathname===to||pathname.startsWith(to+'/')?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
+function MobileNavigation(){const {pathname}=useLocation();return <nav className="mobile-dock" aria-label="Primary mobile navigation">{[['/','Home',House],['/work','Projects',Briefcase],['/contact','Book a call',CalendarDays],['/journal','Journal',BookOpen],['/about','About',UserRound]].map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={pathname===to||(to!=='/'&&pathname.startsWith(to+'/'))?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;}
 function EntryPage(props){return <Home {...props}/>;}
 function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}
 function EditableHeader({ navItems, onNavChange, onReorder, onAdd, onRemove }) {
