@@ -1,6 +1,6 @@
 import React from 'react';
 export function ArticleIntro({article}) {
- const fa=article.language==='fa',cover=article.heroImage||article.coverImage;
+ const fa=article.language==='fa',cover=article.coverImage||article.heroImage;
  const minutes=article.readingTime||Math.max(1,Math.ceil((article.blocks||[]).map(b=>b.text||b.markdown||'').join(' ').split(/\s+/).length/200));
  const parsedDate=new Date((article.date||'')+'T12:00:00');
  const date=article.date&&!Number.isNaN(parsedDate.getTime())?new Intl.DateTimeFormat(fa?'fa-IR':'en-GB',{year:'numeric',month:'long',day:'numeric'}).format(parsedDate):article.date||'';

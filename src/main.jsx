@@ -318,10 +318,10 @@ function Art({ index = 0 }) {
   );
 }
 function Card({ p, editable = false, onTitleChange, priority = false }) {
-  const optimizedCover = !editable && p.coverFit !== "contain" && !p.managed && p.coverImage?.startsWith("/projects/") && projectCardCovers[p.id];
+  const optimizedCover = !editable && !p.managed && p.coverImage?.startsWith("/projects/") && projectCardCovers[p.id];
   return (
     <Link className={"project-card" + (editable ? " is-editable" : "")} to={"/work/" + p.id} onClick={e=>{if(editable){e.preventDefault();}}}>
-      <div className="cover" data-fit={p.coverFit || "cover"}>
+      <div className="cover" data-fit={"cover"}>
         {p.coverImage ? (optimizedCover ? (
           <picture>
             <source type="image/avif" srcSet={optimizedCover.avif} sizes="(max-width: 700px) 90vw, (max-width: 1100px) 45vw, 30vw" />
@@ -459,7 +459,7 @@ function Grid({ block, cover = 0 }) {
       {boxes.map((box, i) => (
         <div
           key={i}
-          data-fit={block.images?.[i] ? (block.fits?.[i] === "cover" ? "cover" : "contain") : undefined}
+          data-fit={block.images?.[i] ? ("contain") : undefined}
           style={{
             left: (box.x / width) * 100 + "%",
             top: (box.y / height) * 100 + "%",
@@ -468,7 +468,7 @@ function Grid({ block, cover = 0 }) {
           }}
         >
           {block.images?.[i] ? (
-            <img style={{objectFit:block.fits?.[i] === "cover" ? "cover" : "contain"}} src={block.images[i]} alt={block.alts?.[i] || "Project composition " + (i + 1)} loading="lazy" decoding="async" />
+            <img style={{objectFit:"contain"}} src={block.images[i]} alt={block.alts?.[i] || "Project composition " + (i + 1)} loading="lazy" decoding="async" />
           ) : (
             <Art index={(cover + i) % 9} />
           )}
@@ -749,7 +749,7 @@ function Project({ projects }) {
             <p>{b.text}</p>
           </section>
         ) : b.type === "image" ? (
-          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy" data-fit={b.fit === "cover" ? "cover" : "contain"} style={{aspectRatio:b.fit === "cover" ? (b.aspectRatio || undefined) : undefined,objectFit:b.fit === "cover" ? "cover" : "contain"}}/></figure>
+          <figure className={"case-single-image"+(b.layout==="portrait"?" case-portrait":b.layout==="offset"?" case-offset":"")} key={b.id}>{b.title&&<h2 className="case-image-heading">{b.title}</h2>}<img src={b.image} alt={b.alt||b.caption||"Project detail"} loading="lazy" data-fit={"contain"} style={{aspectRatio:undefined,objectFit:"contain"}}/></figure>
         ) : b.type === "markdown" ? <MarkdownContent source={b.markdown} key={b.id}/> : b.type === "html" ? (
           <HtmlPreview block={b} key={b.id} />
         ) : (

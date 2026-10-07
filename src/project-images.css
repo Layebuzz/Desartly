@@ -14,3 +14,10 @@
 .project-overview-cover[data-fit=contain],.project-card .cover[data-fit=contain]{background:transparent!important}
 .project-overview-cover[data-fit=contain]>img,.project-card .cover[data-fit=contain]>img{inset:0;margin:auto;width:auto!important;height:auto!important;max-width:100%;max-height:100%;aspect-ratio:auto;border-radius:var(--control-radius,8px)}
 .project-natural-grid img,.case-image-pair img,.case-image-quartet img{border-radius:var(--control-radius,8px)}
+
+/* Only content covers crop; opening/content images retain their own proportions. */
+.project-card .cover,.blog-card .blog-cover,.project-suggestion-cover,.article-intro-cover{aspect-ratio:1!important;overflow:hidden}
+.project-card .cover img,.blog-card .blog-cover img,.project-suggestion-cover img,.article-intro-cover img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 50%!important}
+.project-page .project-overview-cover[data-fit=contain]{aspect-ratio:auto!important;align-self:start}
+.project-page .project-overview-cover[data-fit=contain]>img{position:static!important;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto!important}
+.blog-image img{height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}
