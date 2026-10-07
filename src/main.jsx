@@ -347,10 +347,10 @@ function BlogCard({ post, editable = false, onChange }) {
   return (
     <Link lang={post.language} dir={post.language==='fa'?'rtl':undefined} className={"blog-card" + (editable ? " is-editable" : "")} to={`/journal/${post.id}`} onClick={e=>{if(editable)e.preventDefault();}}>
       <div className="blog-cover">{post.coverImage ? <img src={post.coverImage} alt="" loading="lazy" decoding="async" /> : <Art index={post.cover || 0} />}</div>
-      <div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
+      <div className="blog-card-copy"><div className="blog-card-meta"><span>{post.category || "Notes"}</span><span>{post.date}</span></div>
       <h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{title:e.currentTarget.innerText})}>{post.title}</h3>
       <p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onChange?.(post.id,{excerpt:e.currentTarget.innerText})}>{post.excerpt}</p>
-      <span className="blog-read"><span>Read note</span> <ArrowUpRight size={16} /></span>
+      <span className="blog-read"><span>{post.language==='fa'?'خواندن یادداشت':'Read note'}</span> <ArrowUpRight size={16} /></span></div>
     </Link>
   );
 }
@@ -588,7 +588,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={()=>{}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.innerText})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","Advertising, packaging and every touchpoint that brings a brand to life."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
     clients: <ClientsStrip clients={clients} editable={editable} onChange={onClientChange} onCollectionChange={onClientsChange}/>,
     stats: <StatsBand stats={stats} editable={editable} onChange={onStatsChange}/>,
-    journal: <section className="journal-preview"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post}/>)}</div></section>,
+    journal: <section className="journal-preview journal-preview-horizontal"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post}/>)}</div></section>,
     contact: <ContactBand editable={editable} page={page} onPatch={onPagePatch}/>,
   };
   const normalizedSections = (homeSections?.length ? homeSections : initialHomeSections).map(section => typeof section === "string" ? { id: section, visible: true } : section);

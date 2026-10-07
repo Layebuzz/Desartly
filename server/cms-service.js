@@ -128,6 +128,7 @@ export function documentSummary(state, kind, doc) {
     category: kind === "project" ? projectDiscipline(doc) : doc.category || "",
     industry: kind === "project" ? projectIndustry(doc) : "",
     brandPersonality:doc.brandPersonality||"",
+    relatedProject:kind === "article" ? doc.relatedProject || "" : "",
     updatedAt: doc.updatedAt || "",
     version: doc._version || 0,
     status: documentStatus(state, kind, doc),
@@ -142,6 +143,7 @@ export function cmsView(state) {
   };
   return {
     growth:growthMetrics({projects:state.published.projects,draftProjects:state.draft.projects,articles:state.draft.blogPosts,certificates:state.draft.certificates,pages:state.draft.pages,inbox:state.inbox,industries:state.growthIndustries||[]}),
+    knowledge:{certificates:(state.draft.certificates||[]).map(c=>({id:c.id,title:c.title||c.name}))},
     revision: state.revision,
     draftVersion: state.draftVersion || 0,
     projects: (state.draft.projects || []).map((d) =>
