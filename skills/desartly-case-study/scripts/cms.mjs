@@ -5,14 +5,16 @@ import {pathToFileURL} from 'node:url';
 
 const readTools=new Set(['cms_schema','cms_editorial_standard','cms_presentation_guide','cms_project_template','cms_benchmarks','cms_grid_presets','cms_media_architecture','cms_media_list','cms_list','cms_get','cms_review']);
 const writeTools=new Set(['cms_create','cms_save','cms_upload']);
-export function createClient({endpoint='https://studio.desartly.info/mcp',token,fetchImpl=fetch}={}){
+export function createClient({endpoint='https://studio.desartly.info/mcp',token,cookie,fetchImpl=fetch}={}){
  const url=new URL(endpoint);
  if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash)throw Error('Use a credential-free HTTPS MCP endpoint.');
- if(!token)throw Error('Set DESARTLY_CMS_TOKEN privately, or use an already connected CMS tool.');
- const safe=message=>String(message).split(token).join('[redacted]').replace(/[A-Za-z0-9+/=]{100,}/g,'[long data omitted]').slice(0,240);
+ if(!token&&!cookie)throw Error('No helper credentials configured. Check connected CMS tools and the existing Studio session before requesting access.');
+ if(!token&&(url.origin!=='https://studio.desartly.info'||!/^pol_owner=[^;\s]+$/.test(cookie)))throw Error('Use only a scoped pol_owner cookie on the exact Studio origin.');
+ const secrets=[token,cookie,!token&&cookie?.slice('pol_owner='.length)].filter(Boolean);
+ const safe=message=>secrets.reduce((value,secret)=>value.split(secret).join('[redacted]'),String(message)).replace(/[A-Za-z0-9+/=]{100,}/g,'[long data omitted]').slice(0,240);
  return async function call(name,args={},permission='read'){
   if(!readTools.has(name)&&!(writeTools.has(name)&&permission==='write')&&!(name==='cms_publish'&&permission==='publish'))throw Error('Tool is not permitted in this mode. Use --write or --publish only within the owner’s request.');
-  const response=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(45000),headers:{Authorization:'Bearer '+token,'Content-Type':'application/json',Accept:'application/json','Origin':url.origin},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name,arguments:args}})});
+  const response=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(45000),headers:{...(token?{Authorization:'Bearer '+token}:{Cookie:cookie}),'Content-Type':'application/json',Accept:'application/json','Origin':url.origin},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name,arguments:args}})});
   if(!response.ok)throw Error('CMS HTTP '+response.status+'. Reread state before retrying a write.');
   const envelope=await response.json();
   if(envelope.error)throw Error('CMS: '+safe(envelope.error.message||'RPC error'));
@@ -75,7 +77,7 @@ async function main(){
  }
  if(command!=='inventory'&&command!=='call')throw Error('Usage: cms.mjs inventory "folder" output.json | call cms_tool @arguments.json output.json [--write|--publish] | preflight document.json schema.json');
  const endpoint=process.env.DESARTLY_CMS_ENDPOINT||'https://studio.desartly.info/mcp';
- const call=createClient({endpoint,token:process.env.DESARTLY_CMS_TOKEN});
+ const call=createClient({endpoint,token:process.env.DESARTLY_CMS_TOKEN,cookie:process.env.DESARTLY_CMS_COOKIE});
  if(command==='inventory'){
   if(!args[0]||!args[1])throw Error('Folder and output file are required.');
   const result=await inventory(call,args[0]);await save(args[1],result);console.log(JSON.stringify({folder:result.folder,assets:result.assets.length,projectCandidates:result.projectCandidates.map(p=>({id:p.id,status:p.status})),saved:args[1]}));return;

@@ -3,12 +3,16 @@ name: desartly-case-study
 description: Write evidence-led, human portfolio case studies for Desartly from a named CMS media-library folder, then save or publish through existing API functions. Covers product UI/UX, branding, packaging, campaigns and visual communication. Use for project uploads and case-study rewrites, not website engineering or social posting.
 metadata:
   author: Ali / Desartly
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Desartly case study
 
 Turn the owner's named **site-library folder** into an original, image-led case study. Conversation defaults to Persian; public case-study copy defaults to English unless requested otherwise. Publish through the CMS functions, never Git, SQL, seed files or whole-site replacement. This skill requires an available CMS connection with suitable scopes; it contains no credentials.
+
+## Establish access before declaring a blocker
+
+Read the connection discovery section in [references/api.md](references/api.md). Check available CMS tools, existing private environment configuration, then an authorized same-origin Studio session accessible through the available browser tools. Test access with one read-only `cms_schema` call. Missing MCP tools alone do not mean missing CMS access. Never claim a connection or scope is missing without checking the available routes; report the actual failed route/status. This archive supplies instructions, not credentials, and cannot transfer a login between devices or chats.
 
 ## Start cheaply
 

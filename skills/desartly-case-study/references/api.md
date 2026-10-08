@@ -1,10 +1,18 @@
 # CMS connection and economical operations
 
-Default Studio: `https://studio.desartly.info`; public site: `https://www.desartly.info`; Streamable HTTP MCP: `https://studio.desartly.info/mcp`. Prefer already connected `cms_*` tools. Otherwise use a privately supplied bearer token from Studio → AI connections, scoped `read`, `write`, and `publish` when needed. Never obtain credentials from unrelated accounts, print them, commit them or include them in this archive. If no authorized connection exists, prepare the case study locally and request the missing connection; do not claim publication.
+Default Studio: `https://studio.desartly.info`; public site: `https://www.desartly.info`; Streamable HTTP MCP: `https://studio.desartly.info/mcp`. ## Connection discovery
+
+Use the first available authorized route:
+
+1. Already connected `cms_*` tools, including discoverable tools exposed by the environment.
+2. Existing private `DESARTLY_CMS_TOKEN` configuration for the exact Studio endpoint. Check presence without displaying the value; do not search unrelated credential files.
+3. An already signed-in owner session at `https://studio.desartly.info`, if the available browser tools support authenticated same-origin API calls. Read the browser capability documentation first. Call `/mcp` through that session using the existing functions. If the capability exposes scoped cookies for API use, the helper accepts an ephemeral `DESARTLY_CMS_COOKIE` containing only `pol_owner=<value>`, restricted to this Studio origin. Do not export a whole browser profile, enable new permissions, mint tokens, or copy sessions between devices. Keep any temporary secret file private (0600), outside the skill/download, and remove it after use.
+
+Verify the chosen route with one read-only `cms_schema {}` call before asking for access. A missing connector listing is not proof that all routes are unavailable. Distinguish unavailable browser capability, no signed-in session, HTTP 401/403, and network failure. A successful read does not prove write/publish scopes; inspect the connection's permissions and report actual permission errors without retries. If no route works, preserve useful local preparation and request the specific missing access once. A new private bearer token, when genuinely needed, comes from Studio → AI connections with `read`, `write`, and `publish` scopes appropriate to the task. Never print credentials, commit them, put them in prompts or include them in this archive. Never claim publication without verification.
 
 ## Optional helper (Node.js 20+, no packages)
 
-The helper reads `DESARTLY_CMS_TOKEN` from the environment; `DESARTLY_CMS_ENDPOINT` can override the HTTPS MCP URL. Configure the token securely outside prompts and command output. Never place a literal secret in a command. Paths below are relative to this skill folder; working files belong in the active task's private `work/` folder. The helper deliberately prints small summaries and writes full responses to files. Read only selected fields from those files. It has no retries and does not auto-publish.
+The helper reads `DESARTLY_CMS_TOKEN` (preferred) or the scoped ephemeral `DESARTLY_CMS_COOKIE` from the environment; `DESARTLY_CMS_ENDPOINT` can override the HTTPS MCP URL. Configure the token securely outside prompts and command output. Never place a literal secret in a command. Paths below are relative to this skill folder; working files belong in the active task's private `work/` folder. The helper deliberately prints small summaries and writes full responses to files. Read only selected fields from those files. It has no retries and does not auto-publish.
 
 ```sh
 node scripts/cms.mjs inventory 'Projects/project-name' work/inventory.json
@@ -25,7 +33,7 @@ node scripts/cms.mjs call cms_publish @work/publish-arguments.json work/publishe
 
 Search `cms_list` by confirmed title and compare `cms_get` media references to the inventory. Folder paths may be moved or custom; `Projects/foo` does not prove `foo` is the intended document. Preserve existing URLs/ownership and stable slug. Reuse media by returned URL, not guessed storage paths. Build contact sheets locally from authorized media; then view full detail only where necessary. Do not read every PDF page or generate images by default.
 
-For genuinely new assets, `cms_create` establishes `Projects/<slug>` before upload. Refresh allowed folders, then call `cms_upload` with `{name,mimeType,folder,alt,base64}`. Read file bytes in a script so base64 never enters model context or logs. On the Vercel path keep decoded uploads under 3 MB; raster images are optimized by the server. Use meaningful kebab-case filenames and returned URLs. Do not upload copies merely to reorganize library folders.
+For genuinely new assets, `cms_create` establishes `Projects/<slug>` before upload. Refresh allowed folders, then call `cms_upload` with `{name,mimeType,folder,alt,base64}`. Read file bytes in a script so base64 never enters model context or logs. On the Vercel path keep decoded uploads under 3 MB; check the live image-transformation capability before relying on server optimization. When unavailable, optimize raster files locally to WebP before API upload; browser uploads already use client optimization. Preserve legibility and aspect ratio. Use meaningful kebab-case filenames and returned URLs. Do not upload copies merely to reorganize library folders.
 
 ## Tool map and state invariants
 

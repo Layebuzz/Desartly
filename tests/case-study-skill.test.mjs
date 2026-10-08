@@ -42,3 +42,14 @@ test('Studio serves the ZIP as an asset instead of redirecting it or returning t
  const response=await workerPageResponse(new Request('https://studio.desartly.info/downloads/desartly-case-study.zip?v=1.0.0'),{ASSETS:{fetch:async request=>{assert.equal(new URL(request.url).pathname,'/downloads/desartly-case-study.zip');return new Response(zip,{headers:{'Content-Type':'application/zip'}});}}},null);
  assert.equal(response.status,200);assert.equal(response.headers.get('Content-Type'),'application/zip');assert.equal((await response.arrayBuffer()).byteLength,zip.length);
 });
+
+test('existing owner session fallback stays on Studio, redacts credentials and yields to bearer configuration',async()=>{
+ const cookie='pol_owner=fixture-owner-session';
+ const client=createClient({cookie,fetchImpl:async(url,options)=>{assert.equal(url.origin,'https://studio.desartly.info');assert.equal(options.headers.Cookie,cookie);assert.equal(options.headers.Authorization,undefined);return Response.json({result:{structuredContent:{ok:true}}});}});
+ assert.deepEqual(await client('cms_schema'),{ok:true});
+ assert.throws(()=>createClient({cookie,endpoint:'https://other.example/mcp'}),/exact Studio/);
+ for(const invalid of ['pol_owner=a; other=b','pol_owner=a\r\nX: bad','other=secret'])assert.throws(()=>createClient({cookie:invalid}),/scoped/);
+ assert.throws(()=>createClient(),/Check connected CMS tools/);
+ const bearer=createClient({token:'fixture-token',cookie,fetchImpl:async(url,options)=>{assert.equal(options.headers.Cookie,undefined);assert.equal(options.headers.Authorization,'Bearer fixture-token');return Response.json({result:{structuredContent:{ok:true}}});}});await bearer('cms_schema');
+ const failed=createClient({cookie,fetchImpl:async()=>Response.json({result:{isError:true,content:[{type:'text',text:'fixture-owner-session '+cookie}]}})});await assert.rejects(failed('cms_schema'),e=>!e.message.includes('fixture-owner-session'));
+});

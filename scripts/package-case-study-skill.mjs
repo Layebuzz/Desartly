@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 export const skillFiles=['SKILL.md','agents/openai.yaml','references/api.md','references/story.md','references/disciplines.md','scripts/cms.mjs'];
 export async function packageCaseStudySkill(){
  const root=new URL('../skills/desartly-case-study/',import.meta.url),entries={};
- for(const name of skillFiles)entries['desartly-case-study/'+name]=[strToU8(await readFile(new URL(name,root),'utf8')),{mtime:new Date('2026-10-09T00:00:00Z')}];
+ for(const name of skillFiles)entries['desartly-case-study/'+name]=[strToU8(await readFile(new URL(name,root),'utf8')),{mtime:new Date(2026,9,9,0,0,0)}];
  const bytes=zipSync(entries,{level:9});
  const output=new URL('../public/downloads/desartly-case-study.zip',import.meta.url);
  await mkdir(new URL('./',output),{recursive:true});await writeFile(output,bytes);
