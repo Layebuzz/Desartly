@@ -1,3 +1,4 @@
+import {practiceStats} from '../src/cms/practice-stats.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const links=[['/','Home'],['/work','Projects'],['/about','About'],['/services','Services'],['/journal','Journal'],['/certificates','Certificates'],['/contact','Book a call']];
 const visible=items=>(items||[]).filter(d=>!d.archived&&!d.hidden);
@@ -12,6 +13,7 @@ export function initialPublicContent(site,path){
  let body=text(doc?.summary||doc?.excerpt||page.intro)+text(doc?null:page.body);
  if(doc){body+=text(doc.author)+text(doc.date);body+=image(doc.heroImage||doc.coverImage,doc.title);for(const key of ['clientDescription','challenge','role','deliverables','outcome','credits'])body+=text(doc[key]);body+=(doc.blocks||[]).map(block).join('');}
  else{body+=(page.blocks||[]).map(block).join('');body+=(page.sections||[]).filter(s=>s&&typeof s==='object'&&s.visible!==false).map(block).join('');if(path==='/'||path==='/work')body+='<ul>'+visible(site.projects).map(p=>'<li><a href="/work/'+encodeURIComponent(p.id)+'">'+esc(p.title)+'</a>'+text(p.summary)+'</li>').join('')+'</ul>';if(path==='/journal')body+='<ul>'+visible(site.blogPosts).map(p=>'<li><a href="/journal/'+encodeURIComponent(p.id)+'">'+esc(p.title)+'</a>'+text(p.excerpt)+'</li>').join('')+'</ul>';}
+ if(path==='/'&&(!site.homeSections?.length||site.homeSections.some(s=>(typeof s==='string'?s:s.id)==='stats'&&s.visible!==false)))body+='<section aria-label="Selected practice statistics">'+practiceStats(site).map(s=>'<article><strong>'+esc(s.value)+'</strong><h3>'+esc(s.label)+'</h3>'+text(s.detail)+'</article>').join('')+'</section>';
  return '<header><a href="/">Desartly</a><nav aria-label="Main navigation">'+links.map(([url,label])=>'<a href="'+url+'">'+label+'</a>').join(' · ')+'</nav></header><main id="main"><h1>'+esc(doc?.title||page.title||titles[path])+'</h1>'+body+'</main>';
 }
 export function pageBody(html,site,path){return html.replace(/<div id="root">\s*<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div>');}

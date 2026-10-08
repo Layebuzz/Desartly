@@ -1,3 +1,4 @@
+import {practiceStats} from './cms/practice-stats.js';
 import { ArticleIntro } from './ArticleIntro.jsx';
 import {ArticleChart} from './ArticleChart.jsx';
 import {resolveAbout,AboutSettings,AboutProjects,AboutCertificates,PracticeRadar} from './AboutSections.jsx';
@@ -398,7 +399,7 @@ function StatsBand({ stats, editable = false, onChange }) {
     <section className="stats-band" aria-label="Selected practice statistics">
       <div className="folio-section-label"><span>03 / A FEW NUMBERS</span><span>Updated as the practice grows</span></div>
       <div className="stats-grid">
-        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.innerText})}/><div><h3 contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.innerText})}>{stat.label}</h3><p contentEditable={editable} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.innerText})}>{editable||!/replace|add the year/i.test(stat.detail||'')?stat.detail?.replace(/Advertising/g,'Communication Design'):""}</p></div></article>)}
+        {shown.map((stat) => <article key={stat.id}><AnimatedNumber value={stat.value} editable={editable&&!stat.automatic} onBlur={e=>onChange?.(stat.id,{value:e.currentTarget.innerText})}/><div><h3 contentEditable={editable&&!stat.automatic} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{label:e.currentTarget.innerText})}>{stat.label}</h3><p contentEditable={editable&&!stat.automatic} suppressContentEditableWarning onBlur={e=>onChange?.(stat.id,{detail:e.currentTarget.innerText})}>{editable||!/replace|add the year/i.test(stat.detail||'')?stat.detail?.replace(/Advertising/g,'Communication Design'):""}</p></div></article>)}
       </div>
     </section>
   );
@@ -580,6 +581,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
   }, [previousSlideIndex, slideIndex]);
   const touchStart = React.useRef(null);
   const moveSlide = delta => selectSlide((activeIndex + delta + slides.length) % Math.max(1, slides.length), delta);
+  const {certificates:practiceCertificates=[]}=React.useContext(PageContent);
   const sectionMap = {
     intro: <section className="folio-intro personal-hero">
       <div className="portfolio-hero-stage" role="region" aria-roledescription="carousel" aria-label="Featured projects" tabIndex={0} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(e.key==='ArrowRight'){e.preventDefault();moveSlide(1)}if(e.key==='ArrowLeft'){e.preventDefault();moveSlide(-1)}}} onTouchStart={e=>{touchStart.current={x:e.touches[0].clientX,y:e.touches[0].clientY}}} onTouchEnd={e=>{if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current.x,dy=e.changedTouches[0].clientY-touchStart.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))moveSlide(dx<0?1:-1);touchStart.current=null}}>
@@ -597,7 +599,7 @@ function Home({ projects, stats = initialStats, clients = initialClients, blogPo
     </section>,
     practice: <section className="folio-perspective"><div><span className="eyebrow">02 / THE PRACTICE</span><EditableHeading as="h2" first={page.practiceTitle ?? "Clarity in thinking."} second={page.practiceSubtitle ?? "Character in the details."} editable={editable} label="Practice heading" onChange={(practiceTitle,practiceSubtitle)=>onPagePatch?.({practiceTitle,practiceSubtitle})}/><Link to="/about" onClick={e=>{if(editable)e.preventDefault();}}><span>A little about me</span> <Arrow/></Link></div><div className="folio-disciplines">{categories.map((c,i)=><Link key={c} to={"/work?category="+categoryIds[i]} onClick={e=>{if(editable)e.preventDefault();}}><small>0{i+1}</small><div><h3 contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={()=>{}}>{c}</h3><p contentEditable={editable} suppressContentEditableWarning onClick={e=>{if(editable)e.preventDefault();}} onBlur={e=>onPagePatch?.({[`practiceDescription${i}`]:e.currentTarget.innerText})}>{page[`practiceDescription${i}`] || ["Useful interfaces and intelligent workflows, shaped around people.","A coherent identity, from the first impression to the smallest detail.","Advertising, packaging and every touchpoint that brings a brand to life."][i] || "An evolving part of my design practice."}</p></div><Arrow/></Link>)}</div></section>,
     clients: <ClientsStrip clients={clients} editable={editable} onChange={onClientChange} onCollectionChange={onClientsChange}/>,
-    stats: <StatsBand stats={stats} editable={editable} onChange={onStatsChange}/>,
+    stats: <StatsBand stats={practiceStats({projects,certificates:practiceCertificates,stats})} editable={editable} onChange={onStatsChange}/>,
     journal: <section className="journal-preview journal-preview-horizontal"><div className="folio-section-label"><span>04 / FIELD NOTES</span><Link to="/journal" onClick={e=>{if(editable)e.preventDefault();}}><span>All notes</span> <Arrow/></Link></div><div className="blog-grid">{blogPosts.slice(0, 2).map(post => <BlogCard key={post.id} post={post}/>)}</div></section>,
     contact: <ContactBand editable={editable} page={page} onPatch={onPagePatch}/>,
   };
