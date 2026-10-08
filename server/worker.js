@@ -1,3 +1,4 @@
+import {calendarResponse} from './calendar-service.js';
 import {mediaBackupResponse} from './media-backup.js';
 import { authResponse, isOwner, ownerPath } from "./owner-auth.js";
 import { contentResponse } from "./content-api.js";
@@ -8,6 +9,7 @@ export default {
   async fetch(request, env) {
     const auth = await authResponse(request, env);
     if (auth) return auth;
+    const calendar=await calendarResponse(request,env);if(calendar)return calendar;
     const url = new URL(request.url);
     const backup=await mediaBackupResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env));if(backup)return backup;
     const cms=await cmsResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),null);

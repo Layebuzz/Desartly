@@ -50,3 +50,11 @@ Contact delivery still requires its production rate-limit/Turnstile configuratio
 Contact uses a square black primary action. About and Resume share the About page; legacy `/resume` redirects to `/about#resume`. Certificate cards use four columns on desktop, two on tablet and one on phones; their accessible native dialog includes a description, verification link and optional Top 10% of class badge. The badge defaults off and must reflect a real distinction.
 
 Projects have independent `coverImage` (cards/home feature) and `heroImage` (case-study opening). The cover is used as a fallback only when the main image is absent. Recommended cover/main assets are 2400×2400 px; full-width content is 2400 px wide and grid images at least 1200 px wide. Studio uploads never upscale or crop originals and use WebP quality 84, including incoming WebP files. Each image and grid slot has its own Replace control and reports actual dimensions. The project editor now shares the public case-study container width.
+
+### Native booking and Google Calendar
+
+Apply `server/migrations/0002_calendar.sql` to D1. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` as Worker secrets; the OAuth web client must allow `https://desartly.vercel.app/api/studio/calendar/callback`. `GOOGLE_REDIRECT_URI` can override that callback. Calendar API must be enabled. Connect the owner's account from Studio → Calendar and grant both requested calendar scopes. Use a production OAuth configuration for a durable owner connection; testing-mode consent has Google's expiration limits.
+
+Studio → Calendar controls Tehran working days/hours, notice, days off and meeting buffers, and lists private website briefs. Owner cancellation and rescheduling update the existing Google event and notify attendees. Public availability reveals slots only. A stable request/event ID and atomic D1 holds prevent duplicate website reservations; uncertain responses can be retried with the same ID. This does not make an external Google Calendar edit atomic with a website booking.
+
+Unfinished briefs and uncertain booking attempts stay in session storage for up to 24 hours and are cleared after confirmation. Google tokens are encrypted in KV using the owner session secret; rotating that secret requires reconnecting Google Calendar. Never put OAuth secrets in frontend environment variables or committed files.
