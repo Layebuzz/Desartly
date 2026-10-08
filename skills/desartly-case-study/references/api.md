@@ -35,6 +35,10 @@ Search `cms_list` by confirmed title and compare `cms_get` media references to t
 
 For genuinely new assets, `cms_create` establishes `Projects/<slug>` before upload. Refresh allowed folders, then call `cms_upload` with `{name,mimeType,folder,alt,base64}`. Read file bytes in a script so base64 never enters model context or logs. On the Vercel path keep decoded uploads under 3 MB; check the live image-transformation capability before relying on server optimization. When unavailable, optimize raster files locally to WebP before API upload; browser uploads already use client optimization. Preserve legibility and aspect ratio. Use meaningful kebab-case filenames and returned URLs. Do not upload copies merely to reorganize library folders.
 
+## Caption fields on the project document
+
+Include `announcement: {fa: "…", en: "…", hashtags: "#RelevantTag\n#AnotherTag"}` in the merged document passed to `cms_save`. These are three strings, not an array or separate tool call. Preserve `announcement.notes` when present. Read the current writing standard from `cms_editorial_standard.announcement`. After saving, use `cms_get` to verify all three fields. They are CMS-only and excluded from the public website. Preparing and saving them is part of the case-study workflow; publishing to a social network requires its own authorization.
+
 ## Tool map and state invariants
 
 | Operation | Tool and arguments |

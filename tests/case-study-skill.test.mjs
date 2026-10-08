@@ -29,7 +29,9 @@ test('helper defaults to read-only, has explicit publish mode, no redirect crede
 });
 test('local preflight rejects empty story sections and invented taxonomy but identifies manual HTML checks',()=>{
  const schema={...contentSchema,brandPersonalities:personalities};
- const doc={id:'farm',title:'Farm',industry:'Agriculture',brandPersonality:'competence',discipline:'Product',coverImage:'/api/media/1',summary:'A farm interface.',references:[{url:'https://example.com/project',checkedAt:'2026-10-09',takeaway:'Layout observation'}],blocks:[{id:'context',type:'text',text:'Visible work and its context.'},{id:'live',type:'html',html:'<!doctype html><p>Live interface</p>'}]};
+ const doc={id:'farm',title:'Farm',industry:'Agriculture',brandPersonality:'competence',discipline:'Product',coverImage:'/api/media/1',summary:'A farm interface.',announcement:{fa:'روایت فارسی پروژه',en:'The project design story.',hashtags:'#ProductDesign'},references:[{url:'https://example.com/project',checkedAt:'2026-10-09',takeaway:'Layout observation'}],blocks:[{id:'context',type:'text',text:'Visible work and its context.'},{id:'live',type:'html',html:'<!doctype html><p>Live interface</p>'}]};
+ for(const key of ['fa','en','hashtags']){const missing=preflight({...doc,announcement:{...doc.announcement,[key]:' '}},schema);assert.equal(missing.ok,false);assert.ok(missing.errors.includes('Missing social caption field: announcement.'+key));}
+ assert.equal(preflight({...doc,announcement:undefined},schema,{requireCaptions:false}).ok,true);
  const valid=preflight(doc,schema);assert.equal(valid.ok,true);assert.match(valid.warnings[0],/390\/768\/1440/);
  const invalid=preflight({...doc,industry:'Agriculture & Farm Management',blocks:[{id:'blank',type:'text',text:''},{id:'blank',type:'grid',images:[]}]},schema);assert.equal(invalid.ok,false);assert.ok(invalid.errors.some(e=>e.includes('industry')));assert.ok(invalid.errors.some(e=>e.includes('Empty text')));assert.ok(invalid.errors.some(e=>e.includes('duplicate')));assert.ok(invalid.errors.some(e=>e.includes('Empty grid')));
 });

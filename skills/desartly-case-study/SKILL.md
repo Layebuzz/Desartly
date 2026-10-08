@@ -3,7 +3,7 @@ name: desartly-case-study
 description: Write evidence-led, human portfolio case studies for Desartly from a named CMS media-library folder, then save or publish through existing API functions. Covers product UI/UX, branding, packaging, campaigns and visual communication. Use for project uploads and case-study rewrites, not website engineering or social posting.
 metadata:
   author: Ali / Desartly
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # Desartly case study
@@ -33,6 +33,10 @@ Draft a single coherent version: a short opening, specific challenge, selected d
 Use native editable text, image and grid blocks; choose `cms_grid_presets` only when arranging images. Alternate scale and density intentionally. No empty template sections, huge unexplained gaps, stretched images, forced crops, repeated text-only rows or filler to meet a section count. Covers are square, image-led and legible at card size. Reuse good supplied art; generate missing assets only when necessary and authorized by the task.
 
 For product UI, use working self-contained HTML over screenshots: `componentSelector` for component details, `previewWidth` for mobile, `autoHeight` for sizing. Screenshots are PDF fallbacks. Keep case-study prose in native blocks. See the Product section for clipping, weather-card and empty-state checks. Do not hide broken UI with a crop or a screenshot.
+
+## Complete all three social-caption fields
+
+Every case-study delivery includes `announcement.fa`, `announcement.en`, and `announcement.hashtags`, unless the owner explicitly excludes captions. Follow `cms_editorial_standard.announcement` and the caption section in [references/story.md](references/story.md). Save these strings inside the same document through `cms_save`; do not merely return them in chat. Verify all three in the saved document before publication. They remain private CMS content; preparing captions never authorizes social posting.
 
 ## Save, verify, publish
 

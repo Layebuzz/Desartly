@@ -30,4 +30,12 @@ Plan a short sequence using actual assets: reveal → concise context → detail
 
 Store verified benchmarks in `references: [{url, checkedAt, takeaway}]`; reference what was observed and how it informed this presentation. An accessed old project can be a valid reference; access date is not its publication date. Do not call the work recent without evidence. Favor source project pages over search snippets and agency homepages.
 
-If an announcement is requested, fetch and follow the current CMS announcement standard. Its copy stays internal unless separately authorized for social posting; project publication does not authorize messaging or social distribution.
+## Required bilingual social caption
+
+Read `cms_editorial_standard.announcement` alongside the editorial rules already fetched; no separate research pass is needed. Deliver all three as strings in `announcement: {fa, en, hashtags}` on every case study unless explicitly excluded by the owner:
+
+- `fa`: conversational Persian in Ali’s first-person voice, four short paragraphs: the actual design experience/scope; brand and audience; concrete design choices; invitation to message for a tailored collaboration proposal. Adapt the service named in the invitation to this project’s discipline. Preserve paragraph spacing. A personal experience must be grounded in confirmed work; do not invent emotions, anecdotes or client feedback.
+- `en`: natural English conveying the same four paragraphs, scope and claims; edit for English fluency rather than translating mechanically.
+- `hashtags`: relevant project, discipline and industry tags, one hashtag per line. Use meaningful terms supported by this work; no unrelated trend tags or invented claims. Keep these as social tags, never new CMS industry labels.
+
+Save the fields with the project via `cms_save`, preserving unrelated fields and existing private notes. Verify the freshly read saved values are nonempty and the Social caption checklist is 3/3. Missing captions are incomplete delivery; local preflight checks presence, while manual review checks voice, bilingual meaning and evidence. Keep captions out of public narrative blocks. Their copy stays private in the CMS; project publication does not authorize messaging or social distribution.

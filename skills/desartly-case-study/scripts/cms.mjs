@@ -41,8 +41,9 @@ export async function inventory(call,requested){
  const tail=folder.split('/').at(-1);
  return {folder,assets,projectCandidates:projects.filter(p=>p.id===tail||normalized(p.title)===normalized(tail)||normalized(p.id).includes(normalized(tail)))};
 }
-export function preflight(document,schema){
+export function preflight(document,schema,{requireCaptions=true}={}){
  const errors=[],warnings=[],seen=new Set();
+ if(requireCaptions)for(const key of ['fa','en','hashtags'])if(typeof document.announcement?.[key]!=='string'||!document.announcement[key].trim())errors.push('Missing social caption field: announcement.'+key);
  if(!/^[a-z0-9][a-z0-9-]{0,119}$/.test(document.id||'')||document.id==='new')errors.push('Invalid project slug.');
  if(!document.title?.trim())errors.push('Project title is empty.');
  if(!schema.industries?.includes(document.industry))errors.push('Select an industry from the live schema.');
