@@ -1,3 +1,4 @@
+import {validateIndustry,canonicalIndustry} from '../src/cms/industries.js';
 import {validatePresentationReview} from '../src/cms/presentation-readiness.js';
 import {validateAnnouncement} from '../src/cms/announcement.js';
 import {libraryFolders,organiseMedia} from '../src/cms/media-architecture.js';
@@ -73,6 +74,11 @@ export function validateDocument(kind, doc) {
     if (block.type === "html" && block.component !== "divar-categories" && typeof block.html !== "string")
       fail("HTML blocks need HTML content.");
   }
+  for(const block of doc.blocks||[]){
+    if(block.type!=='html')continue;
+    if(block.componentSelector!==undefined&&(typeof block.componentSelector!=='string'||block.componentSelector.length>500))fail('Component selector must be text under 500 characters.');
+    if(block.previewWidth!==undefined&&(!Number.isFinite(block.previewWidth)||block.previewWidth<240||block.previewWidth>2400))fail('Preview width must be between 240 and 2400 pixels.');
+  }
   for (const key of ["hidden", "archived"])
     if (doc[key] !== undefined && typeof doc[key] !== "boolean")
       fail(key + " must be a boolean.");
@@ -93,7 +99,7 @@ export function validateDocument(kind, doc) {
       ...doc,
       discipline: projectDiscipline(doc),
       category: projectDiscipline(doc),
-      industry: projectIndustry(doc),
+      industry: validateIndustry(projectIndustry(doc),{allowEmpty:true}),
     };
     if (doc.industry.length > 80)
       fail("Industry must be 80 characters or fewer.");
@@ -216,7 +222,8 @@ export function mutateDocument(
       (h) => h.id === historyId && h.kind === kind && h.document.id === id,
     );
     if (!entry) fail("Revision not found.", 404);
-    document = entry.document;
+    document = structuredClone(entry.document);
+    if(kind==='project'&&document.industry){document.industry=canonicalIndustry(document.industry,{legacy:true})||document.industry;validateIndustry(document.industry);}
   }
   if (action === "duplicate") {
     const suffix = " — copy";

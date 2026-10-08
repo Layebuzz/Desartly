@@ -52,6 +52,12 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  }
  if(privatePath&&request.method==='POST'){
   const body=JSON.parse(new TextDecoder().decode(await bounded(request,8*1024*1024)));
+  // Activate only after every deployed reader supports the lossless history codec.
+  if(path==='/api/studio/storage'){
+   if(body.action!=='compact-history')return json({error:'Choose a supported storage action.'},400);
+   if(body.revision!==state.revision)return json({error:'Content changed. Reload before compacting history.'},409);
+   await save({...state,historyStorageVersion:1});return json({ok:true,revision:state.revision,historyStorageVersion:1});
+  }
   // Draft writes use a draft-specific revision so inbox/events cannot invalidate edits.
   if(['save','publish','restore','import'].includes(path.split('/').at(-1))&&body.draftVersion!==(state.draftVersion||0))return json({error:'A newer draft exists. Reload before saving.'},409);
   if(path==='/api/studio/save'||path==='/api/studio/import'){
@@ -61,7 +67,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
    const draft=versionedSite(body.site,state.draft);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,3);await save({...state,draft,published:structuredClone(draft),publishedAt:new Date().toISOString(),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/restore'){
-   const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
+   const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(validateSite(version.site)),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/media-action'){await save(mediaAction(state,body));return json({ok:true,revision:state.revision});}
   if(path==='/api/studio/media'){

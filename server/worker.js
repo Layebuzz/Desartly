@@ -1,3 +1,5 @@
+import {workerPageResponse} from './worker-pages.js';
+import {staticAssetResponse} from './static-assets.js';
 import {processTelegramQueue} from './telegram-delivery.js';
 import {presentationRenderResponse,materialResponse} from './telegram-material-service.js';
 import {telegramResponse} from './telegram-service.js';
@@ -13,6 +15,7 @@ import { MediaStorage } from "./media-storage.js";
 export default {
   async scheduled(controller,env,ctx){ctx.waitUntil(Promise.allSettled([sendBookingOwnerEmails(env),processTelegramQueue(env)]));},
   async fetch(request, env, ctx) {
+    const staticAsset=await staticAssetResponse(request,env,new MediaStorage(env));if(staticAsset)return staticAsset;
     const render=await presentationRenderResponse(request,env);if(render)return render;
     const materials=await materialResponse(request,env,ctx);if(materials)return materials;
     const telegram=await telegramResponse(request,env,ctx);if(telegram)return telegram;
@@ -35,7 +38,7 @@ export default {
           "Cache-Control": "no-store",
         },
       });
-    const response = await env.ASSETS.fetch(request);
+    const response = await workerPageResponse(request,env,env.DB?new D1Store(env.DB):null);
     if (ownerPath(url.pathname) || url.pathname === "/login") {
       const privateResponse = new Response(response.body, response);
       privateResponse.headers.set("Cache-Control", "no-store");

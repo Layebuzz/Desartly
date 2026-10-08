@@ -1,0 +1,4 @@
+interface:
+  display_name: "Desartly Case Study"
+  short_description: "Evidence-led case studies from library to CMS"
+  default_prompt: "با $desartly-case-study از پوشهٔ کتابخانه‌ای که معرفی می‌کنم کیس‌استادی بنویس، بررسی کن و طبق درخواست من با API ذخیره یا منتشر کن."
