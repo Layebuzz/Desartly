@@ -52,6 +52,12 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  }
  if(privatePath&&request.method==='POST'){
   const body=JSON.parse(new TextDecoder().decode(await bounded(request,8*1024*1024)));
+  // Activate only after every deployed reader supports the lossless history codec.
+  if(path==='/api/studio/storage'){
+   if(body.action!=='compact-history')return json({error:'Choose a supported storage action.'},400);
+   if(body.revision!==state.revision)return json({error:'Content changed. Reload before compacting history.'},409);
+   await save({...state,historyStorageVersion:1});return json({ok:true,revision:state.revision,historyStorageVersion:1});
+  }
   // Draft writes use a draft-specific revision so inbox/events cannot invalidate edits.
   if(['save','publish','restore','import'].includes(path.split('/').at(-1))&&body.draftVersion!==(state.draftVersion||0))return json({error:'A newer draft exists. Reload before saving.'},409);
   if(path==='/api/studio/save'||path==='/api/studio/import'){
