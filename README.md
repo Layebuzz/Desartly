@@ -24,7 +24,7 @@ The editor includes inline copy, navigation and footer controls, section orderin
 - React and Vite; Manrope typography, white surfaces and blue/violet/rose accents.
 - Cloudflare Worker handles protected editor routes and content APIs.
 - D1 stores draft/published content, media metadata and three publication snapshots. A size guard protects the current single-row content store.
-- Backblaze B2 stores media under `desartly/` in the existing private bucket. Studio image uploads are resized for their role (cover 1600px, logo 1000px, full-width 2400px and grid slots 1200–2400px on the longest side) and converted to WebP before upload. SVG logos remain vector and pass server validation.
+- Parspack S3 stores media under `desartly/` in the configured bucket. Studio image uploads are resized for their role (cover 1600px, logo 1000px, full-width 2400px and grid slots 1200–2400px on the longest side) and converted to WebP before upload. SVG logos remain vector and pass server validation.
 - `src/cloud.js` loads public content or authenticated drafts and handles cloud saves/uploads.
 - `server/content-api.js` enforces owner access, request origin and draft versions.
 - Owner credentials use Worker secrets; password changes use salted PBKDF2 hashes in KV. Never commit `.env.local` or secret values.
@@ -37,7 +37,7 @@ The editor includes inline copy, navigation and footer controls, section orderin
 - Deploy: `npm run build` then `npx wrangler deploy`
 - Deployment is manual; a push to main does not currently trigger a build.
 
-Bindings are declared in `wrangler.jsonc`. Required secrets: `OWNER_PASSWORD`, `OWNER_SESSION_SECRET`, `B2_KEY_ID`, `B2_APP_KEY`. The bucket ID is nonsecret configuration. B2 secrets are installed in the production Worker. A live test verified WebP upload, byte-exact retrieval for the owner and denied guest access to unpublished media. Credentials are restricted to the `desartly/` prefix; no secret values are stored in this repository.
+Bindings are declared in `wrangler.jsonc`. Required secrets: `OWNER_PASSWORD`, `OWNER_SESSION_SECRET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`. Configure `S3_ENDPOINT`, `S3_BUCKET` and `S3_REGION` for Parspack. Uploads and reads use S3 exclusively; missing configuration fails without a fallback provider. No secret values are stored in this repository.
 
 Contact delivery still requires its production rate-limit/Turnstile configuration and frontend integration. Do not present a local form preview as delivered mail. Starter projects are concepts; real client logos, verified outcomes and experience totals must be supplied by the owner.
 

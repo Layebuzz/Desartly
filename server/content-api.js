@@ -18,7 +18,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  let state=await store.read();
  const save=async next=>{state=await store.write(organiseMedia(next),state.revision);return state;};
  if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
- if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',b2:!!(env.B2_BUCKET_ID&&env.B2_KEY_ID&&env.B2_APP_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
+ if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',s3:!!(env.S3_ENDPOINT&&env.S3_BUCKET&&env.S3_ACCESS_KEY&&env.S3_SECRET_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
  if(path==='/api/studio/upload'&&request.method==='POST'){
   const folder=validateFolder(state,decodeURIComponent(request.headers.get('X-Media-Folder')||'Site assets'));
   const bytes=await bounded(request,12*1024*1024);const type=request.headers.get('Content-Type')||'';const id=crypto.randomUUID();const name=decodeURIComponent(request.headers.get('X-File-Name')||'Upload').slice(0,180);let variants=[];
