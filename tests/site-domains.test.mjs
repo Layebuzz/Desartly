@@ -10,3 +10,7 @@ test('Studio serves private routes, redirects its root and public navigation',()
  assert.deepEqual(surfaceRoute('studio.desartly.info','/preview/work/myom'),{studio:true});
  assert.equal(surfaceRoute('studio.desartly.info','/work/myom').redirect,publicOrigin+'/work/myom');
 });
+
+test('legacy layout redirects preserve the page selection query',()=>{
+ assert.equal(surfaceRoute('www.desartly.info','/studio/layout','path=%2Fabout').redirect,studioOrigin+'/studio/layout?path=%2Fabout');
+});

@@ -6,27 +6,27 @@
   "rewrites": [
     {
       "source": "/robots.txt",
-      "destination": "/api/public?path=/robots.txt"
+      "destination": "/api/public?__path=/robots.txt"
     },
     {
       "source": "/sitemap.xml",
-      "destination": "/api/public?path=/sitemap.xml"
+      "destination": "/api/public?__path=/sitemap.xml"
     },
     {
       "source": "/manifest.webmanifest",
-      "destination": "/api/public?path=/manifest.webmanifest"
+      "destination": "/api/public?__path=/manifest.webmanifest"
     },
     {
       "source": "/",
-      "destination": "/api/public?path=/"
+      "destination": "/api/public?__path=/"
     },
     {
       "source": "/:page(work|journal|about|services|certificates|contact|privacy)",
-      "destination": "/api/public?path=/:page"
+      "destination": "/api/public?__path=/:page"
     },
     {
       "source": "/:area(work|journal)/:slug",
-      "destination": "/api/public?path=/:area/:slug"
+      "destination": "/api/public?__path=/:area/:slug"
     },
     {
       "source": "/api/media/:id",
@@ -42,27 +42,27 @@
     },
     {
       "source": "/studio/:path*",
-      "destination": "/api/public?path=/studio/:path*"
+      "destination": "/api/public?__path=/studio/:path*"
     },
     {
       "source": "/preview/:path*",
-      "destination": "/api/public?path=/preview/:path*"
+      "destination": "/api/public?__path=/preview/:path*"
     },
     {
       "source": "/login",
-      "destination": "/api/public?path=/login"
+      "destination": "/api/public?__path=/login"
     },
     {
       "source": "/admin",
-      "destination": "/api/public?path=/admin"
+      "destination": "/api/public?__path=/admin"
     },
     {
       "source": "/edit/:path*",
-      "destination": "/api/public?path=/edit/:path*"
+      "destination": "/api/public?__path=/edit/:path*"
     },
     {
       "source": "/:path*",
-      "destination": "/api/public?path=/:path*"
+      "destination": "/api/public?__path=/:path*"
     }
   ],
   "headers": [
