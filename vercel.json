@@ -41,12 +41,12 @@
       "destination": "/api/backend?__route=/mcp"
     },
     {
-      "source": "/studio/:path*",
-      "destination": "/api/public?__path=/studio/:path*"
+      "source": "/studio/:surfacePath*",
+      "destination": "/api/public?__path=/studio/:surfacePath*"
     },
     {
-      "source": "/preview/:path*",
-      "destination": "/api/public?__path=/preview/:path*"
+      "source": "/preview/:surfacePath*",
+      "destination": "/api/public?__path=/preview/:surfacePath*"
     },
     {
       "source": "/login",
@@ -57,12 +57,12 @@
       "destination": "/api/public?__path=/admin"
     },
     {
-      "source": "/edit/:path*",
-      "destination": "/api/public?__path=/edit/:path*"
+      "source": "/edit/:surfacePath*",
+      "destination": "/api/public?__path=/edit/:surfacePath*"
     },
     {
-      "source": "/:path*",
-      "destination": "/api/public?__path=/:path*"
+      "source": "/:surfacePath*",
+      "destination": "/api/public?__path=/:surfacePath*"
     }
   ],
   "headers": [

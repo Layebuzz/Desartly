@@ -15,7 +15,7 @@ export function pageHead(html,site,path){const m=metadata(site,path),url=origin+
 export function sitemap(site){const paths=['/','/work','/journal','/about','/services','/certificates','/contact',...(site.projects||[]).filter(d=>!d.archived&&!d.hidden).map(d=>'/work/'+encodeURIComponent(d.id)),...(site.blogPosts||[]).filter(d=>!d.archived&&!d.hidden).map(d=>'/journal/'+encodeURIComponent(d.id))];return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+paths.map(p=>'<url><loc>'+escape(origin+p)+'</loc></url>').join('')+'</urlset>';}
 export default {async fetch(request){
  const url=new URL(request.url),path=url.searchParams.get('__path')||url.pathname;
- const route=surfaceRoute(url.hostname,path,url.searchParams.get('__path')?new URLSearchParams([...url.searchParams].filter(([key])=>key!=='__path')).toString():url.search.slice(1));
+ const route=surfaceRoute(url.hostname,path,url.searchParams.get('__path')?new URLSearchParams([...url.searchParams].filter(([key])=>!['__path','surfacePath'].includes(key))).toString():url.search.slice(1));
  if(route.redirect)return new Response(null,{status:302,headers:{Location:route.redirect,'Cache-Control':'no-store'}});
  if(route.studio){const html=await readFile(new URL('../dist/studio-app/index.html',import.meta.url),'utf8');return new Response(html,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'}});}
  if(path==='/robots.txt')return new Response('User-agent: *\nAllow: /\nDisallow: /studio\nDisallow: /login\nDisallow: /preview/\nDisallow: /api/\nDisallow: /*/edit\nSitemap: '+origin+'/sitemap.xml\n',{headers:{'Content-Type':'text/plain; charset=utf-8'}});
