@@ -1,3 +1,4 @@
+import {bookingEmailHtml} from './booking-email-template.js';
 import {formatBrief} from '../src/booking-config.js';
 
 export const bookingOwnerEmail='komeilipv@gmail.com';
@@ -9,10 +10,12 @@ export function bookingEmail(row){
  const brief=JSON.parse(row.brief),confirmation=JSON.parse(row.confirmation||'{}');
  const time=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tehran',dateStyle:'full',timeStyle:'short'}).format(new Date(row.start_at));
  const body=`A new appointment was booked on Desartly.\n\n${time} (Asia/Tehran)\nDuration: 30 minutes\nGoogle Meet: ${confirmation.meetingUrl||'Open the appointment in Google Calendar'}\n\n${formatBrief(brief)}\n\nManage: https://desartly.vercel.app/studio/calendar\nBooking ID: ${row.id}\n`;
+ const boundary='desartly_'+crypto.randomUUID().replaceAll('-','');
+ const encoded=text=>base64(text).match(/.{1,76}/g).join('\r\n');
  const mime=[`From: Desartly <${bookingOwnerEmail}>`,`To: ${bookingOwnerEmail}`,
   `Subject: =?UTF-8?B?${base64('Desartly — New booking')}?=`,
   `Message-ID: <booking-${row.id}@desartly.vercel.app>`,`Date: ${new Date().toUTCString()}`,
-  'MIME-Version: 1.0','Content-Type: text/plain; charset=UTF-8','Content-Transfer-Encoding: base64','',base64(body).match(/.{1,76}/g).join('\r\n')].join('\r\n');
+  'MIME-Version: 1.0',`Content-Type: multipart/alternative; boundary="${boundary}"`,'',`--${boundary}`,'Content-Type: text/plain; charset=UTF-8','Content-Transfer-Encoding: base64','',encoded(body),`--${boundary}`,'Content-Type: text/html; charset=UTF-8','Content-Transfer-Encoding: base64','',encoded(bookingEmailHtml(row)),`--${boundary}--` ].join('\r\n');
  return Buffer.from(mime,'utf8').toString('base64url');
 }
 

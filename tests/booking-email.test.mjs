@@ -13,7 +13,7 @@ function fixture(){
 }
 test('owner email has a fixed recipient and safely encodes Unicode and injected headers',()=>{
  const {row}=fixture();const mime=Buffer.from(bookingEmail(row),'base64url').toString('utf8');
- const [headers,body]=mime.split('\r\n\r\n');assert(headers.includes('To: '+bookingOwnerEmail));assert(!headers.includes('Bcc:'));assert(!headers.includes('guest@test.invalid'));
+ const headers=mime.split('\r\n\r\n')[0];const plain=mime.split('Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n')[1];const body=plain.split('\r\n--')[0];assert(headers.includes('To: '+bookingOwnerEmail));assert(!headers.includes('Bcc:'));assert(!headers.includes('guest@test.invalid'));
  const text=Buffer.from(body.replaceAll('\r\n',''),'base64').toString('utf8');assert(text.includes('علی'));assert(text.includes('https://meet.google.com/test'));assert(text.includes('Asia/Tehran'));assert(text.includes('guest@test.invalid'));
 });
 test('cron mail is sent once across repeated and concurrent scans',async t=>{
@@ -28,4 +28,10 @@ test('rejected sends are delayed for retry; cancelled bookings send nothing',asy
 });
 test('token refresh failure leaves mail pending without attempting delivery',async t=>{
  const {env,db}=fixture();let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++});await assert.rejects(flushBookingEmails(env,async()=>{throw Error('renew access')}));assert.equal(calls,0);assert.equal(db.prepare('SELECT status FROM booking_owner_emails').get().status,'pending');
+});
+
+
+test('branded HTML is multipart, escapes briefs and rejects unsafe meeting links',async()=>{
+ const {bookingEmailHtml}=await import('../server/booking-email-template.js');const {row}=fixture();row.brief=JSON.stringify({...JSON.parse(row.brief),message:'<img src=x onerror=alert(1)> & hello',company:'</td><script>bad()</script>'});row.confirmation=JSON.stringify({meetingUrl:'javascript:alert(1)'});
+ const html=bookingEmailHtml(row);assert(html.includes('Desartly'));assert(html.includes('#e8e1fa'));assert(html.includes('Manage appointment in Studio'));assert(!html.includes('<script>'));assert(!html.includes('<img'));assert(!html.includes('javascript:'));assert(html.includes('&lt;img'));const mime=Buffer.from(bookingEmail(row),'base64url').toString();assert(mime.includes('multipart/alternative'));assert(mime.includes('Content-Type: text/html; charset=UTF-8'));
 });

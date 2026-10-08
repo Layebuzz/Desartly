@@ -168,3 +168,10 @@ test('email OAuth rejects another account before saving sending access',async t=
  t.mock.method(globalThis,'fetch',async url=>String(url).includes('userinfo')?Response.json({email:'someone@example.test',email_verified:true}):Response.json({access_token:'fixture',refresh_token:'fixture',scope:'https://www.googleapis.com/auth/gmail.send'}));
  assert.equal((await calendarResponse(new Request('https://site.test/api/studio/calendar/callback?state='+location.searchParams.get('state')+'&code=fixture'),env)).status,400);assert(!map.has('google-calendar:owner-email'));
 });
+
+test('manual owner email processing requires owner auth, rate limit and an email connection',async()=>{
+ const {env}=await fixture();const request=cookie=>new Request('https://site.test/api/studio/calendar/email/send-queued',{method:'POST',headers:{Origin:'https://site.test',...(cookie?{Cookie:cookie}:{})}});
+ assert.equal((await calendarResponse(request(),env)).status,401);
+ assert.equal((await calendarResponse(request(ownerCookie(env)),env)).status,429);
+ env.OWNER_RATE_LIMITER={limit:async()=>({success:true})};assert.equal((await calendarResponse(request(ownerCookie(env)),env)).status,409);
+});
