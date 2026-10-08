@@ -1,3 +1,4 @@
+import {mailboxResponse} from './mailbox-service.js';
 import {calendarResponse,sendBookingOwnerEmails} from './calendar-service.js';
 import {mediaBackupResponse} from './media-backup.js';
 import { authResponse, isOwner, ownerPath } from "./owner-auth.js";
@@ -10,6 +11,7 @@ export default {
   async fetch(request, env, ctx) {
     const auth = await authResponse(request, env);
     if (auth) return auth;
+    const mailbox=await mailboxResponse(request,env);if(mailbox)return mailbox;
     const calendar=await calendarResponse(request,env,ctx);if(calendar)return calendar;
     const url = new URL(request.url);
     const backup=await mediaBackupResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env));if(backup)return backup;

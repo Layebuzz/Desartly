@@ -14,3 +14,5 @@ test('Studio serves private routes, redirects its root and public navigation',()
 test('legacy layout redirects preserve the page selection query',()=>{
  assert.equal(surfaceRoute('www.desartly.info','/studio/layout','path=%2Fabout').redirect,studioOrigin+'/studio/layout?path=%2Fabout');
 });
+
+test('standalone booking uses its own surface and keeps owner routes private',()=>{assert.deepEqual(surfaceRoute('book.desartly.info','/'),{booking:true});assert.deepEqual(surfaceRoute('book.desartly.info','/contact'),{booking:true});assert.equal(surfaceRoute('book.desartly.info','/studio').redirect,studioOrigin+'/studio');});

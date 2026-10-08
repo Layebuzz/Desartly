@@ -4,7 +4,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {createHmac} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {candidateSlots,availableSlots,defaultSchedule,validateSchedule,validateBrief,calendarResponse} from '../server/calendar-service.js';
-const brief={name:'Test Visitor',email:'visitor@example.test',company:'Fixture Co',industry:'Design',message:'A test-only design project briefing.',services:['Branding']};
+const brief={meetingType:'briefing',name:'Test Visitor',email:'visitor@example.test',company:'Fixture Co',industry:'Design',message:'A test-only design project briefing.',services:['Branding']};
 const dbFixture=()=>{
  const db=new DatabaseSync(':memory:');for(const migration of ['0002_calendar.sql','0003_booking_email.sql'])db.exec(readFileSync(new URL('../server/migrations/'+migration,import.meta.url),'utf8'));
  return {prepare(sql){return {bind(...values){return {async first(){return db.prepare(sql).get(...values)||null;},async all(){return {results:db.prepare(sql).all(...values)};},async run(){return {meta:{changes:db.prepare(sql).run(...values).changes}};}};}};}};
@@ -194,3 +194,5 @@ test('self bookings update only the owner RSVP after Google resets insertion acc
  const request=new Request('https://site.test/api/calendar/book',{method:'POST',headers:{Origin:'https://site.test','Content-Type':'application/json'},body:JSON.stringify({start:slot.start,requestId:crypto.randomUUID(),brief:{...brief,email:'komeilipv@gmail.com'}})});
  assert.equal((await calendarResponse(request,env)).status,200);assert.equal(patches,1);
 });
+
+test('session types validate and old briefs remain compatible',()=>{const {meetingType,...old}=brief;assert.equal(validateBrief(old).meetingType,'briefing');assert.equal(validateBrief({...brief,meetingType:'mentorship'}).meetingType,'mentorship');assert.throws(()=>validateBrief({...brief,meetingType:'other'}));});

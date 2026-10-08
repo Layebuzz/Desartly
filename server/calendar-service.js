@@ -65,6 +65,8 @@ async function freeBusy(env,s,starts){
 }
 export function validateBrief(input){
  const b={};for(const key of ['name','email','company','industry','message'])b[key]=String(input?.[key]||'').trim();
+ if(input?.meetingType&&!['briefing','mentorship'].includes(input.meetingType))throw fail('Choose a valid session type.',400);
+ b.meetingType=input?.meetingType||'briefing';
  b.services=Array.isArray(input?.services)?input.services.filter(s=>typeof s==='string'&&s.length<=100).slice(0,8):[];
  if(!b.name||b.name.length>100||!/^\S+@\S+\.\S+$/.test(b.email)||b.email.length>254||!b.company||b.company.length>150||!b.industry||b.industry.length>100||b.message.length<10||b.message.length>1500||!b.services.length)throw fail('Complete your name, email and project brief.',400);return b;
 }
@@ -112,7 +114,7 @@ async function createBooking(env,s,body){
  if(!locked.meta.changes){const retry=await env.DB.prepare('SELECT signature FROM calendar_bookings WHERE id=?').bind(id).first();if(retry?.signature===signature)throw fail('Your confirmation is in progress. Try again in a moment.');throw fail('This time was just booked. Choose another.',409);}
  }
  try{
-  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`Briefing — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name,...(brief.email.toLowerCase()===bookingOwnerEmail?{responseStatus:'accepted'}:{})}],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
+  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`${brief.meetingType==='mentorship'?'Mentorship':'Briefing'} — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name,...(brief.email.toLowerCase()===bookingOwnerEmail?{responseStatus:'accepted'}:{})}],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
   const result=await confirmation(event,slot,s,env);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;
  }catch(error){
   // A failed response can follow a successful Google insert. Keep the hold and
@@ -166,7 +168,7 @@ async function manageBooking(env,s,body){
 }
 export async function sendBookingOwnerEmails(env){
  const c=await connection(env,emailConnectionKey);
- if(c?.refreshToken&&c.email===bookingOwnerEmail)await flushBookingEmails(env,()=>token(env,emailConnectionKey));
+ if((env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true')||(c?.refreshToken&&c.email===bookingOwnerEmail))await flushBookingEmails(env,()=>token(env,emailConnectionKey));
 }
 export async function calendarResponse(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;

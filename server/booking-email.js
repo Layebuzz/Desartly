@@ -29,12 +29,13 @@ export async function flushBookingEmails(env,getToken){
  const rows=await env.DB.prepare("SELECT b.*,e.attempts FROM booking_owner_emails e JOIN calendar_bookings b ON b.id=e.booking_id WHERE e.status='pending' AND e.next_attempt<=? AND b.status='confirmed' AND b.end_at>? ORDER BY b.created_at LIMIT 10").bind(Date.now(),Date.now()).all();
  if(!rows.results.length)return;
  // Refresh before claiming a message: expired/revoked access cannot strand it.
- const accessToken=await getToken();
+ const domainMail=!!env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true';
+ const accessToken=domainMail?null:await getToken();
  for(const row of rows.results){
   const claimed=await env.DB.prepare("UPDATE booking_owner_emails SET status='sending',attempts=attempts+1,updated_at=? WHERE booking_id=? AND status='pending'").bind(Date.now(),row.id).run();
   if(!claimed.meta.changes)continue;
   try{
-   const response=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({raw:bookingEmail(row)}),signal:AbortSignal.timeout(10000)});
+   const response=domainMail?await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env.RESEND_API_KEY,'Content-Type':'application/json','Idempotency-Key':'booking-'+row.id},body:JSON.stringify({from:'Desartly <Komeili@desartly.info>',to:[bookingOwnerEmail],subject:'Desartly — New booking',html:bookingEmailHtml(row),text:formatBrief(JSON.parse(row.brief))}),signal:AbortSignal.timeout(10000)}):await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({raw:bookingEmail(row)}),signal:AbortSignal.timeout(10000)});
    if(response.ok){
     const message=await response.json();if(!message.id)throw Error('Missing Gmail acceptance ID');
     await env.DB.prepare("UPDATE booking_owner_emails SET status='sent',message_id=?,updated_at=? WHERE booking_id=?").bind(message.id,Date.now(),row.id).run();

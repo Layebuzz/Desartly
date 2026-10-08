@@ -1,4 +1,5 @@
 export const publicOrigin='https://www.desartly.info';
+export const bookingOrigin='https://book.desartly.info';
 export const studioOrigin='https://studio.desartly.info';
 export function surfaceRoute(hostname,path,query=''){
  const privatePath=path==='/login'||path==='/admin'||path==='/studio'||path.startsWith('/studio/')||path==='/preview'||path.startsWith('/preview/')||path.startsWith('/edit/')||/\/(edit|new)\/?$/.test(path);
@@ -7,6 +8,10 @@ export function surfaceRoute(hostname,path,query=''){
   if(path==='/')return {redirect:studioOrigin+'/studio'+suffix};
   if(privatePath)return {studio:true};
   return {redirect:publicOrigin+path+suffix};
+ }
+ if(hostname==='book.desartly.info'){
+  if(path==='/'||path==='/contact')return {booking:true};
+  if(!privatePath)return {redirect:publicOrigin+path+suffix};
  }
  if(privatePath)return {redirect:studioOrigin+path+suffix};
  return {public:true};

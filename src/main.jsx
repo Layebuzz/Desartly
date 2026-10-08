@@ -963,6 +963,7 @@ function App() {
   const isStudio = import.meta.env.VITE_APP_TARGET !== "public" && (location.pathname === "/studio" || location.pathname.startsWith("/studio/"));
   const edit = import.meta.env.VITE_APP_TARGET !== "public" && (isWorkspace || isStudio || location.pathname === "/login");
   const publicProjects = projects.filter(isVisibleProject);
+  if(location.pathname==='/' && window.location.hostname==='book.desartly.info' || location.pathname==='/contact' && window.location.hostname==='book.desartly.info')return <BookCall standalone/>;
   return (
     <PageContent.Provider value={{ pages, setPages,projects:publicProjects,certificates }}><SiteMetadata settings={pages["/site"]?.settings} site={{pages,projects:publicProjects,blogPosts}}/>
       {!edit&&<MobileNavigation/>}
