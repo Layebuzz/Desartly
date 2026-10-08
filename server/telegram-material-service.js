@@ -32,7 +32,7 @@ export async function presentationFile(env,project,format,{old=false}={}){
  try{
  browser=await puppeteer.launch(env.PRESENTATION_BROWSER);const page=await browser.newPage();
  await page.setCookie({name:'desartly_render',value:job,domain:new URL(origin).hostname,path:'/',secure:true,httpOnly:true,sameSite:'Strict'});
- await page.goto(origin+'/_presentation-render',{waitUntil:'networkidle0',timeout:60000});
+ const loaded=await page.goto(origin+'/_presentation-render',{waitUntil:'networkidle0',timeout:60000});if(!loaded?.ok())throw Error('Private renderer page returned HTTP '+loaded?.status());
  await page.waitForFunction('window.desartlyRenderResult !== undefined',{timeout:180000});
  const result=await page.evaluate(()=>window.desartlyRenderResult);if(result.error)throw Object.assign(Error('تولید PDF ناموفق بود؛ تصاویر پروژه را در CMS بررسی کن.'),{renderReason:result.error});
  const bytes=Uint8Array.from(atob(result.base64),c=>c.charCodeAt(0));

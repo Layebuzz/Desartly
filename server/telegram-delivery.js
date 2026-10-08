@@ -23,15 +23,15 @@ async function sendAsset(env,owner,payload,preparedFile){
  // Albums have durable chunk rows. Retrying a later chunk cannot resend earlier ones.
  const all=projectImages(project);if(!all.length)throw Object.assign(Error('تصویری برای این پروژه موجود نیست.'),{rejected:true});
  const chunk=all.slice(payload.offset||0,(payload.offset||0)+10),form=new FormData(),media=[];
- for(const [i,url] of chunk.entries()){const response=await projectImage(env,project,url),bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>9*1024*1024)throw Object.assign(Error('یکی از تصاویر برای آلبوم بزرگ است. از کاور یا فایل پروژه استفاده کن.'),{rejected:true});form.set('image'+i,new Blob([bytes],{type:response.headers.get('content-type')||'image/webp'}),`${i+1}.webp`);media.push({type:'document',media:'attach://image'+i,...(i===0?{caption:project.title+' — آلبوم '+(Math.floor((payload.offset||0)/10)+1)}:{})});}
- if(media.length===1){return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0]),project.id+'-image.webp',{caption:project.title})).message_id);}
- form.set('chat_id',owner);form.set('media',JSON.stringify(media));const result=await telegramCall(env,'sendMediaGroup',form);return result.map(x=>x.message_id).join(',');
+ for(const [i,url] of chunk.entries()){const response=await projectImage(env,project,url),bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>9*1024*1024)throw Object.assign(Error('یکی از تصاویر برای آلبوم بزرگ است. از کاور یا فایل پروژه استفاده کن.'),{rejected:true});form.set('image'+i,new Blob([bytes],{type:response.headers.get('content-type')||'image/webp'}),`${i+1}.webp`);media.push({type:'photo',media:'attach://image'+i,...(i===0?{caption:project.title+' — آلبوم '+(Math.floor((payload.offset||0)/10)+1)}:{})});}
+ if(media.length===1){try{return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0]),project.id+'-image.webp',{photo:true,caption:project.title})).message_id);}catch(error){if(!error.rejected||error.telegramCode!==400)throw error;return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0]),project.id+'-image.webp',{caption:project.title+' — تصویر اصلی'})).message_id);}}
+ form.set('chat_id',owner);form.set('media',JSON.stringify(media));let result;try{result=await telegramCall(env,'sendMediaGroup',form);}catch(error){if(!error.rejected||error.telegramCode!==400)throw error;form.set('media',JSON.stringify(media.map(m=>({...m,type:'document'}))));result=await telegramCall(env,'sendMediaGroup',form);}return result.map(x=>x.message_id).join(',');
 }
 export async function flushTelegramDeliveries(env){
  if(!env.DB||!env.DESARTLY_AUTH)return;const settings=await env.DB.prepare('SELECT * FROM telegram_settings WHERE id=1').first();if(!settings?.owner_id)return;
  await env.DB.prepare("UPDATE telegram_deliveries SET status='uncertain' WHERE status='sending' AND updated_at<?").bind(Date.now()-600000).run();
  await env.DB.prepare("UPDATE telegram_deliveries SET status='pending' WHERE status='preparing' AND updated_at<?").bind(Date.now()-240000).run();
- const pending=await env.DB.prepare("SELECT * FROM telegram_deliveries WHERE status='pending' AND next_attempt<=? ORDER BY created_at,rowid LIMIT 4").bind(Date.now()).all();
+ const pending=await env.DB.prepare("SELECT * FROM telegram_deliveries WHERE status='pending' AND next_attempt<=? ORDER BY CASE WHEN kind='asset' THEN 1 ELSE 0 END,created_at,rowid LIMIT 4").bind(Date.now()).all();
  for(const job of pending.results){
   const payload=JSON.parse(job.payload||'{}');
   if(job.booking_id){const row=await env.DB.prepare('SELECT * FROM calendar_bookings WHERE id=?').bind(job.booking_id).first();const note=job.kind==='followup'?await env.DB.prepare('SELECT * FROM telegram_client_notes WHERE booking_id=?').bind(job.booking_id).first():null;
@@ -46,4 +46,4 @@ export async function flushTelegramDeliveries(env){
   }catch(error){const retry=error.rejected&&error.retryAfter&&job.attempts<3;const status=retry?'pending':error.uncertain?'uncertain':'failed';await env.DB.prepare('UPDATE telegram_deliveries SET status=?,next_attempt=?,updated_at=? WHERE id=?').bind(status,Date.now()+(error.retryAfter||60)*1000,Date.now(),job.id).run();try{await telegramCall(env,'sendMessage',{chat_id:settings.owner_id,text:status==='uncertain'?'نتیجهٔ تحویل فایل/اعلان نامشخص است. برای جلوگیری از تکرار، خودکار دوباره ارسال نمی‌شود. وضعیت را در Studio بررسی کن.':status==='pending'?'تلگرام محدودیت موقت گذاشته؛ درخواست در صف می‌ماند.':'تحویل انجام نشد. اتصال یا فایل پروژه را در Studio بررسی کن؛ سپس دوباره درخواست بده.'});}catch{}}
  }
 }
-export async function processTelegramQueue(env){await processRenderJobs(env);await queueBookingNotifications(env);await flushTelegramDeliveries(env);}
+export async function processTelegramQueue(env){await queueBookingNotifications(env);await flushTelegramDeliveries(env);await processRenderJobs(env);}
