@@ -5,6 +5,838 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/projects/afc-qatar/LICENSE-Barlow.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/LICENSE-Barlow.txt"
+    },
+    {
+      "source": "/projects/afc-qatar/LICENSE-Caveat.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/LICENSE-Caveat.txt"
+    },
+    {
+      "source": "/projects/afc-qatar/LICENSE-InstrumentSerif.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/LICENSE-InstrumentSerif.txt"
+    },
+    {
+      "source": "/projects/afc-qatar/LICENSE-Manrope.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/LICENSE-Manrope.txt"
+    },
+    {
+      "source": "/projects/afc-qatar/afc-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/afc-logo.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/afc-transparent.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/afc-transparent.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/architecture.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/architecture.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/barlow-condensed-700.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/barlow-condensed-700.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/barlow-condensed-900.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/barlow-condensed-900.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/caveat-600.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/caveat-600.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/cover-luxury.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/cover-luxury.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/cover.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/flightio-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/flightio-logo.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/flightio-transparent.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/flightio-transparent.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/instrument-serif-italic.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/instrument-serif-italic.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/instrument-serif-normal.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/instrument-serif-normal.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/manrope-400.woff2",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/manrope-400.woff2"
+    },
+    {
+      "source": "/projects/afc-qatar/sculpture.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/sculpture.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/stadium.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/stadium.webp"
+    },
+    {
+      "source": "/projects/afc-qatar/wireframe.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/afc-qatar/wireframe.webp"
+    },
+    {
+      "source": "/projects/airbnb/antarctic-poster.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/antarctic-poster.webp"
+    },
+    {
+      "source": "/projects/airbnb/arctic-poster.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/arctic-poster.webp"
+    },
+    {
+      "source": "/projects/airbnb/client-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/client-logo.webp"
+    },
+    {
+      "source": "/projects/airbnb/cover-clean.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/cover-clean.webp"
+    },
+    {
+      "source": "/projects/airbnb/cover-square.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/cover-square.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-blue-hour-streetboard.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-blue-hour-streetboard.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-giraffe-lightbox.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-giraffe-lightbox.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-penguin-lightbox-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-penguin-lightbox-v2.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-penguin-lightbox.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-penguin-lightbox.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-plaza-reflection.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-plaza-reflection.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-plaza-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-plaza-v2.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-plaza.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-plaza.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-rhino-streetboard.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-rhino-streetboard.webp"
+    },
+    {
+      "source": "/projects/airbnb/kuwait-shelter.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/kuwait-shelter.webp"
+    },
+    {
+      "source": "/projects/airbnb/plaza-screen-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/plaza-screen-art.webp"
+    },
+    {
+      "source": "/projects/airbnb/rainforest-poster.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/rainforest-poster.webp"
+    },
+    {
+      "source": "/projects/airbnb/savannah-poster.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/savannah-poster.webp"
+    },
+    {
+      "source": "/projects/airbnb/shelter-screen-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/airbnb/shelter-screen-art.webp"
+    },
+    {
+      "source": "/projects/cafe-de-la-corte/craftsmanship.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/cafe-de-la-corte/craftsmanship.webp"
+    },
+    {
+      "source": "/projects/cafe-de-la-corte/hospitality.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/cafe-de-la-corte/hospitality.webp"
+    },
+    {
+      "source": "/projects/cafe-de-la-corte/pour-full.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/cafe-de-la-corte/pour-full.webp"
+    },
+    {
+      "source": "/projects/cafe-de-la-corte/serving-ritual.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/cafe-de-la-corte/serving-ritual.webp"
+    },
+    {
+      "source": "/projects/covers/afc-qatar-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/afc-qatar-640.avif"
+    },
+    {
+      "source": "/projects/covers/afc-qatar-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/afc-qatar-640.webp"
+    },
+    {
+      "source": "/projects/covers/afc-qatar-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/afc-qatar-960.avif"
+    },
+    {
+      "source": "/projects/covers/afc-qatar-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/afc-qatar-960.webp"
+    },
+    {
+      "source": "/projects/covers/airbnb-unlock-adventure-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/airbnb-unlock-adventure-640.avif"
+    },
+    {
+      "source": "/projects/covers/airbnb-unlock-adventure-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/airbnb-unlock-adventure-640.webp"
+    },
+    {
+      "source": "/projects/covers/airbnb-unlock-adventure-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/airbnb-unlock-adventure-960.avif"
+    },
+    {
+      "source": "/projects/covers/airbnb-unlock-adventure-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/airbnb-unlock-adventure-960.webp"
+    },
+    {
+      "source": "/projects/covers/cafe-de-la-corte-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/cafe-de-la-corte-640.avif"
+    },
+    {
+      "source": "/projects/covers/cafe-de-la-corte-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/cafe-de-la-corte-640.webp"
+    },
+    {
+      "source": "/projects/covers/cafe-de-la-corte-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/cafe-de-la-corte-960.avif"
+    },
+    {
+      "source": "/projects/covers/cafe-de-la-corte-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/cafe-de-la-corte-960.webp"
+    },
+    {
+      "source": "/projects/covers/digikala-smile-arrives-home-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/digikala-smile-arrives-home-640.avif"
+    },
+    {
+      "source": "/projects/covers/digikala-smile-arrives-home-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/digikala-smile-arrives-home-640.webp"
+    },
+    {
+      "source": "/projects/covers/digikala-smile-arrives-home-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/digikala-smile-arrives-home-960.avif"
+    },
+    {
+      "source": "/projects/covers/digikala-smile-arrives-home-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/digikala-smile-arrives-home-960.webp"
+    },
+    {
+      "source": "/projects/covers/divar-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/divar-640.avif"
+    },
+    {
+      "source": "/projects/covers/divar-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/divar-640.webp"
+    },
+    {
+      "source": "/projects/covers/divar-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/divar-960.avif"
+    },
+    {
+      "source": "/projects/covers/divar-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/divar-960.webp"
+    },
+    {
+      "source": "/projects/covers/flightio-ota-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/flightio-ota-640.avif"
+    },
+    {
+      "source": "/projects/covers/flightio-ota-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/flightio-ota-640.webp"
+    },
+    {
+      "source": "/projects/covers/flightio-ota-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/flightio-ota-960.avif"
+    },
+    {
+      "source": "/projects/covers/flightio-ota-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/flightio-ota-960.webp"
+    },
+    {
+      "source": "/projects/covers/mci-5g-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/mci-5g-640.avif"
+    },
+    {
+      "source": "/projects/covers/mci-5g-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/mci-5g-640.webp"
+    },
+    {
+      "source": "/projects/covers/mci-5g-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/mci-5g-960.avif"
+    },
+    {
+      "source": "/projects/covers/mci-5g-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/mci-5g-960.webp"
+    },
+    {
+      "source": "/projects/covers/myom-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/myom-640.avif"
+    },
+    {
+      "source": "/projects/covers/myom-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/myom-640.webp"
+    },
+    {
+      "source": "/projects/covers/myom-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/myom-960.avif"
+    },
+    {
+      "source": "/projects/covers/myom-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/myom-960.webp"
+    },
+    {
+      "source": "/projects/covers/noghteh-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/noghteh-640.avif"
+    },
+    {
+      "source": "/projects/covers/noghteh-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/noghteh-640.webp"
+    },
+    {
+      "source": "/projects/covers/noghteh-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/noghteh-960.avif"
+    },
+    {
+      "source": "/projects/covers/noghteh-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/noghteh-960.webp"
+    },
+    {
+      "source": "/projects/covers/toypet-640.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/toypet-640.avif"
+    },
+    {
+      "source": "/projects/covers/toypet-640.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/toypet-640.webp"
+    },
+    {
+      "source": "/projects/covers/toypet-960.avif",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/toypet-960.avif"
+    },
+    {
+      "source": "/projects/covers/toypet-960.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/covers/toypet-960.webp"
+    },
+    {
+      "source": "/projects/digikala/balloon-box.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/balloon-box.webp"
+    },
+    {
+      "source": "/projects/digikala/btl-hafez.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/btl-hafez.webp"
+    },
+    {
+      "source": "/projects/digikala/btl-karim-khan.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/btl-karim-khan.webp"
+    },
+    {
+      "source": "/projects/digikala/client-logo.svg",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/client-logo.svg"
+    },
+    {
+      "source": "/projects/digikala/client-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/client-logo.webp"
+    },
+    {
+      "source": "/projects/digikala/cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/cover.webp"
+    },
+    {
+      "source": "/projects/digikala/delivery-at-home.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/delivery-at-home.webp"
+    },
+    {
+      "source": "/projects/digikala/shiraz-billboard.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/shiraz-billboard.webp"
+    },
+    {
+      "source": "/projects/digikala/shiraz-bus-shelter.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/digikala/shiraz-bus-shelter.webp"
+    },
+    {
+      "source": "/projects/divar/boost-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/boost-v2.webp"
+    },
+    {
+      "source": "/projects/divar/boost.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/boost.webp"
+    },
+    {
+      "source": "/projects/divar/car-music.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/car-music.webp"
+    },
+    {
+      "source": "/projects/divar/category-panel.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/category-panel.webp"
+    },
+    {
+      "source": "/projects/divar/category-world.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/category-world.webp"
+    },
+    {
+      "source": "/projects/divar/client-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/client-logo.webp"
+    },
+    {
+      "source": "/projects/divar/cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/cover.webp"
+    },
+    {
+      "source": "/projects/divar/digital-discovery.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/digital-discovery.webp"
+    },
+    {
+      "source": "/projects/divar/hero-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/hero-v2.webp"
+    },
+    {
+      "source": "/projects/divar/hero.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/hero.webp"
+    },
+    {
+      "source": "/projects/divar/home-discovery.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/home-discovery.webp"
+    },
+    {
+      "source": "/projects/divar/human-ai-final.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/human-ai-final.webp"
+    },
+    {
+      "source": "/projects/divar/human-ai.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/human-ai.webp"
+    },
+    {
+      "source": "/projects/divar/icons/beauty.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/beauty.webp"
+    },
+    {
+      "source": "/projects/divar/icons/community.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/community.webp"
+    },
+    {
+      "source": "/projects/divar/icons/electronics.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/electronics.webp"
+    },
+    {
+      "source": "/projects/divar/icons/fashion.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/fashion.webp"
+    },
+    {
+      "source": "/projects/divar/icons/living.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/living.webp"
+    },
+    {
+      "source": "/projects/divar/icons/property.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/property.webp"
+    },
+    {
+      "source": "/projects/divar/icons/sports.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/sports.webp"
+    },
+    {
+      "source": "/projects/divar/icons/vehicles.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/icons/vehicles.webp"
+    },
+    {
+      "source": "/projects/divar/listing-promotion.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/listing-promotion.webp"
+    },
+    {
+      "source": "/projects/divar/mascot-family-red.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/mascot-family-red.webp"
+    },
+    {
+      "source": "/projects/divar/mascot-family.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/mascot-family.webp"
+    },
+    {
+      "source": "/projects/divar/mascot-red.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/mascot-red.webp"
+    },
+    {
+      "source": "/projects/divar/mascot.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/divar/mascot.webp"
+    },
+    {
+      "source": "/projects/flightio/caravanserai-petra-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/caravanserai-petra-art.webp"
+    },
+    {
+      "source": "/projects/flightio/caravanserai-petra.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/caravanserai-petra.webp"
+    },
+    {
+      "source": "/projects/flightio/client-logo.svg",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/client-logo.svg"
+    },
+    {
+      "source": "/projects/flightio/client-wordmark.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/client-wordmark.webp"
+    },
+    {
+      "source": "/projects/flightio/cover-wordmark.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/cover-wordmark.webp"
+    },
+    {
+      "source": "/projects/flightio/cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/cover.webp"
+    },
+    {
+      "source": "/projects/flightio/environment-bridge-final.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/environment-bridge-final.webp"
+    },
+    {
+      "source": "/projects/flightio/environment-day.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/environment-day.webp"
+    },
+    {
+      "source": "/projects/flightio/environment-lightbox-refined.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/environment-lightbox-refined.webp"
+    },
+    {
+      "source": "/projects/flightio/environment-night.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/environment-night.webp"
+    },
+    {
+      "source": "/projects/flightio/hero-bus.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/hero-bus.webp"
+    },
+    {
+      "source": "/projects/flightio/hero-flight.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/hero-flight.webp"
+    },
+    {
+      "source": "/projects/flightio/hero-train.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/hero-train.webp"
+    },
+    {
+      "source": "/projects/flightio/hormuz-alps-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/hormuz-alps-art.webp"
+    },
+    {
+      "source": "/projects/flightio/hormuz-alps.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/hormuz-alps.webp"
+    },
+    {
+      "source": "/projects/flightio/persepolis-rome-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/persepolis-rome-art.webp"
+    },
+    {
+      "source": "/projects/flightio/persepolis-rome.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/persepolis-rome.webp"
+    },
+    {
+      "source": "/projects/flightio/portal-billboard.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/portal-billboard.webp"
+    },
+    {
+      "source": "/projects/flightio/portal-campaign.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/portal-campaign.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-alps.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-alps.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-bus.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-bus.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-client-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-client-logo.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-cover.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-flight.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-flight.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-lightbox.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-lightbox.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-louvre.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-louvre.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-overpass.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-overpass.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-petra-alternate.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-petra-alternate.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-petra.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-petra.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-rome.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-rome.webp"
+    },
+    {
+      "source": "/projects/flightio/selected-train.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/selected-train.webp"
+    },
+    {
+      "source": "/projects/flightio/shiraz-paris-art.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/shiraz-paris-art.webp"
+    },
+    {
+      "source": "/projects/flightio/shiraz-paris.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/shiraz-paris.webp"
+    },
+    {
+      "source": "/projects/flightio/transport-system.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/flightio/transport-system.webp"
+    },
+    {
+      "source": "/projects/mci/ad-network.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/ad-network.webp"
+    },
+    {
+      "source": "/projects/mci/client-logo.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/client-logo.webp"
+    },
+    {
+      "source": "/projects/mci/digital-screens-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/digital-screens-v2.webp"
+    },
+    {
+      "source": "/projects/mci/snail-speed.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/snail-speed.webp"
+    },
+    {
+      "source": "/projects/mci/snail-top.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/snail-top.webp"
+    },
+    {
+      "source": "/projects/mci/tehran-billboard-v2.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/tehran-billboard-v2.webp"
+    },
+    {
+      "source": "/projects/mci/tortoise-speed.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/mci/tortoise-speed.webp"
+    },
+    {
+      "source": "/projects/noghteh/material-library.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/noghteh/material-library.webp"
+    },
+    {
+      "source": "/projects/noghteh/print-and-glass.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/noghteh/print-and-glass.webp"
+    },
+    {
+      "source": "/projects/noghteh/studio-entrance.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/projects/noghteh/studio-entrance.webp"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/analytical-cover-portrait.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/analytical-cover-portrait.webp"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/analytical-cover.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/analytical-cover.webp"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-instagram-v3.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-instagram-v3.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-instagram-v4.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-instagram-v4.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-instagram.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-instagram.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-linkedin-v3.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-linkedin-v3.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-linkedin-v4.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-linkedin-v4.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-article-linkedin.pdf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-article-linkedin.pdf"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-instagram-carousel-v3.zip",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-instagram-carousel-v3.zip"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-instagram-carousel-v4.zip",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-instagram-carousel-v4.zip"
+    },
+    {
+      "source": "/journal/myom-character-to-shelf/myom-instagram-carousel.zip",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/journal/myom-character-to-shelf/myom-instagram-carousel.zip"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-amber-bottle-autumn-scene-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-amber-bottle-autumn-scene-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-blue-bottle-water-scene-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-blue-bottle-water-scene-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-botanical-label-detail-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-botanical-label-detail-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-botanical-linework-library-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-botanical-linework-library-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-bottle-and-closure-study-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-bottle-and-closure-study-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-bottle-blueprint-study-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-bottle-blueprint-study-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-bottle-construction-study-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-bottle-construction-study-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-bottle-in-hand-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-bottle-in-hand-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-boxed-packaging-system-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-boxed-packaging-system-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-brand-colour-system-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-brand-colour-system-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-closure-water-droplet-detail-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-closure-water-droplet-detail-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-delivery-van-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-delivery-van-mockup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-four-colour-bottle-family-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-four-colour-bottle-family-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-glass-bottle-lineup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-glass-bottle-lineup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-green-bottle-stone-scene-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-green-bottle-stone-scene-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-interior-signage-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-interior-signage-mockup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-mobile-brand-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-mobile-brand-mockup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-staff-badge-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-staff-badge-mockup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-stationery-system-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-stationery-system-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-terrarium-dropper-scene-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-terrarium-dropper-scene-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-typography-specification-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-typography-specification-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-violet-bottle-floral-scene-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-violet-bottle-floral-scene-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-welcome-kit-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-welcome-kit-mockup-upscaled.webp"
+    },
+    {
+      "source": "/images/auraleaf-restored/auraleaf-workspace-environment-mockup-upscaled.webp",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/images/auraleaf-restored/auraleaf-workspace-environment-mockup-upscaled.webp"
+    },
+    {
+      "source": "/presentation/Manrope-OFL.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/Manrope-OFL.txt"
+    },
+    {
+      "source": "/presentation/Vazirmatn-OFL.txt",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/Vazirmatn-OFL.txt"
+    },
+    {
+      "source": "/presentation/desartly-logo.svg",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/desartly-logo.svg"
+    },
+    {
+      "source": "/presentation/manrope-400.ttf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/manrope-400.ttf"
+    },
+    {
+      "source": "/presentation/manrope-700.ttf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/manrope-700.ttf"
+    },
+    {
+      "source": "/presentation/snapshots/afc-interactions.png",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/snapshots/afc-interactions.png"
+    },
+    {
+      "source": "/presentation/snapshots/afc-landing.png",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/snapshots/afc-landing.png"
+    },
+    {
+      "source": "/presentation/snapshots/divar-category-world.png",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/snapshots/divar-category-world.png"
+    },
+    {
+      "source": "/presentation/snapshots/flightio-glass-system.png",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/snapshots/flightio-glass-system.png"
+    },
+    {
+      "source": "/presentation/vazirmatn-400.ttf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/vazirmatn-400.ttf"
+    },
+    {
+      "source": "/presentation/vazirmatn-700.ttf",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/presentation/vazirmatn-700.ttf"
+    },
+    {
+      "source": "/brand/desartly-share.png",
+      "destination": "https://desartly.layebuzz.workers.dev/api/static?asset=/brand/desartly-share.png"
+    },
+    {
       "source": "/robots.txt",
       "destination": "/api/public?__path=/robots.txt"
     },
@@ -143,7 +975,11 @@
   ],
   "functions": {
     "api/public.js": {
-      "includeFiles": "dist/{shell.html,studio-app/index.html}"
+      "includeFiles": "dist/{shell.html,studio-app/index.html}",
+      "excludeFiles": "public/**"
+    },
+    "api/backend.js": {
+      "excludeFiles": "public/**"
     }
   },
   "redirects": [

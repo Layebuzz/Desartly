@@ -8,10 +8,12 @@ export class MediaStorage {
   if(!this.s3)throw Object.assign(Error('Media storage is not configured.'),{status:503});
   return this.s3.put(id,bytes,type);
  }
- get(asset){
+ authorizeStatic(asset){if(!this.s3)throw Error('Media storage is not configured.');return this.s3.authorizeStatic(asset);}
+ discardStaged(id){if(!this.s3)throw Error('Media storage is not configured.');return this.s3.discardStaged(id);}
+ get(asset,range){
   if(asset.storage==='s3'){
    if(!this.s3)throw Object.assign(Error('Media storage is not configured.'),{status:503});
-   return this.s3.get(asset);
+   return this.s3.get(asset,range);
   }
   throw Object.assign(Error('Invalid media asset.'),{status:503});
  }

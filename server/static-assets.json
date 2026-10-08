@@ -1,0 +1,1250 @@
+{
+  "/projects/afc-qatar/LICENSE-Barlow.txt": {
+    "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+    "size": 4377,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f/LICENSE-Barlow.txt"
+  },
+  "/projects/afc-qatar/LICENSE-Caveat.txt": {
+    "sha256": "1f9d81d094273d82f3898a1ee8b598a717d050ecbf5ff7bede105b704880157b",
+    "size": 4385,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/1f9d81d094273d82f3898a1ee8b598a717d050ecbf5ff7bede105b704880157b/LICENSE-Caveat.txt"
+  },
+  "/projects/afc-qatar/LICENSE-InstrumentSerif.txt": {
+    "sha256": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521",
+    "size": 4405,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521/LICENSE-InstrumentSerif.txt"
+  },
+  "/projects/afc-qatar/LICENSE-Manrope.txt": {
+    "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b",
+    "size": 4387,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b/LICENSE-Manrope.txt"
+  },
+  "/projects/afc-qatar/afc-logo.webp": {
+    "sha256": "a87e80c08e017064056234c5efb4b36859090a8a4f0f810cdf02fc3861178285",
+    "size": 16256,
+    "type": "image/webp",
+    "key": "static/a87e80c08e017064056234c5efb4b36859090a8a4f0f810cdf02fc3861178285/afc-logo.webp"
+  },
+  "/projects/afc-qatar/afc-transparent.webp": {
+    "sha256": "73e3106764352322fb38360d8759c357ad6841b5670b0cee4d7f4db7daf9a03c",
+    "size": 81384,
+    "type": "image/webp",
+    "key": "static/73e3106764352322fb38360d8759c357ad6841b5670b0cee4d7f4db7daf9a03c/afc-transparent.webp"
+  },
+  "/projects/afc-qatar/architecture.webp": {
+    "sha256": "3980174808aa099876416cc7cf1a80b8097b7b70e7571e3c4c4e82d509862b19",
+    "size": 381578,
+    "type": "image/webp",
+    "key": "static/3980174808aa099876416cc7cf1a80b8097b7b70e7571e3c4c4e82d509862b19/architecture.webp"
+  },
+  "/projects/afc-qatar/barlow-condensed-700.woff2": {
+    "sha256": "e3e520cb7468f2efd60bc2ce96694567c3312f4ef414fffbe605e3ad146b24e6",
+    "size": 14888,
+    "type": "font/woff2",
+    "key": "static/e3e520cb7468f2efd60bc2ce96694567c3312f4ef414fffbe605e3ad146b24e6/barlow-condensed-700.woff2"
+  },
+  "/projects/afc-qatar/barlow-condensed-900.woff2": {
+    "sha256": "2036f7f4aacc7759dcf8c6be2bd5bbde873c25a860f24dca0530ad14d4937723",
+    "size": 13940,
+    "type": "font/woff2",
+    "key": "static/2036f7f4aacc7759dcf8c6be2bd5bbde873c25a860f24dca0530ad14d4937723/barlow-condensed-900.woff2"
+  },
+  "/projects/afc-qatar/caveat-600.woff2": {
+    "sha256": "1c591acdadd5ea398bad6aa21b36498dde59035ad366d1dbb05bbc0e537e7bc9",
+    "size": 51296,
+    "type": "font/woff2",
+    "key": "static/1c591acdadd5ea398bad6aa21b36498dde59035ad366d1dbb05bbc0e537e7bc9/caveat-600.woff2"
+  },
+  "/projects/afc-qatar/cover-luxury.webp": {
+    "sha256": "91da2f7c4e64ea7c2d63c7d85dc64a0ba958472519778147172ce818d500d612",
+    "size": 192590,
+    "type": "image/webp",
+    "key": "static/91da2f7c4e64ea7c2d63c7d85dc64a0ba958472519778147172ce818d500d612/cover-luxury.webp"
+  },
+  "/projects/afc-qatar/cover.webp": {
+    "sha256": "810b29e6d4baf0694247a8371f51558356463c74e12750f03488432174c73c3d",
+    "size": 137628,
+    "type": "image/webp",
+    "key": "static/810b29e6d4baf0694247a8371f51558356463c74e12750f03488432174c73c3d/cover.webp"
+  },
+  "/projects/afc-qatar/flightio-logo.webp": {
+    "sha256": "e4764f89eefeee7a5f6f890bfa5328fe07ab6b3fc0cde151e3d6b9eb8d946e1f",
+    "size": 6448,
+    "type": "image/webp",
+    "key": "static/e4764f89eefeee7a5f6f890bfa5328fe07ab6b3fc0cde151e3d6b9eb8d946e1f/flightio-logo.webp"
+  },
+  "/projects/afc-qatar/flightio-transparent.webp": {
+    "sha256": "33902ca8325e265caf4f143b8c63eb6f86610d63b457e9aa34b3414889e80873",
+    "size": 26016,
+    "type": "image/webp",
+    "key": "static/33902ca8325e265caf4f143b8c63eb6f86610d63b457e9aa34b3414889e80873/flightio-transparent.webp"
+  },
+  "/projects/afc-qatar/instrument-serif-italic.woff2": {
+    "sha256": "6ee678c33f388dd7ba59700ebea635deb98821baafd817b09891f7927177f702",
+    "size": 15684,
+    "type": "font/woff2",
+    "key": "static/6ee678c33f388dd7ba59700ebea635deb98821baafd817b09891f7927177f702/instrument-serif-italic.woff2"
+  },
+  "/projects/afc-qatar/instrument-serif-normal.woff2": {
+    "sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d",
+    "size": 15040,
+    "type": "font/woff2",
+    "key": "static/60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d/instrument-serif-normal.woff2"
+  },
+  "/projects/afc-qatar/manrope-400.woff2": {
+    "sha256": "e310b55a7fd9677f5e3555e6c6c4d064fa1f1d24393f0ddbe217cea12a8c432f",
+    "size": 24576,
+    "type": "font/woff2",
+    "key": "static/e310b55a7fd9677f5e3555e6c6c4d064fa1f1d24393f0ddbe217cea12a8c432f/manrope-400.woff2"
+  },
+  "/projects/afc-qatar/sculpture.webp": {
+    "sha256": "a17ad026f5a1eb425b7ac8153611f1655b07217f9dc194e14948da4f067bd3f0",
+    "size": 278562,
+    "type": "image/webp",
+    "key": "static/a17ad026f5a1eb425b7ac8153611f1655b07217f9dc194e14948da4f067bd3f0/sculpture.webp"
+  },
+  "/projects/afc-qatar/stadium.webp": {
+    "sha256": "d23c0faf37ad1e05903b3b108326a40a097002fbe1ab625967094c94f78aa2fd",
+    "size": 171050,
+    "type": "image/webp",
+    "key": "static/d23c0faf37ad1e05903b3b108326a40a097002fbe1ab625967094c94f78aa2fd/stadium.webp"
+  },
+  "/projects/afc-qatar/wireframe.webp": {
+    "sha256": "da9ab598beef4b690009f5ff4078fa0051e72de6b2e1b60820d2ad3ec479eb89",
+    "size": 492884,
+    "type": "image/webp",
+    "key": "static/da9ab598beef4b690009f5ff4078fa0051e72de6b2e1b60820d2ad3ec479eb89/wireframe.webp"
+  },
+  "/projects/airbnb/antarctic-poster.webp": {
+    "sha256": "c5ddea8af0ffae4e053aa06daf0ee436368f1f3808155cd7a4da0be1f09c3d3f",
+    "size": 176898,
+    "type": "image/webp",
+    "key": "static/c5ddea8af0ffae4e053aa06daf0ee436368f1f3808155cd7a4da0be1f09c3d3f/antarctic-poster.webp"
+  },
+  "/projects/airbnb/arctic-poster.webp": {
+    "sha256": "fc83438f6108031187686089468529ac0838732f9ed335e0dd916bbc2d7e7810",
+    "size": 259036,
+    "type": "image/webp",
+    "key": "static/fc83438f6108031187686089468529ac0838732f9ed335e0dd916bbc2d7e7810/arctic-poster.webp"
+  },
+  "/projects/airbnb/client-logo.webp": {
+    "sha256": "fa1ac4ed290266b1e005d2a121078d023d20d081961a33171a78203559c335ca",
+    "size": 9234,
+    "type": "image/webp",
+    "key": "static/fa1ac4ed290266b1e005d2a121078d023d20d081961a33171a78203559c335ca/client-logo.webp"
+  },
+  "/projects/airbnb/cover-clean.webp": {
+    "sha256": "d47b45ce75fbdacb1f6591c2dfd34926dcb8ecf0b402f23abeefb31edc7b7fd4",
+    "size": 356332,
+    "type": "image/webp",
+    "key": "static/d47b45ce75fbdacb1f6591c2dfd34926dcb8ecf0b402f23abeefb31edc7b7fd4/cover-clean.webp"
+  },
+  "/projects/airbnb/cover-square.webp": {
+    "sha256": "5e459c6fbb6964e78282e29d22e23740c401a4df1a926ebb7322bf2b0943c004",
+    "size": 211664,
+    "type": "image/webp",
+    "key": "static/5e459c6fbb6964e78282e29d22e23740c401a4df1a926ebb7322bf2b0943c004/cover-square.webp"
+  },
+  "/projects/airbnb/kuwait-blue-hour-streetboard.webp": {
+    "sha256": "4b9144c6b10ab4e136596c3101c880cad7f827d37f901dac2d1fb02c6714f72a",
+    "size": 301294,
+    "type": "image/webp",
+    "key": "static/4b9144c6b10ab4e136596c3101c880cad7f827d37f901dac2d1fb02c6714f72a/kuwait-blue-hour-streetboard.webp"
+  },
+  "/projects/airbnb/kuwait-giraffe-lightbox.webp": {
+    "sha256": "f8ef6060330c87de4efaa8f9c1111fdb5b1c2d8935ed6d795e292b934a3f571c",
+    "size": 256190,
+    "type": "image/webp",
+    "key": "static/f8ef6060330c87de4efaa8f9c1111fdb5b1c2d8935ed6d795e292b934a3f571c/kuwait-giraffe-lightbox.webp"
+  },
+  "/projects/airbnb/kuwait-penguin-lightbox-v2.webp": {
+    "sha256": "3b89bd124eadbbd4267d1259a28457cb26d6c281dfba571d7a70a89b7d951ea1",
+    "size": 310320,
+    "type": "image/webp",
+    "key": "static/3b89bd124eadbbd4267d1259a28457cb26d6c281dfba571d7a70a89b7d951ea1/kuwait-penguin-lightbox-v2.webp"
+  },
+  "/projects/airbnb/kuwait-penguin-lightbox.webp": {
+    "sha256": "16bc557cf667ee60267f2f94458924049200e5d4e09394e32abdbd825e3e1d5f",
+    "size": 249776,
+    "type": "image/webp",
+    "key": "static/16bc557cf667ee60267f2f94458924049200e5d4e09394e32abdbd825e3e1d5f/kuwait-penguin-lightbox.webp"
+  },
+  "/projects/airbnb/kuwait-plaza-reflection.webp": {
+    "sha256": "c517f8e5d583b32fce6fa03eafc3e5c2249c6a091f92db3ef8463a3a7958b931",
+    "size": 245598,
+    "type": "image/webp",
+    "key": "static/c517f8e5d583b32fce6fa03eafc3e5c2249c6a091f92db3ef8463a3a7958b931/kuwait-plaza-reflection.webp"
+  },
+  "/projects/airbnb/kuwait-plaza-v2.webp": {
+    "sha256": "0fc6836b379fa8a0c4e1ce12cc15bca1ed7c817d9762d77c15aac3c31a28e95d",
+    "size": 269638,
+    "type": "image/webp",
+    "key": "static/0fc6836b379fa8a0c4e1ce12cc15bca1ed7c817d9762d77c15aac3c31a28e95d/kuwait-plaza-v2.webp"
+  },
+  "/projects/airbnb/kuwait-plaza.webp": {
+    "sha256": "54c82be0cef9291e0ece9e25107c6ccf0bbce85c7d612e40ed7895dc5192ad85",
+    "size": 279448,
+    "type": "image/webp",
+    "key": "static/54c82be0cef9291e0ece9e25107c6ccf0bbce85c7d612e40ed7895dc5192ad85/kuwait-plaza.webp"
+  },
+  "/projects/airbnb/kuwait-rhino-streetboard.webp": {
+    "sha256": "23ab2594b233e4ba714fba269dab81d46d16784c737eed8bb50c9e8e67f7ed42",
+    "size": 354794,
+    "type": "image/webp",
+    "key": "static/23ab2594b233e4ba714fba269dab81d46d16784c737eed8bb50c9e8e67f7ed42/kuwait-rhino-streetboard.webp"
+  },
+  "/projects/airbnb/kuwait-shelter.webp": {
+    "sha256": "6a9809a6ab404d7c1159abb5981ddea0ea4ffc4d74add504d6e45a4776716fe5",
+    "size": 348244,
+    "type": "image/webp",
+    "key": "static/6a9809a6ab404d7c1159abb5981ddea0ea4ffc4d74add504d6e45a4776716fe5/kuwait-shelter.webp"
+  },
+  "/projects/airbnb/plaza-screen-art.webp": {
+    "sha256": "90808c8a2aa824a2af8888680196ecfaca4b330ff06034b96ae6b8afa1ddec6d",
+    "size": 71956,
+    "type": "image/webp",
+    "key": "static/90808c8a2aa824a2af8888680196ecfaca4b330ff06034b96ae6b8afa1ddec6d/plaza-screen-art.webp"
+  },
+  "/projects/airbnb/rainforest-poster.webp": {
+    "sha256": "dcc8324033c6732a9d38afc6348958f90830d4fd320f096632f546c098b9a88c",
+    "size": 395678,
+    "type": "image/webp",
+    "key": "static/dcc8324033c6732a9d38afc6348958f90830d4fd320f096632f546c098b9a88c/rainforest-poster.webp"
+  },
+  "/projects/airbnb/savannah-poster.webp": {
+    "sha256": "c1f0322c7db665ddacbc219c1e96af69f5b520cf37d92c3d8112248c73b9da78",
+    "size": 281008,
+    "type": "image/webp",
+    "key": "static/c1f0322c7db665ddacbc219c1e96af69f5b520cf37d92c3d8112248c73b9da78/savannah-poster.webp"
+  },
+  "/projects/airbnb/shelter-screen-art.webp": {
+    "sha256": "23b34e8637d196a888f93176779d7252e6ddcaff43406a5916dcba531a282abc",
+    "size": 89220,
+    "type": "image/webp",
+    "key": "static/23b34e8637d196a888f93176779d7252e6ddcaff43406a5916dcba531a282abc/shelter-screen-art.webp"
+  },
+  "/projects/cafe-de-la-corte/craftsmanship.webp": {
+    "sha256": "d34206c843bcc9a02e11f84e4e9a26a6149197c553a95cee6cda75ba965f08b5",
+    "size": 485400,
+    "type": "image/webp",
+    "key": "static/d34206c843bcc9a02e11f84e4e9a26a6149197c553a95cee6cda75ba965f08b5/craftsmanship.webp"
+  },
+  "/projects/cafe-de-la-corte/hospitality.webp": {
+    "sha256": "71b037359b5335cd16135457debcf380320af92d21c49327b8675c210e143815",
+    "size": 349300,
+    "type": "image/webp",
+    "key": "static/71b037359b5335cd16135457debcf380320af92d21c49327b8675c210e143815/hospitality.webp"
+  },
+  "/projects/cafe-de-la-corte/pour-full.webp": {
+    "sha256": "e79f6e21e0d9fd53aceeae85cb2bbbaea619d1f33b2df7ec07e79e305df95adf",
+    "size": 246080,
+    "type": "image/webp",
+    "key": "static/e79f6e21e0d9fd53aceeae85cb2bbbaea619d1f33b2df7ec07e79e305df95adf/pour-full.webp"
+  },
+  "/projects/cafe-de-la-corte/serving-ritual.webp": {
+    "sha256": "237f4e9cb1f1f64ea26eb527714d9992823f58d398e8c26df93bf1cbd626c01f",
+    "size": 502546,
+    "type": "image/webp",
+    "key": "static/237f4e9cb1f1f64ea26eb527714d9992823f58d398e8c26df93bf1cbd626c01f/serving-ritual.webp"
+  },
+  "/projects/covers/afc-qatar-640.avif": {
+    "sha256": "378938604282a4866239e204b9d98a67cc631f39be72b7d49203c85005a5e6a1",
+    "size": 34278,
+    "type": "image/avif",
+    "key": "static/378938604282a4866239e204b9d98a67cc631f39be72b7d49203c85005a5e6a1/afc-qatar-640.avif"
+  },
+  "/projects/covers/afc-qatar-640.webp": {
+    "sha256": "b742989d895bd3ef4e0fb79bfcd2d7977db1a7a4572efd23113c1f5d3e4bc77c",
+    "size": 57254,
+    "type": "image/webp",
+    "key": "static/b742989d895bd3ef4e0fb79bfcd2d7977db1a7a4572efd23113c1f5d3e4bc77c/afc-qatar-640.webp"
+  },
+  "/projects/covers/afc-qatar-960.avif": {
+    "sha256": "bcf154b3b61ba108409f179dd7f86e0b37e909c786327c0d357b69e8cea45509",
+    "size": 61170,
+    "type": "image/avif",
+    "key": "static/bcf154b3b61ba108409f179dd7f86e0b37e909c786327c0d357b69e8cea45509/afc-qatar-960.avif"
+  },
+  "/projects/covers/afc-qatar-960.webp": {
+    "sha256": "ba87e0457b390fbd076046a9157bd4d94cd5d21edc536fda68a706b7559db8f0",
+    "size": 99922,
+    "type": "image/webp",
+    "key": "static/ba87e0457b390fbd076046a9157bd4d94cd5d21edc536fda68a706b7559db8f0/afc-qatar-960.webp"
+  },
+  "/projects/covers/airbnb-unlock-adventure-640.avif": {
+    "sha256": "2841a0da1efe27dc4cb46a22b1b8fc506f277b85014023cd8aed7f7d35919f21",
+    "size": 30248,
+    "type": "image/avif",
+    "key": "static/2841a0da1efe27dc4cb46a22b1b8fc506f277b85014023cd8aed7f7d35919f21/airbnb-unlock-adventure-640.avif"
+  },
+  "/projects/covers/airbnb-unlock-adventure-640.webp": {
+    "sha256": "c2aa666cc675e3b8cb6b0bbcd739dcfbafff53206cf46edf97399debd61d3f86",
+    "size": 58142,
+    "type": "image/webp",
+    "key": "static/c2aa666cc675e3b8cb6b0bbcd739dcfbafff53206cf46edf97399debd61d3f86/airbnb-unlock-adventure-640.webp"
+  },
+  "/projects/covers/airbnb-unlock-adventure-960.avif": {
+    "sha256": "5e16701afe2023d65aca76f4793371f113deb29de474c66a7089b926a2b6f91f",
+    "size": 68514,
+    "type": "image/avif",
+    "key": "static/5e16701afe2023d65aca76f4793371f113deb29de474c66a7089b926a2b6f91f/airbnb-unlock-adventure-960.avif"
+  },
+  "/projects/covers/airbnb-unlock-adventure-960.webp": {
+    "sha256": "050a982c4e378bbe6a0b7a10c500508e0463105669b6f18e9bcc0fdda8564439",
+    "size": 109912,
+    "type": "image/webp",
+    "key": "static/050a982c4e378bbe6a0b7a10c500508e0463105669b6f18e9bcc0fdda8564439/airbnb-unlock-adventure-960.webp"
+  },
+  "/projects/covers/cafe-de-la-corte-640.avif": {
+    "sha256": "be6cd1a757a61f450be63ffbdc804f4025956f73e89ca6989ec747d40c58c739",
+    "size": 22860,
+    "type": "image/avif",
+    "key": "static/be6cd1a757a61f450be63ffbdc804f4025956f73e89ca6989ec747d40c58c739/cafe-de-la-corte-640.avif"
+  },
+  "/projects/covers/cafe-de-la-corte-640.webp": {
+    "sha256": "6fcc204fd519f9006c5a337f83b931841ae8c32bb2503c50ee036317aa0c0b1a",
+    "size": 37774,
+    "type": "image/webp",
+    "key": "static/6fcc204fd519f9006c5a337f83b931841ae8c32bb2503c50ee036317aa0c0b1a/cafe-de-la-corte-640.webp"
+  },
+  "/projects/covers/cafe-de-la-corte-960.avif": {
+    "sha256": "81fadd869d75144e743c7c9a4ce05381bffb6c2722efcbd907a8b31d2347ca30",
+    "size": 56001,
+    "type": "image/avif",
+    "key": "static/81fadd869d75144e743c7c9a4ce05381bffb6c2722efcbd907a8b31d2347ca30/cafe-de-la-corte-960.avif"
+  },
+  "/projects/covers/cafe-de-la-corte-960.webp": {
+    "sha256": "b70e0b777365212aabefee4e2c303f0cbe2a7d2b84b26df3be078f8cb9f287dd",
+    "size": 80814,
+    "type": "image/webp",
+    "key": "static/b70e0b777365212aabefee4e2c303f0cbe2a7d2b84b26df3be078f8cb9f287dd/cafe-de-la-corte-960.webp"
+  },
+  "/projects/covers/digikala-smile-arrives-home-640.avif": {
+    "sha256": "eaa4545e68c162fd6de5ac1d95b570762c8598936d3dffcd3307f8e02291ef73",
+    "size": 18768,
+    "type": "image/avif",
+    "key": "static/eaa4545e68c162fd6de5ac1d95b570762c8598936d3dffcd3307f8e02291ef73/digikala-smile-arrives-home-640.avif"
+  },
+  "/projects/covers/digikala-smile-arrives-home-640.webp": {
+    "sha256": "8a4d0954f96f54b1e7b2fb4fd673eb134c6f9bb58cb5050bc189bb3c3ee89dd3",
+    "size": 32956,
+    "type": "image/webp",
+    "key": "static/8a4d0954f96f54b1e7b2fb4fd673eb134c6f9bb58cb5050bc189bb3c3ee89dd3/digikala-smile-arrives-home-640.webp"
+  },
+  "/projects/covers/digikala-smile-arrives-home-960.avif": {
+    "sha256": "6e437eabb4892e99fb4fd6ca664b24b150e0ada22d5567c1c84b5331d8d5f59f",
+    "size": 37199,
+    "type": "image/avif",
+    "key": "static/6e437eabb4892e99fb4fd6ca664b24b150e0ada22d5567c1c84b5331d8d5f59f/digikala-smile-arrives-home-960.avif"
+  },
+  "/projects/covers/digikala-smile-arrives-home-960.webp": {
+    "sha256": "1f73af02af00b89b4edc64107cf6e305240a9687ef2458a894c6596edbb4ce63",
+    "size": 64886,
+    "type": "image/webp",
+    "key": "static/1f73af02af00b89b4edc64107cf6e305240a9687ef2458a894c6596edbb4ce63/digikala-smile-arrives-home-960.webp"
+  },
+  "/projects/covers/divar-640.avif": {
+    "sha256": "f062f427f800295f5d3bb4d5a876debf166a324bba305f1b16c245b3f328d459",
+    "size": 8069,
+    "type": "image/avif",
+    "key": "static/f062f427f800295f5d3bb4d5a876debf166a324bba305f1b16c245b3f328d459/divar-640.avif"
+  },
+  "/projects/covers/divar-640.webp": {
+    "sha256": "67b12ff521ebb6d0699603f2d42046ac8a6db17fab59e10bea2bc88a70f84b30",
+    "size": 13492,
+    "type": "image/webp",
+    "key": "static/67b12ff521ebb6d0699603f2d42046ac8a6db17fab59e10bea2bc88a70f84b30/divar-640.webp"
+  },
+  "/projects/covers/divar-960.avif": {
+    "sha256": "3536fb6d05cc42cfb6dd7a19330eebbb6c67d5eff9d733e7be076694e29f1fc3",
+    "size": 15083,
+    "type": "image/avif",
+    "key": "static/3536fb6d05cc42cfb6dd7a19330eebbb6c67d5eff9d733e7be076694e29f1fc3/divar-960.avif"
+  },
+  "/projects/covers/divar-960.webp": {
+    "sha256": "9feed18cdb6de01f7d92251d38eab3ed40233f48c470490982544cb3ffd55cae",
+    "size": 22542,
+    "type": "image/webp",
+    "key": "static/9feed18cdb6de01f7d92251d38eab3ed40233f48c470490982544cb3ffd55cae/divar-960.webp"
+  },
+  "/projects/covers/flightio-ota-640.avif": {
+    "sha256": "f07cef757be1bf40fedc7bc619a07858bd8912b8afaaffdb22d0a86f8612f730",
+    "size": 89708,
+    "type": "image/avif",
+    "key": "static/f07cef757be1bf40fedc7bc619a07858bd8912b8afaaffdb22d0a86f8612f730/flightio-ota-640.avif"
+  },
+  "/projects/covers/flightio-ota-640.webp": {
+    "sha256": "5cf970b0bb2b668bee8f604174f48bff38d9d6982d46d5af43a6ea58ad6acd99",
+    "size": 135430,
+    "type": "image/webp",
+    "key": "static/5cf970b0bb2b668bee8f604174f48bff38d9d6982d46d5af43a6ea58ad6acd99/flightio-ota-640.webp"
+  },
+  "/projects/covers/flightio-ota-960.avif": {
+    "sha256": "dab37d2fc7d12bcf8ad097d01fbc89bfd159918d28c6fcfee0184e6d720a8468",
+    "size": 170229,
+    "type": "image/avif",
+    "key": "static/dab37d2fc7d12bcf8ad097d01fbc89bfd159918d28c6fcfee0184e6d720a8468/flightio-ota-960.avif"
+  },
+  "/projects/covers/flightio-ota-960.webp": {
+    "sha256": "34ba99d06e8bd62d29fbffba4c8a4940bfa12921bd88a33a2bb518f57e550cb2",
+    "size": 261150,
+    "type": "image/webp",
+    "key": "static/34ba99d06e8bd62d29fbffba4c8a4940bfa12921bd88a33a2bb518f57e550cb2/flightio-ota-960.webp"
+  },
+  "/projects/covers/mci-5g-640.avif": {
+    "sha256": "438880ee6a34a651cdce853f39c1da00f830dc4aeea9c7d2b05deec7ff7fcc0a",
+    "size": 11380,
+    "type": "image/avif",
+    "key": "static/438880ee6a34a651cdce853f39c1da00f830dc4aeea9c7d2b05deec7ff7fcc0a/mci-5g-640.avif"
+  },
+  "/projects/covers/mci-5g-640.webp": {
+    "sha256": "2ab0f6793cc97fce896efb0c0f9c795ba0d56d1bdfadbe5aa543706791540a60",
+    "size": 20170,
+    "type": "image/webp",
+    "key": "static/2ab0f6793cc97fce896efb0c0f9c795ba0d56d1bdfadbe5aa543706791540a60/mci-5g-640.webp"
+  },
+  "/projects/covers/mci-5g-960.avif": {
+    "sha256": "d25262754c51a920d34a9531c878341f003891187935d618abc01e2664e4ad0f",
+    "size": 26413,
+    "type": "image/avif",
+    "key": "static/d25262754c51a920d34a9531c878341f003891187935d618abc01e2664e4ad0f/mci-5g-960.avif"
+  },
+  "/projects/covers/mci-5g-960.webp": {
+    "sha256": "5d29e8eef2f46a756ae9c9b45326be0301f55b5144bb9fe731669536985a8db3",
+    "size": 40604,
+    "type": "image/webp",
+    "key": "static/5d29e8eef2f46a756ae9c9b45326be0301f55b5144bb9fe731669536985a8db3/mci-5g-960.webp"
+  },
+  "/projects/covers/myom-640.avif": {
+    "sha256": "c121e1eadfbc3fb42838485b984f571a288d810639e7d9bf517e4cdfbc113ec6",
+    "size": 30194,
+    "type": "image/avif",
+    "key": "static/c121e1eadfbc3fb42838485b984f571a288d810639e7d9bf517e4cdfbc113ec6/myom-640.avif"
+  },
+  "/projects/covers/myom-640.webp": {
+    "sha256": "d83491b9b29fe5f466243a3f829c12a711177f35f8974f398eed8e79ae0606f9",
+    "size": 52068,
+    "type": "image/webp",
+    "key": "static/d83491b9b29fe5f466243a3f829c12a711177f35f8974f398eed8e79ae0606f9/myom-640.webp"
+  },
+  "/projects/covers/myom-960.avif": {
+    "sha256": "0394828faf2d1815f9345f52bbe41c9ecdd3f350f08d16fc519a801f1caed84c",
+    "size": 67465,
+    "type": "image/avif",
+    "key": "static/0394828faf2d1815f9345f52bbe41c9ecdd3f350f08d16fc519a801f1caed84c/myom-960.avif"
+  },
+  "/projects/covers/myom-960.webp": {
+    "sha256": "d13d395de0ae5e2ad5f91bcca3626553dc5b0057f193d79fb637974760fce58c",
+    "size": 100614,
+    "type": "image/webp",
+    "key": "static/d13d395de0ae5e2ad5f91bcca3626553dc5b0057f193d79fb637974760fce58c/myom-960.webp"
+  },
+  "/projects/covers/noghteh-640.avif": {
+    "sha256": "15ead339171c7e9dbf4da8ea3a8d400a7c51150c6d40ad2ddc7f31af21729b49",
+    "size": 10573,
+    "type": "image/avif",
+    "key": "static/15ead339171c7e9dbf4da8ea3a8d400a7c51150c6d40ad2ddc7f31af21729b49/noghteh-640.avif"
+  },
+  "/projects/covers/noghteh-640.webp": {
+    "sha256": "260c376f848ec7e974806bd3d2a02031fd439c4268cf02f0a88d33206ee47ecc",
+    "size": 12288,
+    "type": "image/webp",
+    "key": "static/260c376f848ec7e974806bd3d2a02031fd439c4268cf02f0a88d33206ee47ecc/noghteh-640.webp"
+  },
+  "/projects/covers/noghteh-960.avif": {
+    "sha256": "c6dcc1dc2d72ed3d15cc0fe1a49fd87fe63fee2dd6585ece355c3f47eb7c6473",
+    "size": 27932,
+    "type": "image/avif",
+    "key": "static/c6dcc1dc2d72ed3d15cc0fe1a49fd87fe63fee2dd6585ece355c3f47eb7c6473/noghteh-960.avif"
+  },
+  "/projects/covers/noghteh-960.webp": {
+    "sha256": "2547cc1b1ac2a31f1122b0b58fb041f4247f2810838346d990ddf64a0d775c37",
+    "size": 28016,
+    "type": "image/webp",
+    "key": "static/2547cc1b1ac2a31f1122b0b58fb041f4247f2810838346d990ddf64a0d775c37/noghteh-960.webp"
+  },
+  "/projects/covers/toypet-640.avif": {
+    "sha256": "2ba17dbb0d23fca0906e7b23746fe64d6e3ae063e6cdfbe1f0c626f231299ba7",
+    "size": 26263,
+    "type": "image/avif",
+    "key": "static/2ba17dbb0d23fca0906e7b23746fe64d6e3ae063e6cdfbe1f0c626f231299ba7/toypet-640.avif"
+  },
+  "/projects/covers/toypet-640.webp": {
+    "sha256": "e3d18c28c78d2cb9ba5239bd97072d832e83f660742a1923ad45aca3c2d5745b",
+    "size": 44654,
+    "type": "image/webp",
+    "key": "static/e3d18c28c78d2cb9ba5239bd97072d832e83f660742a1923ad45aca3c2d5745b/toypet-640.webp"
+  },
+  "/projects/covers/toypet-960.avif": {
+    "sha256": "9d2673f099b43079f932ec14ebb15bc7daf1271b4b0c8ab8fea640f4a06d557b",
+    "size": 55509,
+    "type": "image/avif",
+    "key": "static/9d2673f099b43079f932ec14ebb15bc7daf1271b4b0c8ab8fea640f4a06d557b/toypet-960.avif"
+  },
+  "/projects/covers/toypet-960.webp": {
+    "sha256": "f2e6ca339924a7c69c77e76e20790faba53680e36afac207b435bc1af0ddff22",
+    "size": 78674,
+    "type": "image/webp",
+    "key": "static/f2e6ca339924a7c69c77e76e20790faba53680e36afac207b435bc1af0ddff22/toypet-960.webp"
+  },
+  "/projects/digikala/balloon-box.webp": {
+    "sha256": "a369c7032bf92c057f4211636e6040bcdd7d82d7563e66491c6e0f515fbd7122",
+    "size": 123280,
+    "type": "image/webp",
+    "key": "static/a369c7032bf92c057f4211636e6040bcdd7d82d7563e66491c6e0f515fbd7122/balloon-box.webp"
+  },
+  "/projects/digikala/btl-hafez.webp": {
+    "sha256": "c7386f256b31a6e9041c65314b94e284941090f944d72be0ef4f0ec4ee3c1bf0",
+    "size": 381034,
+    "type": "image/webp",
+    "key": "static/c7386f256b31a6e9041c65314b94e284941090f944d72be0ef4f0ec4ee3c1bf0/btl-hafez.webp"
+  },
+  "/projects/digikala/btl-karim-khan.webp": {
+    "sha256": "4d3f7c9a228becb7a42486fe0d1f8cef969956052374a35c8d84678c260b26bd",
+    "size": 360858,
+    "type": "image/webp",
+    "key": "static/4d3f7c9a228becb7a42486fe0d1f8cef969956052374a35c8d84678c260b26bd/btl-karim-khan.webp"
+  },
+  "/projects/digikala/client-logo.svg": {
+    "sha256": "a0ccf51eb281711cb3bfc71a4e62e1f2eec833af0f59160f178a3e694118d912",
+    "size": 422,
+    "type": "image/svg+xml",
+    "key": "static/a0ccf51eb281711cb3bfc71a4e62e1f2eec833af0f59160f178a3e694118d912/client-logo.svg"
+  },
+  "/projects/digikala/client-logo.webp": {
+    "sha256": "457e3abebd6fad7e34b52af355234c60eab9ed4ad2b1cd784265027da9da4c46",
+    "size": 7066,
+    "type": "image/webp",
+    "key": "static/457e3abebd6fad7e34b52af355234c60eab9ed4ad2b1cd784265027da9da4c46/client-logo.webp"
+  },
+  "/projects/digikala/cover.webp": {
+    "sha256": "dc72496deabd7c9b3b4f395a8fac4010b3bd6b23fabf59fddf9661ac4573873a",
+    "size": 251058,
+    "type": "image/webp",
+    "key": "static/dc72496deabd7c9b3b4f395a8fac4010b3bd6b23fabf59fddf9661ac4573873a/cover.webp"
+  },
+  "/projects/digikala/delivery-at-home.webp": {
+    "sha256": "d4bec94d1340d62be0c988e05bdbad32dfca4159c652b8c4785f048a8bfcc93b",
+    "size": 178684,
+    "type": "image/webp",
+    "key": "static/d4bec94d1340d62be0c988e05bdbad32dfca4159c652b8c4785f048a8bfcc93b/delivery-at-home.webp"
+  },
+  "/projects/digikala/shiraz-billboard.webp": {
+    "sha256": "24fdac0a6cc3a65666368ce1d75fdd260fa8a6c2986f542c2e2e964a54f5a01f",
+    "size": 287044,
+    "type": "image/webp",
+    "key": "static/24fdac0a6cc3a65666368ce1d75fdd260fa8a6c2986f542c2e2e964a54f5a01f/shiraz-billboard.webp"
+  },
+  "/projects/digikala/shiraz-bus-shelter.webp": {
+    "sha256": "6d669068a51888251c715b977e31c95efcba2cac81b44e48db5d1f8c0ec3e0a4",
+    "size": 377758,
+    "type": "image/webp",
+    "key": "static/6d669068a51888251c715b977e31c95efcba2cac81b44e48db5d1f8c0ec3e0a4/shiraz-bus-shelter.webp"
+  },
+  "/projects/divar/boost-v2.webp": {
+    "sha256": "d4f584656fab5bdf3c67be33861fde58b9f7b091db7d8e8a1fe10eccddba369e",
+    "size": 75624,
+    "type": "image/webp",
+    "key": "static/d4f584656fab5bdf3c67be33861fde58b9f7b091db7d8e8a1fe10eccddba369e/boost-v2.webp"
+  },
+  "/projects/divar/boost.webp": {
+    "sha256": "99bef0bf7a1a21f578e8045915df1dde6045c660f8d59d5dc941bf57a10dbba1",
+    "size": 88172,
+    "type": "image/webp",
+    "key": "static/99bef0bf7a1a21f578e8045915df1dde6045c660f8d59d5dc941bf57a10dbba1/boost.webp"
+  },
+  "/projects/divar/car-music.webp": {
+    "sha256": "81003f6204c379fdde076a92f15624c9a3a7626f01f1a0c334f358b42196775d",
+    "size": 119116,
+    "type": "image/webp",
+    "key": "static/81003f6204c379fdde076a92f15624c9a3a7626f01f1a0c334f358b42196775d/car-music.webp"
+  },
+  "/projects/divar/category-panel.webp": {
+    "sha256": "49d4b7e85586047a7ab52e282051124b813a69840d76253eb01997b125a4e43f",
+    "size": 125544,
+    "type": "image/webp",
+    "key": "static/49d4b7e85586047a7ab52e282051124b813a69840d76253eb01997b125a4e43f/category-panel.webp"
+  },
+  "/projects/divar/category-world.webp": {
+    "sha256": "e32e0df361171916fbdf7d28da3a285125327604727eaba9593b02784a70113a",
+    "size": 133516,
+    "type": "image/webp",
+    "key": "static/e32e0df361171916fbdf7d28da3a285125327604727eaba9593b02784a70113a/category-world.webp"
+  },
+  "/projects/divar/client-logo.webp": {
+    "sha256": "556295126f7f9951859d9b010fb1dadc8d02e0e838bd1d04261ce666337d2f6a",
+    "size": 5796,
+    "type": "image/webp",
+    "key": "static/556295126f7f9951859d9b010fb1dadc8d02e0e838bd1d04261ce666337d2f6a/client-logo.webp"
+  },
+  "/projects/divar/cover.webp": {
+    "sha256": "c8142d00defee27ab10bb9ccc30f643ff1bd639f07b9675d11ce8e7354464dd1",
+    "size": 62294,
+    "type": "image/webp",
+    "key": "static/c8142d00defee27ab10bb9ccc30f643ff1bd639f07b9675d11ce8e7354464dd1/cover.webp"
+  },
+  "/projects/divar/digital-discovery.webp": {
+    "sha256": "6a47d5eac3912be0339140247199414d491d7891af96e371101ce8361efb5778",
+    "size": 92760,
+    "type": "image/webp",
+    "key": "static/6a47d5eac3912be0339140247199414d491d7891af96e371101ce8361efb5778/digital-discovery.webp"
+  },
+  "/projects/divar/hero-v2.webp": {
+    "sha256": "f328557b4aa34560c03e50ea28e95e2b97c1781a463d739987dd091b6fe4bdf7",
+    "size": 66618,
+    "type": "image/webp",
+    "key": "static/f328557b4aa34560c03e50ea28e95e2b97c1781a463d739987dd091b6fe4bdf7/hero-v2.webp"
+  },
+  "/projects/divar/hero.webp": {
+    "sha256": "af52ad5ca1dec91a64dc946713286df70b76bdad5b8610fee6896a1d67683667",
+    "size": 83324,
+    "type": "image/webp",
+    "key": "static/af52ad5ca1dec91a64dc946713286df70b76bdad5b8610fee6896a1d67683667/hero.webp"
+  },
+  "/projects/divar/home-discovery.webp": {
+    "sha256": "a7a11a846d4243400decd78785b7888f2ef0b8312429a24cd26a173b9e6c3e38",
+    "size": 124560,
+    "type": "image/webp",
+    "key": "static/a7a11a846d4243400decd78785b7888f2ef0b8312429a24cd26a173b9e6c3e38/home-discovery.webp"
+  },
+  "/projects/divar/human-ai-final.webp": {
+    "sha256": "f7e2a27f15b56877ee74e897188fdc3844052c2fab6a01086d71368f7a86dea8",
+    "size": 151518,
+    "type": "image/webp",
+    "key": "static/f7e2a27f15b56877ee74e897188fdc3844052c2fab6a01086d71368f7a86dea8/human-ai-final.webp"
+  },
+  "/projects/divar/human-ai.webp": {
+    "sha256": "1bb1ac33026fe4657cedcb6b79a8df713e7b24092a0946c9a81c96f3fe36e634",
+    "size": 86776,
+    "type": "image/webp",
+    "key": "static/1bb1ac33026fe4657cedcb6b79a8df713e7b24092a0946c9a81c96f3fe36e634/human-ai.webp"
+  },
+  "/projects/divar/icons/beauty.webp": {
+    "sha256": "dff1566f9ebf8cd0e074e8a694684479e11a048fc908226821ca3f4e86e15e9b",
+    "size": 4962,
+    "type": "image/webp",
+    "key": "static/dff1566f9ebf8cd0e074e8a694684479e11a048fc908226821ca3f4e86e15e9b/beauty.webp"
+  },
+  "/projects/divar/icons/community.webp": {
+    "sha256": "cbbc9966562a0966722c53ca31e9f0e8ac3a76859746eaf71218c06bc4a75666",
+    "size": 6870,
+    "type": "image/webp",
+    "key": "static/cbbc9966562a0966722c53ca31e9f0e8ac3a76859746eaf71218c06bc4a75666/community.webp"
+  },
+  "/projects/divar/icons/electronics.webp": {
+    "sha256": "0385764fa9ebabfafc3fd57c3253c56eb35a9a4519f2045ab29afb82a7c51dea",
+    "size": 7448,
+    "type": "image/webp",
+    "key": "static/0385764fa9ebabfafc3fd57c3253c56eb35a9a4519f2045ab29afb82a7c51dea/electronics.webp"
+  },
+  "/projects/divar/icons/fashion.webp": {
+    "sha256": "a2c4141725698cfeaf7b8864d76134dca18bdf36da3be4b64acb4f116ce42c50",
+    "size": 9776,
+    "type": "image/webp",
+    "key": "static/a2c4141725698cfeaf7b8864d76134dca18bdf36da3be4b64acb4f116ce42c50/fashion.webp"
+  },
+  "/projects/divar/icons/living.webp": {
+    "sha256": "c223699e05f33478a645a08a6af102f0e0a234037e67a09e28500d5bc2075425",
+    "size": 6946,
+    "type": "image/webp",
+    "key": "static/c223699e05f33478a645a08a6af102f0e0a234037e67a09e28500d5bc2075425/living.webp"
+  },
+  "/projects/divar/icons/property.webp": {
+    "sha256": "fd2a91bdae659d93b8918bb5df73f8e8ee829b66be27c0523917813b16e30723",
+    "size": 7662,
+    "type": "image/webp",
+    "key": "static/fd2a91bdae659d93b8918bb5df73f8e8ee829b66be27c0523917813b16e30723/property.webp"
+  },
+  "/projects/divar/icons/sports.webp": {
+    "sha256": "c80b1469431a52882551184848f9323c0517e37f576a8faf0d573764b396e140",
+    "size": 8840,
+    "type": "image/webp",
+    "key": "static/c80b1469431a52882551184848f9323c0517e37f576a8faf0d573764b396e140/sports.webp"
+  },
+  "/projects/divar/icons/vehicles.webp": {
+    "sha256": "418b9a54f5273ef5e86359ef907bba983f615ffc6d511dbbfff0a04a5f48c512",
+    "size": 11804,
+    "type": "image/webp",
+    "key": "static/418b9a54f5273ef5e86359ef907bba983f615ffc6d511dbbfff0a04a5f48c512/vehicles.webp"
+  },
+  "/projects/divar/listing-promotion.webp": {
+    "sha256": "7001ee45304cb1581ab3277c0763831df228a434d931a9d3175190fe38277198",
+    "size": 68752,
+    "type": "image/webp",
+    "key": "static/7001ee45304cb1581ab3277c0763831df228a434d931a9d3175190fe38277198/listing-promotion.webp"
+  },
+  "/projects/divar/mascot-family-red.webp": {
+    "sha256": "8103c24c0befe6f77f85f2ad6f0e6d75022a4bf8b95a58436feeb4195e70176e",
+    "size": 75268,
+    "type": "image/webp",
+    "key": "static/8103c24c0befe6f77f85f2ad6f0e6d75022a4bf8b95a58436feeb4195e70176e/mascot-family-red.webp"
+  },
+  "/projects/divar/mascot-family.webp": {
+    "sha256": "aea1dabba58c660ca781ac88df623ce1fcb6ce4b1104b09b0191fda1667c526e",
+    "size": 64544,
+    "type": "image/webp",
+    "key": "static/aea1dabba58c660ca781ac88df623ce1fcb6ce4b1104b09b0191fda1667c526e/mascot-family.webp"
+  },
+  "/projects/divar/mascot-red.webp": {
+    "sha256": "c7caa19a3dcb59ad7d9cd6a6ccf40d43bd2827e4224d425ebecb8e11938f0751",
+    "size": 58584,
+    "type": "image/webp",
+    "key": "static/c7caa19a3dcb59ad7d9cd6a6ccf40d43bd2827e4224d425ebecb8e11938f0751/mascot-red.webp"
+  },
+  "/projects/divar/mascot.webp": {
+    "sha256": "5c08cac2328a89e5841ff371aa7b26667030461af816b87a9cb7ea6aaf75b8af",
+    "size": 51730,
+    "type": "image/webp",
+    "key": "static/5c08cac2328a89e5841ff371aa7b26667030461af816b87a9cb7ea6aaf75b8af/mascot.webp"
+  },
+  "/projects/flightio/caravanserai-petra-art.webp": {
+    "sha256": "eb4f588154d60a761e029937fab6a0bd4a8fd3ccd495c36c3c89beb253d8311f",
+    "size": 387736,
+    "type": "image/webp",
+    "key": "static/eb4f588154d60a761e029937fab6a0bd4a8fd3ccd495c36c3c89beb253d8311f/caravanserai-petra-art.webp"
+  },
+  "/projects/flightio/caravanserai-petra.webp": {
+    "sha256": "4ca8e1972eaf65e7eadce1d51e038217564a10a192842d4e13d330f32a38caaf",
+    "size": 302340,
+    "type": "image/webp",
+    "key": "static/4ca8e1972eaf65e7eadce1d51e038217564a10a192842d4e13d330f32a38caaf/caravanserai-petra.webp"
+  },
+  "/projects/flightio/client-logo.svg": {
+    "sha256": "2cd41ab8e5434fb69896fc47049b9ddb713f8cee6221c31e450960d0b5882e72",
+    "size": 926,
+    "type": "image/svg+xml",
+    "key": "static/2cd41ab8e5434fb69896fc47049b9ddb713f8cee6221c31e450960d0b5882e72/client-logo.svg"
+  },
+  "/projects/flightio/client-wordmark.webp": {
+    "sha256": "d0fc76d4fcadc3068759171edc09422092cc2ab040fd3e389f74e6ceb74f6b74",
+    "size": 6626,
+    "type": "image/webp",
+    "key": "static/d0fc76d4fcadc3068759171edc09422092cc2ab040fd3e389f74e6ceb74f6b74/client-wordmark.webp"
+  },
+  "/projects/flightio/cover-wordmark.webp": {
+    "sha256": "cd5710642f93cc42070e5d9cb7b020f170e370bca221db148d37fd8da6ff0eb2",
+    "size": 12908,
+    "type": "image/webp",
+    "key": "static/cd5710642f93cc42070e5d9cb7b020f170e370bca221db148d37fd8da6ff0eb2/cover-wordmark.webp"
+  },
+  "/projects/flightio/cover.webp": {
+    "sha256": "c932859ebb846eea7de4fc3bc652b9e7c9450a980d8c996a11c5ad7e33825c29",
+    "size": 55486,
+    "type": "image/webp",
+    "key": "static/c932859ebb846eea7de4fc3bc652b9e7c9450a980d8c996a11c5ad7e33825c29/cover.webp"
+  },
+  "/projects/flightio/environment-bridge-final.webp": {
+    "sha256": "8973b9075a6a02fa915a41cbb8cdacce39757d5d8bea55452ec2764e20dcd834",
+    "size": 248030,
+    "type": "image/webp",
+    "key": "static/8973b9075a6a02fa915a41cbb8cdacce39757d5d8bea55452ec2764e20dcd834/environment-bridge-final.webp"
+  },
+  "/projects/flightio/environment-day.webp": {
+    "sha256": "7bb5539bcfb1b26ff7469b797bbfdc64aa644539a70bae9da86d0f6d83fe4101",
+    "size": 402140,
+    "type": "image/webp",
+    "key": "static/7bb5539bcfb1b26ff7469b797bbfdc64aa644539a70bae9da86d0f6d83fe4101/environment-day.webp"
+  },
+  "/projects/flightio/environment-lightbox-refined.webp": {
+    "sha256": "5c57af308b67f340826759c8b8cfcabc818579ec64fb3874b573f9798fe0b6c1",
+    "size": 301694,
+    "type": "image/webp",
+    "key": "static/5c57af308b67f340826759c8b8cfcabc818579ec64fb3874b573f9798fe0b6c1/environment-lightbox-refined.webp"
+  },
+  "/projects/flightio/environment-night.webp": {
+    "sha256": "e3088bfdf4719c105c728bc4b87624031ac0562cc2c5680a329f91afe6af7c55",
+    "size": 341152,
+    "type": "image/webp",
+    "key": "static/e3088bfdf4719c105c728bc4b87624031ac0562cc2c5680a329f91afe6af7c55/environment-night.webp"
+  },
+  "/projects/flightio/hero-bus.webp": {
+    "sha256": "818c0188f345223ddec310dd66b36e7c7fe30453730f6cc63f72b261f89096e7",
+    "size": 177216,
+    "type": "image/webp",
+    "key": "static/818c0188f345223ddec310dd66b36e7c7fe30453730f6cc63f72b261f89096e7/hero-bus.webp"
+  },
+  "/projects/flightio/hero-flight.webp": {
+    "sha256": "fa015000aa0ae60983710f422c24c638812f77bcfbe94e5548b71a97fbdf0d1a",
+    "size": 173754,
+    "type": "image/webp",
+    "key": "static/fa015000aa0ae60983710f422c24c638812f77bcfbe94e5548b71a97fbdf0d1a/hero-flight.webp"
+  },
+  "/projects/flightio/hero-train.webp": {
+    "sha256": "891b61315a2c31aa32ea7dc7c7779ec17d2879b2b8dd9df21a5d019f393c8a65",
+    "size": 176466,
+    "type": "image/webp",
+    "key": "static/891b61315a2c31aa32ea7dc7c7779ec17d2879b2b8dd9df21a5d019f393c8a65/hero-train.webp"
+  },
+  "/projects/flightio/hormuz-alps-art.webp": {
+    "sha256": "6ed0b6c609bff49d36b3bbd76e49b47bfdfa287bff9832473e3c8bbeda5e805c",
+    "size": 488556,
+    "type": "image/webp",
+    "key": "static/6ed0b6c609bff49d36b3bbd76e49b47bfdfa287bff9832473e3c8bbeda5e805c/hormuz-alps-art.webp"
+  },
+  "/projects/flightio/hormuz-alps.webp": {
+    "sha256": "1f043184107f1c8bf7e5198067750453c763fb5ad0a61b9edb069781048389f5",
+    "size": 302088,
+    "type": "image/webp",
+    "key": "static/1f043184107f1c8bf7e5198067750453c763fb5ad0a61b9edb069781048389f5/hormuz-alps.webp"
+  },
+  "/projects/flightio/persepolis-rome-art.webp": {
+    "sha256": "f41221aeda191ef8a7f54c6aa46eb3be575ce73804b9f0f9c6a3824f6de56dbd",
+    "size": 402738,
+    "type": "image/webp",
+    "key": "static/f41221aeda191ef8a7f54c6aa46eb3be575ce73804b9f0f9c6a3824f6de56dbd/persepolis-rome-art.webp"
+  },
+  "/projects/flightio/persepolis-rome.webp": {
+    "sha256": "ef9230fbd8b7348933bddc400a91dadc3b0f9634290d03c3a122465c0796edb0",
+    "size": 280248,
+    "type": "image/webp",
+    "key": "static/ef9230fbd8b7348933bddc400a91dadc3b0f9634290d03c3a122465c0796edb0/persepolis-rome.webp"
+  },
+  "/projects/flightio/portal-billboard.webp": {
+    "sha256": "c7814d54a851077803d843d2463be95d22ea398d341ab1df1162c446b2089df4",
+    "size": 313546,
+    "type": "image/webp",
+    "key": "static/c7814d54a851077803d843d2463be95d22ea398d341ab1df1162c446b2089df4/portal-billboard.webp"
+  },
+  "/projects/flightio/portal-campaign.webp": {
+    "sha256": "eba67f625ffabd8d45004ffa39e7a2ac12b828c3b355f9a65bc0838b140d9cdd",
+    "size": 396194,
+    "type": "image/webp",
+    "key": "static/eba67f625ffabd8d45004ffa39e7a2ac12b828c3b355f9a65bc0838b140d9cdd/portal-campaign.webp"
+  },
+  "/projects/flightio/selected-alps.webp": {
+    "sha256": "0f078f4c203d0affa4685140452d20d395e8ddb923c24a7f2f2d040d4d8b7977",
+    "size": 536494,
+    "type": "image/webp",
+    "key": "static/0f078f4c203d0affa4685140452d20d395e8ddb923c24a7f2f2d040d4d8b7977/selected-alps.webp"
+  },
+  "/projects/flightio/selected-bus.webp": {
+    "sha256": "c4f21c6a36a5c8a54ddc8ee95eeb0f0f922b94ccafa0a5e6b6661c8a478bd0ca",
+    "size": 267212,
+    "type": "image/webp",
+    "key": "static/c4f21c6a36a5c8a54ddc8ee95eeb0f0f922b94ccafa0a5e6b6661c8a478bd0ca/selected-bus.webp"
+  },
+  "/projects/flightio/selected-client-logo.webp": {
+    "sha256": "3fc95d8cddd04dbb7154c00a7a72d343dfc69a44413cb4da8f36d15b1f642f8b",
+    "size": 45902,
+    "type": "image/webp",
+    "key": "static/3fc95d8cddd04dbb7154c00a7a72d343dfc69a44413cb4da8f36d15b1f642f8b/selected-client-logo.webp"
+  },
+  "/projects/flightio/selected-cover.webp": {
+    "sha256": "2aa6a0b925573be9185d52c57e11f97b5d3e497f7c15afa2b5421b3045156f78",
+    "size": 428108,
+    "type": "image/webp",
+    "key": "static/2aa6a0b925573be9185d52c57e11f97b5d3e497f7c15afa2b5421b3045156f78/selected-cover.webp"
+  },
+  "/projects/flightio/selected-flight.webp": {
+    "sha256": "90f702490e44d1a53f42c68c52aedb2b690f511e52c6c9eb7d8be0279098252c",
+    "size": 256770,
+    "type": "image/webp",
+    "key": "static/90f702490e44d1a53f42c68c52aedb2b690f511e52c6c9eb7d8be0279098252c/selected-flight.webp"
+  },
+  "/projects/flightio/selected-lightbox.webp": {
+    "sha256": "5371bf470a406114ccda8a3c9610ca1a75af80279d652621b2c7bd5e761588d1",
+    "size": 373584,
+    "type": "image/webp",
+    "key": "static/5371bf470a406114ccda8a3c9610ca1a75af80279d652621b2c7bd5e761588d1/selected-lightbox.webp"
+  },
+  "/projects/flightio/selected-louvre.webp": {
+    "sha256": "2d55f9dd337aea43726cfbd09c5160a449512a9af0e8a877651bcaffa61d1798",
+    "size": 501036,
+    "type": "image/webp",
+    "key": "static/2d55f9dd337aea43726cfbd09c5160a449512a9af0e8a877651bcaffa61d1798/selected-louvre.webp"
+  },
+  "/projects/flightio/selected-overpass.webp": {
+    "sha256": "795c62fdc29a1eb987cc92f1adf2ceccbc272d9144ffd7fc275d73245b771545",
+    "size": 340824,
+    "type": "image/webp",
+    "key": "static/795c62fdc29a1eb987cc92f1adf2ceccbc272d9144ffd7fc275d73245b771545/selected-overpass.webp"
+  },
+  "/projects/flightio/selected-petra-alternate.webp": {
+    "sha256": "814fd9b1b54c2311c4f633c78c04c852ff1b3addb43a5005db11a51bdfacf538",
+    "size": 385532,
+    "type": "image/webp",
+    "key": "static/814fd9b1b54c2311c4f633c78c04c852ff1b3addb43a5005db11a51bdfacf538/selected-petra-alternate.webp"
+  },
+  "/projects/flightio/selected-petra.webp": {
+    "sha256": "d06b23571f81b7dccf9ca961d865bc39bbed454fdab2a97bf033daa7432c1daa",
+    "size": 451108,
+    "type": "image/webp",
+    "key": "static/d06b23571f81b7dccf9ca961d865bc39bbed454fdab2a97bf033daa7432c1daa/selected-petra.webp"
+  },
+  "/projects/flightio/selected-rome.webp": {
+    "sha256": "288ae30e06b47bfd6bf95561a508d64f7bcb2abb3396d873f5d7c41d8b54bb50",
+    "size": 465992,
+    "type": "image/webp",
+    "key": "static/288ae30e06b47bfd6bf95561a508d64f7bcb2abb3396d873f5d7c41d8b54bb50/selected-rome.webp"
+  },
+  "/projects/flightio/selected-train.webp": {
+    "sha256": "8ffb558c7ac3bf4ed52fbaf6dcf7eeb726f23fc780562be0dddf399536c65992",
+    "size": 255274,
+    "type": "image/webp",
+    "key": "static/8ffb558c7ac3bf4ed52fbaf6dcf7eeb726f23fc780562be0dddf399536c65992/selected-train.webp"
+  },
+  "/projects/flightio/shiraz-paris-art.webp": {
+    "sha256": "29c51b9229ad57b24e6d380adba59a41557aada55964c1136d20c962bbe20331",
+    "size": 449806,
+    "type": "image/webp",
+    "key": "static/29c51b9229ad57b24e6d380adba59a41557aada55964c1136d20c962bbe20331/shiraz-paris-art.webp"
+  },
+  "/projects/flightio/shiraz-paris.webp": {
+    "sha256": "8ce791eaa8ce5533b04638338b63e1b75a5fa23035ea80d6b6f9de8bd0f729cb",
+    "size": 280768,
+    "type": "image/webp",
+    "key": "static/8ce791eaa8ce5533b04638338b63e1b75a5fa23035ea80d6b6f9de8bd0f729cb/shiraz-paris.webp"
+  },
+  "/projects/flightio/transport-system.webp": {
+    "sha256": "7cbbfa5d5f3f06cc0592039b57b6f1c610a5693e930b9639c9dec8a6fb75a883",
+    "size": 223128,
+    "type": "image/webp",
+    "key": "static/7cbbfa5d5f3f06cc0592039b57b6f1c610a5693e930b9639c9dec8a6fb75a883/transport-system.webp"
+  },
+  "/projects/mci/ad-network.webp": {
+    "sha256": "2f9cb88b52391575c05c52dd8900dacaf6e77d13c5f54e987de76be94862a53d",
+    "size": 68674,
+    "type": "image/webp",
+    "key": "static/2f9cb88b52391575c05c52dd8900dacaf6e77d13c5f54e987de76be94862a53d/ad-network.webp"
+  },
+  "/projects/mci/client-logo.webp": {
+    "sha256": "406e0d0d4b775e0a822afa992e2f004852d8fdbc58e45a9717dfce8de5c26b4b",
+    "size": 49918,
+    "type": "image/webp",
+    "key": "static/406e0d0d4b775e0a822afa992e2f004852d8fdbc58e45a9717dfce8de5c26b4b/client-logo.webp"
+  },
+  "/projects/mci/digital-screens-v2.webp": {
+    "sha256": "79ab70f1c5936b73c47357bf6e7c730b1e3e92e445c311af2cdcbca79fdecff0",
+    "size": 177366,
+    "type": "image/webp",
+    "key": "static/79ab70f1c5936b73c47357bf6e7c730b1e3e92e445c311af2cdcbca79fdecff0/digital-screens-v2.webp"
+  },
+  "/projects/mci/snail-speed.webp": {
+    "sha256": "846510aebb66c6994c67198031ae0158369cd0c9ff29b78b0f212777cb1d788c",
+    "size": 151216,
+    "type": "image/webp",
+    "key": "static/846510aebb66c6994c67198031ae0158369cd0c9ff29b78b0f212777cb1d788c/snail-speed.webp"
+  },
+  "/projects/mci/snail-top.webp": {
+    "sha256": "8093b9f52a625318d6ca5fb5bb7159cb4f8f90a717ce4319c19dfaea0eb6e13e",
+    "size": 120408,
+    "type": "image/webp",
+    "key": "static/8093b9f52a625318d6ca5fb5bb7159cb4f8f90a717ce4319c19dfaea0eb6e13e/snail-top.webp"
+  },
+  "/projects/mci/tehran-billboard-v2.webp": {
+    "sha256": "b80f5a00f98a3482849da9d0a7706718c9cd4b0996633dc9aa1a18343163dec3",
+    "size": 173274,
+    "type": "image/webp",
+    "key": "static/b80f5a00f98a3482849da9d0a7706718c9cd4b0996633dc9aa1a18343163dec3/tehran-billboard-v2.webp"
+  },
+  "/projects/mci/tortoise-speed.webp": {
+    "sha256": "261d442351f4d7ca831068aba8db1672cc4ac86c2a92dfd071cf9386d593ecf0",
+    "size": 143552,
+    "type": "image/webp",
+    "key": "static/261d442351f4d7ca831068aba8db1672cc4ac86c2a92dfd071cf9386d593ecf0/tortoise-speed.webp"
+  },
+  "/projects/noghteh/material-library.webp": {
+    "sha256": "873f769e2aa16280b8960804b4cbb09bed1133daf950a20c08100b30a9e6296c",
+    "size": 314978,
+    "type": "image/webp",
+    "key": "static/873f769e2aa16280b8960804b4cbb09bed1133daf950a20c08100b30a9e6296c/material-library.webp"
+  },
+  "/projects/noghteh/print-and-glass.webp": {
+    "sha256": "50705a12dc558de17717f3623b449836083126b53373de7dd53962e48881eb0e",
+    "size": 509234,
+    "type": "image/webp",
+    "key": "static/50705a12dc558de17717f3623b449836083126b53373de7dd53962e48881eb0e/print-and-glass.webp"
+  },
+  "/projects/noghteh/studio-entrance.webp": {
+    "sha256": "1c62521169380e0942987d06b1098537b7c3b07aef5ff5b42457a41e37fb8f2f",
+    "size": 475648,
+    "type": "image/webp",
+    "key": "static/1c62521169380e0942987d06b1098537b7c3b07aef5ff5b42457a41e37fb8f2f/studio-entrance.webp"
+  },
+  "/journal/myom-character-to-shelf/analytical-cover-portrait.webp": {
+    "sha256": "8f04a1f4ca1224979286c6ca2adf4266e2747fc440ead4c927461f1b54a8654c",
+    "size": 468274,
+    "type": "image/webp",
+    "key": "static/8f04a1f4ca1224979286c6ca2adf4266e2747fc440ead4c927461f1b54a8654c/analytical-cover-portrait.webp"
+  },
+  "/journal/myom-character-to-shelf/analytical-cover.webp": {
+    "sha256": "e32b8573eb42c08f9c3295f84af223c6d740f152c6378b258556f1448e33f8ce",
+    "size": 599792,
+    "type": "image/webp",
+    "key": "static/e32b8573eb42c08f9c3295f84af223c6d740f152c6378b258556f1448e33f8ce/analytical-cover.webp"
+  },
+  "/journal/myom-character-to-shelf/myom-article-instagram-v3.pdf": {
+    "sha256": "b4c69ef0e3f5fa516106cc306903b5af90c7ef58bd93dab01d64014a740f0878",
+    "size": 7119630,
+    "type": "application/pdf",
+    "key": "static/b4c69ef0e3f5fa516106cc306903b5af90c7ef58bd93dab01d64014a740f0878/myom-article-instagram-v3.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-article-instagram-v4.pdf": {
+    "sha256": "d9555405d67c83651e6da8045cabd76768042a216742cc063c925fd19e8c62ce",
+    "size": 7077939,
+    "type": "application/pdf",
+    "key": "static/d9555405d67c83651e6da8045cabd76768042a216742cc063c925fd19e8c62ce/myom-article-instagram-v4.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-article-instagram.pdf": {
+    "sha256": "7428aeadb3daf958e593fe260fa7bf04c66be258be2ab5687741153a80c38dee",
+    "size": 7644438,
+    "type": "application/pdf",
+    "key": "static/7428aeadb3daf958e593fe260fa7bf04c66be258be2ab5687741153a80c38dee/myom-article-instagram.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-article-linkedin-v3.pdf": {
+    "sha256": "1c4aa902c9abc30f835c8c9a06664c8f74eba124a4fe3752bb440be2222f9150",
+    "size": 7117198,
+    "type": "application/pdf",
+    "key": "static/1c4aa902c9abc30f835c8c9a06664c8f74eba124a4fe3752bb440be2222f9150/myom-article-linkedin-v3.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-article-linkedin-v4.pdf": {
+    "sha256": "0ddc24b40740395daff541a893b9f3e5986628ff1144ccf82d482835742ec38b",
+    "size": 7076079,
+    "type": "application/pdf",
+    "key": "static/0ddc24b40740395daff541a893b9f3e5986628ff1144ccf82d482835742ec38b/myom-article-linkedin-v4.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-article-linkedin.pdf": {
+    "sha256": "fb3dc0f978b8bee0de435cfc539ac3a762f164615e4f4a4795aa84fcd4b2cc88",
+    "size": 7677167,
+    "type": "application/pdf",
+    "key": "static/fb3dc0f978b8bee0de435cfc539ac3a762f164615e4f4a4795aa84fcd4b2cc88/myom-article-linkedin.pdf"
+  },
+  "/journal/myom-character-to-shelf/myom-instagram-carousel-v3.zip": {
+    "sha256": "d57f16dc3dcc6c978638325e8c89f47f829f5d34a107960e4f9cf8ca0f4e729e",
+    "size": 9444067,
+    "type": "application/zip",
+    "key": "static/d57f16dc3dcc6c978638325e8c89f47f829f5d34a107960e4f9cf8ca0f4e729e/myom-instagram-carousel-v3.zip"
+  },
+  "/journal/myom-character-to-shelf/myom-instagram-carousel-v4.zip": {
+    "sha256": "dd24fb08e084c296f2d470bd34eed143444c4d6b0d55da6eb467ef6492f4e70d",
+    "size": 9440976,
+    "type": "application/zip",
+    "key": "static/dd24fb08e084c296f2d470bd34eed143444c4d6b0d55da6eb467ef6492f4e70d/myom-instagram-carousel-v4.zip"
+  },
+  "/journal/myom-character-to-shelf/myom-instagram-carousel.zip": {
+    "sha256": "2206ef933c5347873107e0506408452c0b54d542100e2b3aa94aeb7c1ab3707e",
+    "size": 8982006,
+    "type": "application/zip",
+    "key": "static/2206ef933c5347873107e0506408452c0b54d542100e2b3aa94aeb7c1ab3707e/myom-instagram-carousel.zip"
+  },
+  "/images/auraleaf-restored/auraleaf-amber-bottle-autumn-scene-upscaled.webp": {
+    "sha256": "a68c762554c5040eadb9c656c3c3a845f790ed2471b8fcdcec7cfbce32dddbb0",
+    "size": 265188,
+    "type": "image/webp",
+    "key": "static/a68c762554c5040eadb9c656c3c3a845f790ed2471b8fcdcec7cfbce32dddbb0/auraleaf-amber-bottle-autumn-scene-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-blue-bottle-water-scene-upscaled.webp": {
+    "sha256": "e490d539ed0b69d479597fa903e16e79407a1a1ea9439226a636be9793b41d70",
+    "size": 222684,
+    "type": "image/webp",
+    "key": "static/e490d539ed0b69d479597fa903e16e79407a1a1ea9439226a636be9793b41d70/auraleaf-blue-bottle-water-scene-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-botanical-label-detail-upscaled.webp": {
+    "sha256": "f04e3375480425cc8a739e48599384639603290f4d5d8fc247597f1500a7a2b1",
+    "size": 257420,
+    "type": "image/webp",
+    "key": "static/f04e3375480425cc8a739e48599384639603290f4d5d8fc247597f1500a7a2b1/auraleaf-botanical-label-detail-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-botanical-linework-library-upscaled.webp": {
+    "sha256": "cd0ec42738bc0e696ed0aeb5800566b800941671d26ddab470a9e6287a26de2e",
+    "size": 267570,
+    "type": "image/webp",
+    "key": "static/cd0ec42738bc0e696ed0aeb5800566b800941671d26ddab470a9e6287a26de2e/auraleaf-botanical-linework-library-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-bottle-and-closure-study-upscaled.webp": {
+    "sha256": "daf68885105ab433e495607891fc97479d3a7f73cfc1dcb270081957c617bf5b",
+    "size": 163770,
+    "type": "image/webp",
+    "key": "static/daf68885105ab433e495607891fc97479d3a7f73cfc1dcb270081957c617bf5b/auraleaf-bottle-and-closure-study-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-bottle-blueprint-study-upscaled.webp": {
+    "sha256": "d94c5efb7dbf51123f76b934599d3d4a7bef8499ce1a1f819983e34a59964199",
+    "size": 116564,
+    "type": "image/webp",
+    "key": "static/d94c5efb7dbf51123f76b934599d3d4a7bef8499ce1a1f819983e34a59964199/auraleaf-bottle-blueprint-study-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-bottle-construction-study-upscaled.webp": {
+    "sha256": "9be403cf0fa97f967096ded347763ad74bdceae421904c273124ea09c1169e06",
+    "size": 75852,
+    "type": "image/webp",
+    "key": "static/9be403cf0fa97f967096ded347763ad74bdceae421904c273124ea09c1169e06/auraleaf-bottle-construction-study-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-bottle-in-hand-upscaled.webp": {
+    "sha256": "011e469ca5a51c50aa27e572d8bb98a53db1bf18bae2df29524708a893abd26a",
+    "size": 212908,
+    "type": "image/webp",
+    "key": "static/011e469ca5a51c50aa27e572d8bb98a53db1bf18bae2df29524708a893abd26a/auraleaf-bottle-in-hand-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-boxed-packaging-system-upscaled.webp": {
+    "sha256": "95fcc5d702750cb9d73890acc7edd7673fb5622d71e7921f143b5c5317ff3532",
+    "size": 356510,
+    "type": "image/webp",
+    "key": "static/95fcc5d702750cb9d73890acc7edd7673fb5622d71e7921f143b5c5317ff3532/auraleaf-boxed-packaging-system-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-brand-colour-system-upscaled.webp": {
+    "sha256": "2fb4239a84f06b7b6085e4e790784b9423e24b235728c81a88c795b9b4056f42",
+    "size": 71090,
+    "type": "image/webp",
+    "key": "static/2fb4239a84f06b7b6085e4e790784b9423e24b235728c81a88c795b9b4056f42/auraleaf-brand-colour-system-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-closure-water-droplet-detail-upscaled.webp": {
+    "sha256": "1c5bf6eabfe525996e64c8631c14ca9e04434eb907dd9f3a5af21804e32474c9",
+    "size": 138068,
+    "type": "image/webp",
+    "key": "static/1c5bf6eabfe525996e64c8631c14ca9e04434eb907dd9f3a5af21804e32474c9/auraleaf-closure-water-droplet-detail-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-delivery-van-mockup-upscaled.webp": {
+    "sha256": "fe06ea94d20a4cffb03d5081ab8a3ffc35a33d34a7c69ecae72d9e68d14bc672",
+    "size": 634582,
+    "type": "image/webp",
+    "key": "static/fe06ea94d20a4cffb03d5081ab8a3ffc35a33d34a7c69ecae72d9e68d14bc672/auraleaf-delivery-van-mockup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-four-colour-bottle-family-upscaled.webp": {
+    "sha256": "6711075d69360d88a8e3eb11a57728481767a8cb8cba58c07fe0045c26a0ecc0",
+    "size": 261222,
+    "type": "image/webp",
+    "key": "static/6711075d69360d88a8e3eb11a57728481767a8cb8cba58c07fe0045c26a0ecc0/auraleaf-four-colour-bottle-family-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-glass-bottle-lineup-upscaled.webp": {
+    "sha256": "c56559847a40f080ed26b221320f20463192b1f65b7bec71fd1e5b32f6dd1c71",
+    "size": 292006,
+    "type": "image/webp",
+    "key": "static/c56559847a40f080ed26b221320f20463192b1f65b7bec71fd1e5b32f6dd1c71/auraleaf-glass-bottle-lineup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-green-bottle-stone-scene-upscaled.webp": {
+    "sha256": "757d50f4f987a837337d10d11c319c27c7a5b10883e6a5fef272fa9221c662eb",
+    "size": 218252,
+    "type": "image/webp",
+    "key": "static/757d50f4f987a837337d10d11c319c27c7a5b10883e6a5fef272fa9221c662eb/auraleaf-green-bottle-stone-scene-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-interior-signage-mockup-upscaled.webp": {
+    "sha256": "3d8706e4c66ce01562dca53d57abf0ad180b5fbd43bc8cc6db9f5a3131567a4a",
+    "size": 279482,
+    "type": "image/webp",
+    "key": "static/3d8706e4c66ce01562dca53d57abf0ad180b5fbd43bc8cc6db9f5a3131567a4a/auraleaf-interior-signage-mockup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-mobile-brand-mockup-upscaled.webp": {
+    "sha256": "261829aa97ecccf3fc953a0f2aab87b54e482a9550995336111a45163bd598e3",
+    "size": 297980,
+    "type": "image/webp",
+    "key": "static/261829aa97ecccf3fc953a0f2aab87b54e482a9550995336111a45163bd598e3/auraleaf-mobile-brand-mockup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-staff-badge-mockup-upscaled.webp": {
+    "sha256": "a1b6c5cf199ef04e557cef4068e1774e24032c79fc7728d72fa5a7fa30b4a84b",
+    "size": 416874,
+    "type": "image/webp",
+    "key": "static/a1b6c5cf199ef04e557cef4068e1774e24032c79fc7728d72fa5a7fa30b4a84b/auraleaf-staff-badge-mockup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-stationery-system-upscaled.webp": {
+    "sha256": "6343bf648ae532e8b88113e482b2d1a98ff78cbf8e3ac1add32c9fd6138f1c19",
+    "size": 402942,
+    "type": "image/webp",
+    "key": "static/6343bf648ae532e8b88113e482b2d1a98ff78cbf8e3ac1add32c9fd6138f1c19/auraleaf-stationery-system-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-terrarium-dropper-scene-upscaled.webp": {
+    "sha256": "e9dfabb266bef47f0387a474de34ad273302ddde273302b965ab949136ed78f3",
+    "size": 322170,
+    "type": "image/webp",
+    "key": "static/e9dfabb266bef47f0387a474de34ad273302ddde273302b965ab949136ed78f3/auraleaf-terrarium-dropper-scene-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-typography-specification-upscaled.webp": {
+    "sha256": "341cd00ecf54a8fd26f99d2c86dc084a7111759c1ccc30f63077cb7b632ea743",
+    "size": 200640,
+    "type": "image/webp",
+    "key": "static/341cd00ecf54a8fd26f99d2c86dc084a7111759c1ccc30f63077cb7b632ea743/auraleaf-typography-specification-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-violet-bottle-floral-scene-upscaled.webp": {
+    "sha256": "49424e0a11b27713b1682cb276d20e5c4705101e6029f55acd250dc07263874e",
+    "size": 204020,
+    "type": "image/webp",
+    "key": "static/49424e0a11b27713b1682cb276d20e5c4705101e6029f55acd250dc07263874e/auraleaf-violet-bottle-floral-scene-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-welcome-kit-mockup-upscaled.webp": {
+    "sha256": "a31274570c7e7128842b54c4d1effa81c7081bb63840e124bacfe67864a17bfb",
+    "size": 323746,
+    "type": "image/webp",
+    "key": "static/a31274570c7e7128842b54c4d1effa81c7081bb63840e124bacfe67864a17bfb/auraleaf-welcome-kit-mockup-upscaled.webp"
+  },
+  "/images/auraleaf-restored/auraleaf-workspace-environment-mockup-upscaled.webp": {
+    "sha256": "6acfd94396c526483e1b8445386cbe4b3530e5a4136d3ddd5623716adaa682f7",
+    "size": 340278,
+    "type": "image/webp",
+    "key": "static/6acfd94396c526483e1b8445386cbe4b3530e5a4136d3ddd5623716adaa682f7/auraleaf-workspace-environment-mockup-upscaled.webp"
+  },
+  "/presentation/Manrope-OFL.txt": {
+    "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b",
+    "size": 4387,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b/Manrope-OFL.txt"
+  },
+  "/presentation/Vazirmatn-OFL.txt": {
+    "sha256": "e6f4ce7b6c830d5a25a4f8ac777c267cd7d3c180bc2a7150ca57cbb9b280c4b7",
+    "size": 4390,
+    "type": "text/plain; charset=utf-8",
+    "key": "static/e6f4ce7b6c830d5a25a4f8ac777c267cd7d3c180bc2a7150ca57cbb9b280c4b7/Vazirmatn-OFL.txt"
+  },
+  "/presentation/desartly-logo.svg": {
+    "sha256": "ca3b98e63e78d4405939c4f466fe372572506bc0f884ea81622b544141bb5992",
+    "size": 4608,
+    "type": "image/svg+xml",
+    "key": "static/ca3b98e63e78d4405939c4f466fe372572506bc0f884ea81622b544141bb5992/desartly-logo.svg"
+  },
+  "/presentation/manrope-400.ttf": {
+    "sha256": "003c19530c7e77b7b5073fc035d15b1bf9b0894c44cdd74a49130ec40415e22d",
+    "size": 97500,
+    "type": "font/ttf",
+    "key": "static/003c19530c7e77b7b5073fc035d15b1bf9b0894c44cdd74a49130ec40415e22d/manrope-400.ttf"
+  },
+  "/presentation/manrope-700.ttf": {
+    "sha256": "7f36e0250f7b5573c102643212ee8cbf08806b07fe91d67d97a1506e42e2b57d",
+    "size": 97520,
+    "type": "font/ttf",
+    "key": "static/7f36e0250f7b5573c102643212ee8cbf08806b07fe91d67d97a1506e42e2b57d/manrope-700.ttf"
+  },
+  "/presentation/snapshots/afc-interactions.png": {
+    "sha256": "f528c530d647822c9eda8a4c0a7121c0b9d2f1a0cf6a87ce33e721bf34703db9",
+    "size": 78383,
+    "type": "image/png",
+    "key": "static/f528c530d647822c9eda8a4c0a7121c0b9d2f1a0cf6a87ce33e721bf34703db9/afc-interactions.png"
+  },
+  "/presentation/snapshots/afc-landing.png": {
+    "sha256": "137be55f315051fc18d168552f0e6f6004bcc16ab00e3fde895355b922a3948e",
+    "size": 175841,
+    "type": "image/png",
+    "key": "static/137be55f315051fc18d168552f0e6f6004bcc16ab00e3fde895355b922a3948e/afc-landing.png"
+  },
+  "/presentation/snapshots/divar-category-world.png": {
+    "sha256": "502ae08e7af5e6cd3fff13a8539c4b9f574963a4cc8a757a83fbe59c639d6cf1",
+    "size": 60807,
+    "type": "image/png",
+    "key": "static/502ae08e7af5e6cd3fff13a8539c4b9f574963a4cc8a757a83fbe59c639d6cf1/divar-category-world.png"
+  },
+  "/presentation/snapshots/flightio-glass-system.png": {
+    "sha256": "aadaa60931660347f4d217885108cce7df4340920849f382f9846f58e4a5dc04",
+    "size": 87831,
+    "type": "image/png",
+    "key": "static/aadaa60931660347f4d217885108cce7df4340920849f382f9846f58e4a5dc04/flightio-glass-system.png"
+  },
+  "/presentation/vazirmatn-400.ttf": {
+    "sha256": "b69fd4c680b8f3f225feabcc655a2c585d97627b8f5f5c0f9985e894069f3a56",
+    "size": 122752,
+    "type": "font/ttf",
+    "key": "static/b69fd4c680b8f3f225feabcc655a2c585d97627b8f5f5c0f9985e894069f3a56/vazirmatn-400.ttf"
+  },
+  "/presentation/vazirmatn-700.ttf": {
+    "sha256": "f635fdbea28f265de395ba83b4b1570dcf2f58d13c65469e61903b1c2d2ae723",
+    "size": 123036,
+    "type": "font/ttf",
+    "key": "static/f635fdbea28f265de395ba83b4b1570dcf2f58d13c65469e61903b1c2d2ae723/vazirmatn-700.ttf"
+  },
+  "/brand/desartly-share.png": {
+    "sha256": "721889476884ffe1fc5c16ea8606f7b1bf58a94ea8624136f6c6b52a3ece6d28",
+    "size": 45988,
+    "type": "image/png",
+    "key": "static/721889476884ffe1fc5c16ea8606f7b1bf58a94ea8624136f6c6b52a3ece6d28/desartly-share.png"
+  }
+}

@@ -24,3 +24,9 @@
 
 /* The project overview always presents a square crop, including dedicated hero images. */
 .project-page .project-overview-cover{position:relative;aspect-ratio:1!important;width:100%;height:auto!important;overflow:hidden}.project-page .project-overview-cover>img{position:absolute!important;inset:0;width:100%!important;height:100%!important;max-width:none;max-height:none;object-fit:cover!important;object-position:center;aspect-ratio:1!important}
+
+/* Live UI shares the same corner token as project artwork. */
+.html-block .live-component-frame{width:100%;margin-inline:auto;border-radius:var(--control-radius,8px);overflow:hidden;isolation:isolate}
+.html-block .live-component-frame iframe{border:0;border-radius:inherit}
+.live-component-label{width:100%;display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0 auto 10px;color:var(--muted,#626979);font:500 11px/1.5 Manrope,sans-serif}
+.live-component-label>span:first-child{font-size:16px;line-height:1}
