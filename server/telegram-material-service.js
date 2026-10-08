@@ -42,8 +42,10 @@ export async function presentationFile(env,project,format,{old=false}={}){
  await page.setCookie({name:'desartly_render',value:job,domain:new URL(origin).hostname,path:'/',secure:true,httpOnly:true,sameSite:'Strict'});
  const loaded=await page.goto(origin+'/_presentation-render',{waitUntil:'networkidle0',timeout:60000});if(!loaded?.ok())throw Error('Private renderer page returned HTTP '+loaded?.status());
  await page.waitForFunction('window.desartlyRenderResult !== undefined',{timeout:180000});
- const result=await page.evaluate(()=>window.desartlyRenderResult);if(result.error)throw Object.assign(Error('تولید PDF ناموفق بود؛ تصاویر پروژه را در CMS بررسی کن.'),{renderReason:result.error});
- const bytes=Uint8Array.from(atob(result.base64),c=>c.charCodeAt(0));
+ const result=await page.evaluate(()=>({error:window.desartlyRenderResult.error,length:window.desartlyRenderResult.base64?.length||0}));if(result.error)throw Object.assign(Error('تولید PDF ناموفق بود؛ تصاویر پروژه را در CMS بررسی کن.'),{renderReason:result.error});
+ if(result.length>64*1024*1024)throw Error('PDF exceeds the private delivery size limit.');
+ const chunks=[];for(let offset=0;offset<result.length;offset+=1024*1024){const part=await page.evaluate(start=>window.desartlyRenderResult.base64.slice(start,start+1024*1024),offset);chunks.push(Uint8Array.from(atob(part),c=>c.charCodeAt(0)));}
+ const bytes=new Uint8Array(chunks.reduce((sum,part)=>sum+part.length,0));let position=0;for(const part of chunks){bytes.set(part,position);position+=part.length;}
  const latest=await telegramProject(env,project.id);if(await presentationVersion(latest,format)!==version)throw Error('محتوای پروژه هنگام تولید تغییر کرد. دوباره درخواست بده.');
  const saved=await savePresentation(env,project,format,bytes);return {...saved,stale:false,response:new Response(bytes,{headers:{'Content-Type':'application/pdf'}})};
  }catch(error){if(error.status===429||/429|rate limit|acquisition/i.test(error.message||''))throw Object.assign(Error('تولید PDF در صف محدودیت سرویس قرار گرفت.'),{rejected:true,retryAfter:60});throw error;}finally{if(browser)await browser.close().catch(()=>{});await env.DB.prepare("DELETE FROM telegram_actions WHERE id=? AND kind='browser-render'").bind(job).run();}
