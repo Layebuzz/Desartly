@@ -21,3 +21,6 @@
 .project-page .project-overview-cover[data-fit=contain]{aspect-ratio:auto!important;align-self:start}
 .project-page .project-overview-cover[data-fit=contain]>img{position:static!important;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto!important}
 .blog-image img{height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}
+
+/* The project overview always presents a square crop, including dedicated hero images. */
+.project-page .project-overview-cover{position:relative;aspect-ratio:1!important;width:100%;height:auto!important;overflow:hidden}.project-page .project-overview-cover>img{position:absolute!important;inset:0;width:100%!important;height:100%!important;max-width:none;max-height:none;object-fit:cover!important;object-position:center;aspect-ratio:1!important}

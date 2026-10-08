@@ -22,7 +22,7 @@ export function CaseBrief({project,withCover=false}){
  const hasClient=Boolean(project.clientName?.trim()||(project.clientLogo&&project.title));
  if(!rows.length&&!hasClient&&!image)return null;
  return <section className={'project-overview'+(withCover&&image?' has-cover':'')} aria-label="Project overview" style={tint}>
- {withCover&&image&&<figure className="project-overview-cover" data-fit={project.heroImage ? "contain" : "cover"}><img src={image} alt={project.title+' project cover'} loading="eager" decoding="async"/></figure>}
+ {withCover&&image&&<figure className="project-overview-cover" data-fit="cover"><img src={image} alt={project.title+' project cover'} loading="eager" decoding="async"/></figure>}
  <div className="project-overview-copy"><div className="brief-heading"><span className="eyebrow">Project at a glance</span><span aria-hidden="true">↗</span></div>
  {hasClient&&<div className="brief-client">{project.clientLogo&&<img src={project.clientLogo} alt=""/>}<div><small>CLIENT</small><h2>{project.clientName||project.title}</h2></div></div>}
  <div className="case-brief-data"><dl>{rows.filter(([key])=>['Industry','Year','My role','Deliverables'].includes(key)).map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></div>
