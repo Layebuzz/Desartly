@@ -196,3 +196,12 @@ test('self bookings update only the owner RSVP after Google resets insertion acc
 });
 
 test('session types validate and old briefs remain compatible',()=>{const {meetingType,...old}=brief;assert.equal(validateBrief(old).meetingType,'briefing');assert.equal(validateBrief({...brief,meetingType:'mentorship'}).meetingType,'mentorship');assert.throws(()=>validateBrief({...brief,meetingType:'other'}));});
+
+test('one-off open ranges and blocked ranges follow half-hour rules and do not change existing bookings',()=>{
+ const now=Date.parse('2026-10-06T00:00:00Z');const s={...defaultSchedule,holidays:['2026-10-09'],exceptions:[{date:'2026-10-09',kind:'open',startMinute:1080,endMinute:1140},{date:'2026-10-10',kind:'block',startMinute:600,endMinute:660}]};
+ const slots=candidateSlots(validateSchedule(s),'2026-10',now);
+ assert.deepEqual(slots.filter(x=>x.date==='2026-10-09').map(x=>x.start.slice(11,16)),['14:30','15:00']);
+ assert(!slots.some(x=>x.date==='2026-10-10'&&['06:30','07:00'].includes(x.start.slice(11,16))));
+ assert.throws(()=>validateSchedule({...s,exceptions:[{date:'2026-02-31',kind:'open',startMinute:600,endMinute:660}]}));
+ assert.throws(()=>validateSchedule({...s,exceptions:[{date:'2026-10-09',kind:'block',startMinute:605,endMinute:660}]}));
+});

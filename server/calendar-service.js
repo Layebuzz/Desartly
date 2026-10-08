@@ -5,7 +5,7 @@ import {formatBrief} from '../src/booking-config.js';
 
 const CONNECTION='google-calendar:connection',SCHEDULE='google-calendar:schedule';
 const SCOPES=['https://www.googleapis.com/auth/calendar.events','https://www.googleapis.com/auth/calendar.freebusy'];
-export const defaultSchedule={timeZone:'Asia/Tehran',days:[0,1,2,3,6],startHour:10,endHour:16,duration:30,noticeHours:12,horizonDays:30,calendarId:'primary',bufferMinutes:0,holidays:[]};
+export const defaultSchedule={timeZone:'Asia/Tehran',days:[0,1,2,3,6],startHour:10,endHour:16,duration:30,noticeHours:12,horizonDays:30,calendarId:'primary',bufferMinutes:0,holidays:[],exceptions:[]};
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const fail=(message,status=503)=>Object.assign(Error(message),{status});
 const enc=new TextEncoder();
@@ -17,9 +17,10 @@ async function connection(env,key=CONNECTION){const stored=await env.DESARTLY_AU
 export async function schedule(env){const row=env.DB?await env.DB.prepare('SELECT value FROM calendar_schedule WHERE id=1').bind().first():null;return {...defaultSchedule,...(row?JSON.parse(row.value):await env.DESARTLY_AUTH?.get(SCHEDULE,'json'))};}
 export function validateSchedule(body){
  const s={...defaultSchedule,...body};
+ if(!Array.isArray(s.exceptions)||s.exceptions.length>100||s.exceptions.some(e=>!['open','block'].includes(e.kind)||typeof e.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(e.date)||!Number.isFinite(Date.parse(e.date+'T00:00:00Z'))||new Date(e.date+'T00:00:00Z').toISOString().slice(0,10)!==e.date||!Number.isInteger(e.startMinute)||!Number.isInteger(e.endMinute)||e.startMinute<0||e.endMinute>1440||e.endMinute-e.startMinute<30||e.startMinute%30||e.endMinute%30))throw fail('Choose valid half-hour schedule exceptions.',400);
  if(!Number.isInteger(s.bufferMinutes)||s.bufferMinutes<0||s.bufferMinutes>120||!Array.isArray(s.holidays)||s.holidays.length>100||s.holidays.some(d=>typeof d!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d+'T00:00:00Z'))||new Date(d+'T00:00:00Z').toISOString().slice(0,10)!==d))throw fail('Choose valid holidays and a buffer from 0 to 120 minutes.',400);
  if(s.timeZone!=='Asia/Tehran'||!Array.isArray(s.days)||!s.days.length||s.days.some(d=>!Number.isInteger(d)||d<0||d>6)||!Number.isInteger(s.startHour)||!Number.isInteger(s.endHour)||s.startHour<0||s.endHour>24||s.startHour>=s.endHour||s.duration!==30||!Number.isInteger(s.noticeHours)||s.noticeHours<1||s.noticeHours>168||s.horizonDays!==30||typeof s.calendarId!=='string'||s.calendarId.length>250||!s.calendarId.trim())throw fail('Choose valid working days and hours.',400);
- return {timeZone:s.timeZone,days:[...new Set(s.days)],startHour:s.startHour,endHour:s.endHour,duration:30,noticeHours:s.noticeHours,horizonDays:30,calendarId:s.calendarId.trim(),bufferMinutes:s.bufferMinutes,holidays:[...new Set(s.holidays)].sort()};
+ return {timeZone:s.timeZone,days:[...new Set(s.days)],startHour:s.startHour,endHour:s.endHour,duration:30,noticeHours:s.noticeHours,horizonDays:30,calendarId:s.calendarId.trim(),bufferMinutes:s.bufferMinutes,holidays:[...new Set(s.holidays)].sort(),exceptions:s.exceptions.map(e=>({date:e.date,kind:e.kind,startMinute:e.startMinute,endMinute:e.endMinute})).sort((a,b)=>a.date.localeCompare(b.date)||a.startMinute-b.startMinute||a.kind.localeCompare(b.kind))};
 }
 async function token(env,key=CONNECTION){
  const c=await connection(env,key);if(!c?.refreshToken||!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET)throw fail('The booking calendar is not connected yet.');
@@ -46,11 +47,11 @@ export function candidateSlots(s,month,now=Date.now()){
  const [year,m]=month.split('-').map(Number);if(m<1||m>12||year<2025||year>2100)throw fail('Choose a valid month.',400);
  const starts=[];const count=new Date(Date.UTC(year,m,0)).getUTCDate();
  for(let day=1;day<=count;day++){
-  if(!s.days.includes(new Date(Date.UTC(year,m-1,day)).getUTCDay()))continue;
   const date=`${year}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-  if(s.holidays?.includes(date))continue;
-  for(let hour=s.startHour;hour<s.endHour;hour++)for(const minute of [0,30]){
-   const start=zonedStart(date,hour,minute,s.timeZone),end=start+s.duration*60000;
+  const minutes=new Set();if(s.days.includes(new Date(Date.UTC(year,m-1,day)).getUTCDay())&&!s.holidays?.includes(date))for(let m=s.startHour*60;m<s.endHour*60;m+=30)minutes.add(m);
+  const exceptions=(s.exceptions||[]).filter(e=>e.date===date);for(const e of exceptions.filter(e=>e.kind==='open'))for(let m=e.startMinute;m<e.endMinute;m+=30)minutes.add(m);
+  for(const m of [...minutes].sort((a,b)=>a-b)){if(exceptions.some(e=>e.kind==='block'&&m<e.endMinute&&m+30>e.startMinute))continue;
+   const start=zonedStart(date,Math.floor(m/60),m%60,s.timeZone),end=start+s.duration*60000;
    if(start<now+s.noticeHours*3600000||start>now+s.horizonDays*86400000)continue;
    starts.push({date,start:new Date(start).toISOString(),end:new Date(end).toISOString()});
   }
