@@ -13,11 +13,12 @@ const normalize=value=>String(value).normalize('NFKC').replaceAll('ي','ی').rep
 async function projectCard(env,owner,p){
  const rows=await env.DB.prepare('SELECT format,version FROM telegram_exports WHERE project_id=?').bind(p.id).all();const labels=[];for(const row of rows.results)labels.push((row.format==='instagram'?'عمودی':'افقی')+': '+(row.version===await presentationVersion(p,row.format)?'آماده':'نیازمند بازتولید'));
  const action=material=>'asset:'+material+':'+p.id;
- await reply(env,owner,p.title+'\n\n'+String(p.summary||'').replace(/<[^>]*>/g,'').slice(0,1500)+'\n\nخروجی PDF: '+(labels.join('، ')||'در اولین درخواست تولید می‌شود.')+'\nدریافت فقط در همین گفت‌وگوی خصوصی انجام می‌شود.',[
+ await reply(env,owner,p.title+'\n\n'+String(p.summary||'').replace(/<[^>]*>/g,'').slice(0,1500)+'\n\nوضعیت: '+(p.status==='published'?'منتشرشده':'پیش‌نویس')+'\nخدمات: '+String(p.deliverables||p.discipline||'در CMS ثبت نشده').slice(0,350)+'\nخروجی PDF: '+(labels.join('، ')||'در اولین درخواست تولید می‌شود.')+'\nدریافت فقط در همین گفت‌وگوی خصوصی انجام می‌شود.',[
  [{text:'پرزنتیشن افقی',callback_data:action('linkedin')},{text:'پرزنتیشن عمودی',callback_data:action('instagram')}],
  [{text:'هر دو PDF',callback_data:action('both')},{text:'آلبوم تصاویر',callback_data:action('album')}],
  [{text:'کاور اصلی',callback_data:action('cover')},{text:'کپشن فارسی',callback_data:action('fa')},{text:'English caption',callback_data:action('en')}],
  ...rows.results.length?[[{text:'دریافت PDF قدیمی با برچسب',callback_data:action('old')}]]:[],
+ ...(p.status==='published'?[[{text:'پروژه در سایت',url:'https://www.desartly.info/work/'+encodeURIComponent(p.id)}]]:[]),
  [{text:'پروژه در CMS',url:'https://studio.desartly.info/studio/projects/'+encodeURIComponent(p.id)},{text:'پروژه‌ها',callback_data:'projects:0'}]
  ]);
 }
