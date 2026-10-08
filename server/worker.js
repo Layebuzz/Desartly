@@ -1,3 +1,4 @@
+import {telegramResponse} from './telegram-service.js';
 import {portfolioResponse} from './portfolio-service.js';
 import {mailboxResponse} from './mailbox-service.js';
 import {calendarResponse,sendBookingOwnerEmails} from './calendar-service.js';
@@ -10,6 +11,7 @@ import { MediaStorage } from "./media-storage.js";
 export default {
   async scheduled(controller,env,ctx){ctx.waitUntil(sendBookingOwnerEmails(env));},
   async fetch(request, env, ctx) {
+    const telegram=await telegramResponse(request,env);if(telegram)return telegram;
     const auth = await authResponse(request, env);
     if (auth) return auth;
     const mailbox=await mailboxResponse(request,env);if(mailbox)return mailbox;
