@@ -58,3 +58,9 @@ Apply `server/migrations/0002_calendar.sql` to D1. Set `GOOGLE_CLIENT_ID` and `G
 Studio → Calendar controls Tehran working days/hours, notice, days off and meeting buffers, and lists private website briefs. Owner cancellation and rescheduling update the existing Google event and notify attendees. Public availability reveals slots only. A stable request/event ID and atomic D1 holds prevent duplicate website reservations; uncertain responses can be retried with the same ID. This does not make an external Google Calendar edit atomic with a website booking.
 
 Unfinished briefs and uncertain booking attempts stay in session storage for up to 24 hours and are cleared after confirmation. Google tokens are encrypted in KV using the owner session secret; rotating that secret requires reconnecting Google Calendar. Never put OAuth secrets in frontend environment variables or committed files.
+
+### Owner booking emails
+
+Apply `server/migrations/0003_booking_email.sql`. Enable Gmail API in the same Google Cloud project. Studio → Calendar → Connect booking emails requests only `gmail.send` and basic OpenID email identity, separately from Calendar access. The verified account must be `komeilipv@gmail.com`; both sender and recipient are fixed to that address. Refresh tokens are encrypted using the existing owner session secret.
+
+The Worker cron scans confirmed future bookings every minute, including existing upcoming reservations when first connected. It sends the brief, Tehran time and Meet link; attendee invitations still use Calendar. Mail acceptance is recorded in D1 independently of reservation success. Repeated scans atomically claim each message. Auth/rate-limit rejections retry with backoff (5 attempts); uncertain responses are recorded for manual review rather than risking an automatic duplicate. Gmail acceptance is not an inbox delivery receipt. Failed/uncertain states are shown in Studio.

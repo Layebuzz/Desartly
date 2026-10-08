@@ -1,3 +1,4 @@
+import {bookingOwnerEmail,emailConnectionKey,emailScopes,flushBookingEmails} from './booking-email.js';
 import {isOwner} from './owner-auth.js';
 import {bounded} from './content-api.js';
 import {formatBrief} from '../src/booking-config.js';
@@ -11,8 +12,8 @@ const enc=new TextEncoder();
 const b64=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes)));
 const un64=text=>Uint8Array.from(atob(text),c=>c.charCodeAt(0));
 async function encryptionKey(env){return crypto.subtle.importKey('raw',await crypto.subtle.digest('SHA-256',enc.encode(env.OWNER_SESSION_SECRET)),{name:'AES-GCM'},false,['encrypt','decrypt']);}
-async function saveConnection(env,value){const iv=crypto.getRandomValues(new Uint8Array(12));const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},await encryptionKey(env),enc.encode(JSON.stringify(value)));await env.DESARTLY_AUTH.put(CONNECTION,JSON.stringify({iv:b64(iv),data:b64(data)}));}
-async function connection(env){const stored=await env.DESARTLY_AUTH?.get(CONNECTION,'json');if(!stored)return null;try{return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(stored.iv)},await encryptionKey(env),un64(stored.data))));}catch{return null;}}
+async function saveConnection(env,value,key=CONNECTION){const iv=crypto.getRandomValues(new Uint8Array(12));const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},await encryptionKey(env),enc.encode(JSON.stringify(value)));await env.DESARTLY_AUTH.put(key,JSON.stringify({iv:b64(iv),data:b64(data)}));}
+async function connection(env,key=CONNECTION){const stored=await env.DESARTLY_AUTH?.get(key,'json');if(!stored)return null;try{return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(stored.iv)},await encryptionKey(env),un64(stored.data))));}catch{return null;}}
 async function schedule(env){return {...defaultSchedule,...await env.DESARTLY_AUTH?.get(SCHEDULE,'json')};}
 export function validateSchedule(body){
  const s={...defaultSchedule,...body};
@@ -20,13 +21,13 @@ export function validateSchedule(body){
  if(s.timeZone!=='Asia/Tehran'||!Array.isArray(s.days)||!s.days.length||s.days.some(d=>!Number.isInteger(d)||d<0||d>6)||!Number.isInteger(s.startHour)||!Number.isInteger(s.endHour)||s.startHour<0||s.endHour>24||s.startHour>=s.endHour||s.duration!==30||!Number.isInteger(s.noticeHours)||s.noticeHours<1||s.noticeHours>168||s.horizonDays!==30||typeof s.calendarId!=='string'||s.calendarId.length>250||!s.calendarId.trim())throw fail('Choose valid working days and hours.',400);
  return {timeZone:s.timeZone,days:[...new Set(s.days)],startHour:s.startHour,endHour:s.endHour,duration:30,noticeHours:s.noticeHours,horizonDays:30,calendarId:s.calendarId.trim(),bufferMinutes:s.bufferMinutes,holidays:[...new Set(s.holidays)].sort()};
 }
-async function token(env){
- const c=await connection(env);if(!c?.refreshToken||!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET)throw fail('The booking calendar is not connected yet.');
+async function token(env,key=CONNECTION){
+ const c=await connection(env,key);if(!c?.refreshToken||!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET)throw fail('The booking calendar is not connected yet.');
  if(c.expires>Date.now()+60000)return c.accessToken;
  const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,client_secret:env.GOOGLE_CLIENT_SECRET,refresh_token:c.refreshToken,grant_type:'refresh_token'}),signal:AbortSignal.timeout(10000)});
  if(!response.ok)throw fail('The calendar connection needs to be renewed.');const data=await response.json();
  if(!data.access_token)throw fail('The calendar connection needs to be renewed.');
- await saveConnection(env,{...c,accessToken:data.access_token,expires:Date.now()+Number(data.expires_in||3600)*1000});return data.access_token;
+ await saveConnection(env,{...c,accessToken:data.access_token,expires:Date.now()+Number(data.expires_in||3600)*1000},key);return data.access_token;
 }
 async function google(env,path,options={}){
  const response=await fetch('https://www.googleapis.com/calendar/v3/'+path,{...options,headers:{Authorization:'Bearer '+await token(env),'Content-Type':'application/json'},signal:AbortSignal.timeout(10000)});
@@ -159,6 +160,10 @@ async function manageBooking(env,s,body){
  await env.DB.prepare("UPDATE calendar_bookings SET status='cancelled' WHERE id=?").bind(hold).run();
  return result;
 }
+export async function sendBookingOwnerEmails(env){
+ const c=await connection(env,emailConnectionKey);
+ if(c?.refreshToken&&c.email===bookingOwnerEmail)await flushBookingEmails(env,()=>token(env,emailConnectionKey));
+}
 export async function calendarResponse(request,env){
  const url=new URL(request.url),path=url.pathname;
  if(!path.startsWith('/api/calendar/')&&!path.startsWith('/api/studio/calendar'))return null;
@@ -167,7 +172,8 @@ export async function calendarResponse(request,env){
   if(ownerPath&&path!=='/api/studio/calendar/callback'&&!(await isOwner(request,env)))return json({error:'Owner sign-in required.'},401);
   if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
   const s=await schedule(env),c=await connection(env),configured=!!(env.GOOGLE_CLIENT_ID&&env.GOOGLE_CLIENT_SECRET&&env.DESARTLY_AUTH);
-  if(path==='/api/studio/calendar'&&request.method==='GET')return json({configured,connected:!!c?.refreshToken,schedule:s});
+  if(path==='/api/studio/calendar'&&request.method==='GET'){const mail=await connection(env,emailConnectionKey);return json({configured,connected:!!c?.refreshToken,schedule:s,ownerEmail:{address:bookingOwnerEmail,connected:!!mail?.refreshToken&&mail.email===bookingOwnerEmail}});}
+  if(path==='/api/studio/calendar/email-status'&&request.method==='GET'){const rows=await env.DB.prepare('SELECT booking_id,status,attempts,updated_at FROM booking_owner_emails ORDER BY updated_at DESC LIMIT 100').bind().all();return json({emails:rows.results});}
   if(path==='/api/studio/calendar/manage'&&request.method==='POST')return json(await manageBooking(env,s,JSON.parse(new TextDecoder().decode(await bounded(request,2000)))));
   if(path==='/api/studio/calendar/schedule'&&request.method==='POST'){
    const body=JSON.parse(new TextDecoder().decode(await bounded(request,8000)));const next=validateSchedule(body);await env.DESARTLY_AUTH.put(SCHEDULE,JSON.stringify(next));return json({ok:true,schedule:next});
@@ -175,12 +181,13 @@ export async function calendarResponse(request,env){
   if(path==='/api/studio/calendar/bookings'&&request.method==='GET'){
    const rows=await env.DB.prepare("SELECT id,start_at,end_at,status,brief,confirmation,created_at FROM calendar_bookings WHERE status!='cancelled' AND signature NOT LIKE 'reschedule:%' AND end_at>? ORDER BY start_at LIMIT 100").bind(Date.now()-86400000).all();return json({bookings:rows.results.map(r=>({...r,brief:JSON.parse(r.brief),confirmation:r.confirmation?JSON.parse(r.confirmation):null}))});
   }
-  if(path==='/api/studio/calendar/connect'&&request.method==='GET'){
+  if(['/api/studio/calendar/connect','/api/studio/calendar/email/connect'].includes(path)&&request.method==='GET'){
+   const emailOnly=path.includes('/email/');
    if(!configured)throw fail('Google Calendar API credentials need to be configured.');
    const state=crypto.randomUUID(),verifier=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
-   await env.DESARTLY_AUTH.put('google-calendar:state:'+state,JSON.stringify({verifier}),{expirationTtl:600});
+   await env.DESARTLY_AUTH.put('google-calendar:state:'+state,JSON.stringify({verifier,emailOnly}),{expirationTtl:600});
    const challenge=b64(await crypto.subtle.digest('SHA-256',enc.encode(verifier))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
-   const params=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://desartly.vercel.app/api/studio/calendar/callback',response_type:'code',scope:SCOPES.join(' '),access_type:'offline',prompt:'consent',state,code_challenge:challenge,code_challenge_method:'S256'});
+   const params=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://desartly.vercel.app/api/studio/calendar/callback',response_type:'code',scope:(emailOnly?emailScopes:SCOPES).join(' '),...(emailOnly?{login_hint:bookingOwnerEmail}:{}),access_type:'offline',prompt:'consent',state,code_challenge:challenge,code_challenge_method:'S256'});
    return new Response(null,{status:302,headers:{Location:'https://accounts.google.com/o/oauth2/v2/auth?'+params,'Cache-Control':'no-store'}});
   }
   if(path==='/api/studio/calendar/callback'&&request.method==='GET'){
@@ -190,8 +197,16 @@ export async function calendarResponse(request,env){
    if(url.searchParams.has('error'))return new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=cancelled','Cache-Control':'no-store'}});
    const code=url.searchParams.get('code');if(!code||code.length>2000)throw fail('Calendar connection failed. Try again.',400);
    const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,client_secret:env.GOOGLE_CLIENT_SECRET,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://desartly.vercel.app/api/studio/calendar/callback',code,code_verifier:stored.verifier,grant_type:'authorization_code'}),signal:AbortSignal.timeout(10000)});
-   const data=await response.json();if(!response.ok||!data.refresh_token||!data.access_token||SCOPES.some(scope=>!String(data.scope||'').split(' ').includes(scope)))throw fail('Allow both calendar permissions to connect.',400);
-   await saveConnection(env,{refreshToken:data.refresh_token,accessToken:data.access_token,expires:Date.now()+Number(data.expires_in||3600)*1000});
+   const data=await response.json();const required=stored.emailOnly?[emailScopes[0]]:SCOPES;
+   if(!response.ok||!data.refresh_token||!data.access_token||required.some(scope=>!String(data.scope||'').split(' ').includes(scope)))throw fail('Allow the requested Google permissions to connect.',400);
+   let email;
+   if(stored.emailOnly){
+    const identity=await fetch('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+data.access_token},signal:AbortSignal.timeout(10000)});
+    const profile=await identity.json();if(!identity.ok||profile.email_verified!==true||String(profile.email).toLowerCase()!==bookingOwnerEmail)throw fail('Connect komeilipv@gmail.com to send owner notifications.',400);
+    email=bookingOwnerEmail;
+   }
+   await saveConnection(env,{refreshToken:data.refresh_token,accessToken:data.access_token,expires:Date.now()+Number(data.expires_in||3600)*1000,...(email?{email}:{})},stored.emailOnly?emailConnectionKey:CONNECTION);
+   if(stored.emailOnly)await env.DB.prepare("UPDATE booking_owner_emails SET status='pending',attempts=0,next_attempt=0 WHERE status='failed'").bind().run();
    return new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=success','Cache-Control':'no-store'}});
   }
   if(path==='/api/calendar/availability'&&request.method==='GET'){

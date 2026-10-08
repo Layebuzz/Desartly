@@ -1,4 +1,4 @@
-import {calendarResponse} from './calendar-service.js';
+import {calendarResponse,sendBookingOwnerEmails} from './calendar-service.js';
 import {mediaBackupResponse} from './media-backup.js';
 import { authResponse, isOwner, ownerPath } from "./owner-auth.js";
 import { contentResponse } from "./content-api.js";
@@ -6,6 +6,7 @@ import { D1Store } from "./content-store.js";
 import {cmsResponse} from "./cms-api.js";
 import { MediaStorage } from "./media-storage.js";
 export default {
+  async scheduled(controller,env,ctx){ctx.waitUntil(sendBookingOwnerEmails(env));},
   async fetch(request, env) {
     const auth = await authResponse(request, env);
     if (auth) return auth;

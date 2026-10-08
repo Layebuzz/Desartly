@@ -6,7 +6,7 @@ import {readFileSync} from 'node:fs';
 import {candidateSlots,availableSlots,defaultSchedule,validateSchedule,validateBrief,calendarResponse} from '../server/calendar-service.js';
 const brief={name:'Test Visitor',email:'visitor@example.test',company:'Fixture Co',industry:'Design',message:'A test-only design project briefing.',services:['Branding']};
 const dbFixture=()=>{
- const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('../server/migrations/0002_calendar.sql',import.meta.url),'utf8'));
+ const db=new DatabaseSync(':memory:');for(const migration of ['0002_calendar.sql','0003_booking_email.sql'])db.exec(readFileSync(new URL('../server/migrations/'+migration,import.meta.url),'utf8'));
  return {prepare(sql){return {bind(...values){return {async first(){return db.prepare(sql).get(...values)||null;},async all(){return {results:db.prepare(sql).all(...values)};},async run(){return {meta:{changes:db.prepare(sql).run(...values).changes}};}};}};}};
 };
 async function fixture(){
@@ -153,4 +153,18 @@ test('a reschedule hold prevents a visitor booking the same destination',async t
  t.mock.method(globalThis,'fetch',async(url,options)=>{if(options.method==='PATCH'){entered();await continuePatch;return Response.json({...x.event,...JSON.parse(options.body)});}if(String(url).endsWith('freeBusy'))return Response.json({calendars:{primary:{busy:[]}}});if(String(url).includes('/events?'))return Response.json({items:[]});return Response.json(x.event);});
  const moving=calendarResponse(manageRequest(x.env,{id:x.id,action:'reschedule',start:target.start}),x.env);await patchEntered;
  const visitor=await calendarResponse(bookingRequest(target),x.env);release();assert.equal(visitor.status,409);assert.equal((await moving).status,200);
+});
+
+test('email OAuth requests send-only Gmail access, verifies the owner and preserves calendar access',async t=>{
+ const {env,map}=await fixture(),calendarBefore=map.get('google-calendar:connection');
+ const started=await calendarResponse(new Request('https://site.test/api/studio/calendar/email/connect',{headers:{Cookie:ownerCookie(env)}}),env);
+ const location=new URL(started.headers.get('Location')),scope=location.searchParams.get('scope');assert(scope.includes('gmail.send'));assert(!scope.includes('gmail.read'));assert(!scope.includes('calendar.events'));assert.equal(location.searchParams.get('login_hint'),'komeilipv@gmail.com');
+ t.mock.method(globalThis,'fetch',async url=>String(url).includes('userinfo')?Response.json({email:'komeilipv@gmail.com',email_verified:true}):Response.json({access_token:'mail-fixture',refresh_token:'mail-refresh',expires_in:3600,scope}));
+ const response=await calendarResponse(new Request('https://site.test/api/studio/calendar/callback?state='+location.searchParams.get('state')+'&code=fixture'),env);assert.equal(response.status,302);assert.equal(map.get('google-calendar:connection'),calendarBefore);assert(map.has('google-calendar:owner-email'));assert(!map.get('google-calendar:owner-email').includes('mail-refresh'));
+ const status=await calendarResponse(new Request('https://site.test/api/studio/calendar',{headers:{Cookie:ownerCookie(env)}}),env);assert.equal((await status.json()).ownerEmail.connected,true);
+});
+test('email OAuth rejects another account before saving sending access',async t=>{
+ const {env,map}=await fixture();const started=await calendarResponse(new Request('https://site.test/api/studio/calendar/email/connect',{headers:{Cookie:ownerCookie(env)}}),env),location=new URL(started.headers.get('Location'));
+ t.mock.method(globalThis,'fetch',async url=>String(url).includes('userinfo')?Response.json({email:'someone@example.test',email_verified:true}):Response.json({access_token:'fixture',refresh_token:'fixture',scope:'https://www.googleapis.com/auth/gmail.send'}));
+ assert.equal((await calendarResponse(new Request('https://site.test/api/studio/calendar/callback?state='+location.searchParams.get('state')+'&code=fixture'),env)).status,400);assert(!map.has('google-calendar:owner-email'));
 });
