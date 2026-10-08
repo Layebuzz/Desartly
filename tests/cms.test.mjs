@@ -406,3 +406,23 @@ test('MCP site and settings access requires separate opt-in permissions',async()
  const stale=await(await call(scoped,'tools/call',{name:'cms_settings_save',arguments:{draftVersion:0,settings:{title:'New'}}})).json();assert.equal(stale.result.isError,true);
  const applied=await(await call(scoped,'tools/call',{name:'cms_settings_save',arguments:{draftVersion:1,settings:{title:'New',SECRET:'cannot write'}}})).json();assert.ok(!applied.result.isError);assert.equal((await scoped.read()).draft.pages['/site'].settings.SECRET,undefined);
 });
+
+test('all three shared project templates are read-only and create valid private drafts', async () => {
+ const store=await fixture(['read']);const before=await store.read();
+ const listed=await (await call(store,'tools/list')).json();
+ assert.ok(listed.result.tools.some(t=>t.name==='cms_project_template'));
+ for(const discipline of ['Product','Branding','Communication Design']){
+  const r=await (await call(store,'tools/call',{name:'cms_project_template',arguments:{discipline}})).json();
+  const template=JSON.parse(r.result.content[0].text);
+  assert.equal(template.discipline,discipline);
+  assert.equal(template.blocks.some(b=>b.type==='html'),discipline==='Product');
+  const next=mutateDocument(start(),{action:'create',kind:'project',document:{...document,discipline,category:discipline,blocks:template.blocks}}).state;
+  assert.equal(next.published.projects.length,0);
+  assert.equal(readDocument(next,'project',document.id).status,'Draft');
+  assert.equal(new Set(template.blocks.map(b=>b.id)).size,template.blocks.length);
+  assert.ok(template.blocks.filter(b=>b.type==='text').every(b=>b.text===''));
+ }
+ assert.deepEqual(await store.read(),before);
+ const invalid=await (await call(store,'tools/call',{name:'cms_project_template',arguments:{discipline:'Unknown'}})).json();
+ assert.ok(invalid.error||invalid.result?.isError);
+});

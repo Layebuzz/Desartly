@@ -139,3 +139,12 @@ Site assets             دارایی‌های مشترک سایت
 4. پاراگراف چهارم: دعوت به پیام‌دادن برای هویت بصری، پکیجینگ یا ارتباطات بصری و دریافت پروپوزال همکاری.
 
 ترتیب خروجی: چهار پاراگراف فارسی محاوره‌ای، چهار پاراگراف انگلیسی هم‌معنا، سپس هشتگ‌های مرتبط، هرکدام در یک خط. متن مخصوص MyOm مانند ارگانیک یا بین‌المللی بودن را به پروژهٔ دیگر منتقل نکن. ابهام‌ها فقط در notes خصوصی ثبت شوند. اعلان در CMS خصوصی می‌ماند؛ ذخیرهٔ آن مجوز ارسال به شبکه‌های اجتماعی نیست.
+
+
+## Shared project upload paths
+
+Studio > Projects > New project offers Product, Branding and Communication Design starters. Start story inserts empty editable blocks. Set title, industry and personality, then save to establish Projects/<slug>. Images contains the cover and hero; Content contains the story and demo; Details contains reference URLs, dates and takeaways.
+
+AI uses cms_project_template({discipline:"Product"}) to get the same blocks and instructions without saving or publishing. Add id, title and brandPersonality in cms_create. Continue cms_upload > cms_get > cms_save > cms_review > cms_publish.
+
+HTML is an isolated self-contained responsive demo, not the case study. Set autoHeight and staticImage for PDFs. The panel accepts HTML under 550 KB to leave space inside the 600 KB document limit. Keep narrative and images in separate native blocks.
