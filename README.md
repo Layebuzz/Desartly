@@ -67,4 +67,4 @@ After each successful booking (including recovered retries), the Worker immediat
 
 Booking emails include an inline-styled, table-based Desartly HTML design and a plain-text alternative. Untrusted brief fields are escaped and Meet links restricted to HTTPS meet.google.com. Studio’s Send queued emails processes unsent reservations immediately without resending accepted mail.
 
-Website bookings are confirmed immediately without manual owner approval. New Calendar events explicitly include Ali as an accepted attendee; guest RSVP remains independent.
+Website bookings are confirmed immediately without manual owner approval. The organizer is not invited again for ordinary guest bookings. For owner self-bookings, a separate RSVP update after insertion prevents Google from resetting the owner to needsAction; guest RSVP remains independent. Each confirmed booking writes its pending email to D1 before responding, then processes delivery in waitUntil.

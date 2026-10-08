@@ -68,7 +68,11 @@ export function validateBrief(input){
  b.services=Array.isArray(input?.services)?input.services.filter(s=>typeof s==='string'&&s.length<=100).slice(0,8):[];
  if(!b.name||b.name.length>100||!/^\S+@\S+\.\S+$/.test(b.email)||b.email.length>254||!b.company||b.company.length>150||!b.industry||b.industry.length>100||b.message.length<10||b.message.length>1500||!b.services.length)throw fail('Complete your name, email and project brief.',400);return b;
 }
-function confirmation(event,slot,s){return {confirmed:true,start:slot.start,end:slot.end,timeZone:s.timeZone,meetingUrl:event.hangoutLink||event.conferenceData?.entryPoints?.find(e=>e.entryPointType==='video')?.uri||null};}
+async function confirmation(event,slot,s,env){
+ // Creating a self-invitation can reset Google's initial accepted status.
+ // Update only the owner's RSVP after insert, without changing guest responses.
+ if(event.attendees?.some(a=>a.email?.toLowerCase()===bookingOwnerEmail))await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events/${event.id}?sendUpdates=all`,{method:'PATCH',body:JSON.stringify({attendeesOmitted:true,attendees:[{email:bookingOwnerEmail,responseStatus:'accepted'}]})});
+ return {confirmed:true,start:slot.start,end:slot.end,timeZone:s.timeZone,meetingUrl:event.hangoutLink||event.conferenceData?.entryPoints?.find(e=>e.entryPointType==='video')?.uri||null};}
 async function createBooking(env,s,body){
  const brief=validateBrief(body.brief),id=String(body.requestId||'').replaceAll('-','');
  if(!/^[a-f0-9]{32}$/.test(id)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\.000Z$/.test(body.start||''))throw fail('Choose an available time.',400);
@@ -85,7 +89,7 @@ async function createBooking(env,s,body){
   try{
    const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events/${id}`);
    if(event.status==='cancelled')throw fail('This booking was cancelled. Choose another time.',409);
-   const result=confirmation(event,slot,s);
+   const result=await confirmation(event,slot,s,env);
    await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();
    return result;
   }catch(error){if(error.googleStatus!==404)throw error;}
@@ -108,12 +112,12 @@ async function createBooking(env,s,body){
  if(!locked.meta.changes){const retry=await env.DB.prepare('SELECT signature FROM calendar_bookings WHERE id=?').bind(id).first();if(retry?.signature===signature)throw fail('Your confirmation is in progress. Try again in a moment.');throw fail('This time was just booked. Choose another.',409);}
  }
  try{
-  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`Briefing — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name,...(brief.email.toLowerCase()===bookingOwnerEmail?{responseStatus:'accepted'}:{})},...(brief.email.toLowerCase()!==bookingOwnerEmail?[{email:bookingOwnerEmail,displayName:'Ali Komeili',responseStatus:'accepted'}]:[])],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
-  const result=confirmation(event,slot,s);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;
+  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`Briefing — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name,...(brief.email.toLowerCase()===bookingOwnerEmail?{responseStatus:'accepted'}:{})}],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
+  const result=await confirmation(event,slot,s,env);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;
  }catch(error){
   // A failed response can follow a successful Google insert. Keep the hold and
   // stable event ID so retries cannot send duplicate calendar invitations.
-  if(error.googleStatus===409){const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events/${id}`);if(event.status==='cancelled')throw fail('This booking was cancelled.',409);const result=confirmation(event,slot,s);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;}
+  if(error.googleStatus===409){const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events/${id}`);if(event.status==='cancelled')throw fail('This booking was cancelled.',409);const result=await confirmation(event,slot,s,env);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;}
   throw error;
  }
 }
@@ -135,7 +139,7 @@ async function manageBooking(env,s,body){
  const slot=candidateSlots(s,month).find(x=>x.start===start);if(!slot)throw fail('This time is no longer available.',409);
  const live=await google(env,path);if(live.status==='cancelled')throw fail('This appointment was cancelled in Google Calendar.',409);
  const finish=async event=>{
-  const result=confirmation(event,slot,s);
+  const result=await confirmation(event,slot,s,env);
   await env.DB.prepare("UPDATE calendar_bookings SET start_at=?,end_at=?,confirmation=? WHERE id=?").bind(Date.parse(slot.start),Date.parse(slot.end),JSON.stringify(result),id).run();
   await env.DB.prepare("UPDATE calendar_bookings SET status='cancelled' WHERE status='pending' AND signature=?").bind('reschedule:'+id).run();
   return {ok:true,...result};
@@ -224,6 +228,7 @@ export async function calendarResponse(request,env,ctx){
    if(!configured||!c?.refreshToken)throw fail('The booking calendar is not connected yet.');
    const body=JSON.parse(new TextDecoder().decode(await bounded(request,6000)));if(body.website_trap)return json({error:'Booking could not be confirmed.'},400);
    const result=await createBooking(env,s,body);
+   await env.DB.prepare("INSERT OR IGNORE INTO booking_owner_emails(booking_id,status) SELECT id,'pending' FROM calendar_bookings WHERE id=? AND status='confirmed'").bind(String(body.requestId).replaceAll('-','')).run();
    ctx?.waitUntil(sendBookingOwnerEmails(env).catch(()=>console.error('Owner booking email processing failed; retry from Studio.')));
    return json(result);
   }

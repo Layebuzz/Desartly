@@ -176,8 +176,21 @@ test('manual owner email processing requires owner auth, rate limit and an email
  env.OWNER_RATE_LIMITER={limit:async()=>({success:true})};assert.equal((await calendarResponse(request(ownerCookie(env)),env)).status,409);
 });
 
-test('successful bookings immediately schedule owner email processing and owner is preaccepted',async t=>{
+test('successful bookings durably enqueue and immediately schedule owner mail without inviting the organizer again',async t=>{
  const {env}=await fixture(),work=[];const slot=nextSlot();
- t.mock.method(globalThis,'fetch',async(url,options)=>{if(String(url).endsWith('freeBusy'))return Response.json({calendars:{primary:{busy:[]}}});const event=JSON.parse(options.body);assert.equal(event.attendees.find(a=>a.email==='komeilipv@gmail.com')?.responseStatus,'accepted');assert.equal(event.attendees.find(a=>a.email===brief.email)?.responseStatus,undefined);return Response.json(event);});
- const response=await calendarResponse(bookingRequest(slot),env,{waitUntil(p){work.push(p)}});assert.equal(response.status,200);assert.equal(work.length,1);await Promise.all(work);
+ t.mock.method(globalThis,'fetch',async(url,options)=>{if(String(url).endsWith('freeBusy'))return Response.json({calendars:{primary:{busy:[]}}});const event=JSON.parse(options.body);assert.equal(event.attendees.some(a=>a.email==='komeilipv@gmail.com'),false);assert.equal(event.attendees.find(a=>a.email===brief.email)?.responseStatus,undefined);return Response.json(event);});
+ const response=await calendarResponse(bookingRequest(slot),env,{waitUntil(p){work.push(p)}});assert.equal(response.status,200);assert.equal(work.length,1);assert.equal((await env.DB.prepare('SELECT status FROM booking_owner_emails').bind().first()).status,'pending');await Promise.all(work);
+});
+
+
+test('self bookings update only the owner RSVP after Google resets insertion acceptance',async t=>{
+ const {env}=await fixture();let patches=0;const slot=nextSlot();
+ t.mock.method(globalThis,'fetch',async(url,options)=>{
+  if(String(url).endsWith('freeBusy'))return Response.json({calendars:{primary:{busy:[]}}});
+  const body=JSON.parse(options.body);
+  if(options.method==='PATCH'){patches++;assert.equal(body.attendeesOmitted,true);assert.deepEqual(body.attendees,[{email:'komeilipv@gmail.com',responseStatus:'accepted'}]);return Response.json(body);}
+  return Response.json({...body,attendees:[{email:'komeilipv@gmail.com',responseStatus:'needsAction'}]});
+ });
+ const request=new Request('https://site.test/api/calendar/book',{method:'POST',headers:{Origin:'https://site.test','Content-Type':'application/json'},body:JSON.stringify({start:slot.start,requestId:crypto.randomUUID(),brief:{...brief,email:'komeilipv@gmail.com'}})});
+ assert.equal((await calendarResponse(request,env)).status,200);assert.equal(patches,1);
 });
