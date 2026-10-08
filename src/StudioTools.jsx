@@ -1,3 +1,4 @@
+import {publicOrigin} from '../server/site-domains.js';
 import {useLocation} from 'react-router-dom';
 import {metadata} from './cms/metadata';
 import React,{useState,useEffect} from 'react';
@@ -22,11 +23,11 @@ export function SiteMetadata({settings,site}){
   const setMeta=(selector,attribute,value)=>document.querySelector(selector)?.setAttribute(attribute,value);
   setMeta('meta[name=description]','content',m.description);
   setMeta('link[rel=icon]','href',settings?.favicon||'/favicon.svg');
-  setMeta('link[rel=canonical]','href',location.origin+pathname);
+  setMeta('link[rel=canonical]','href',publicOrigin+pathname);
   setMeta('meta[property="og:title"]','content',m.title);
   setMeta('meta[property="og:description"]','content',m.description);
-  setMeta('meta[property="og:url"]','content',location.origin+pathname);
+  setMeta('meta[property="og:url"]','content',publicOrigin+pathname);
   const image=document.querySelector('meta[property="og:image"]');
-  if(m.image){const node=image||document.createElement('meta');node.setAttribute('property','og:image');node.content=new URL(m.image,location.origin).href;if(!image)document.head.append(node);}else image?.remove();
+  if(m.image){const node=image||document.createElement('meta');node.setAttribute('property','og:image');node.content=new URL(m.image,publicOrigin).href;if(!image)document.head.append(node);}else image?.remove();
  },[settings,site,pathname]);return null;
 }

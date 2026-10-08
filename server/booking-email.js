@@ -1,3 +1,4 @@
+import {studioOrigin} from './site-domains.js';
 import {bookingEmailHtml} from './booking-email-template.js';
 import {formatBrief} from '../src/booking-config.js';
 
@@ -9,7 +10,7 @@ const base64=text=>Buffer.from(text,'utf8').toString('base64');
 export function bookingEmail(row){
  const brief=JSON.parse(row.brief),confirmation=JSON.parse(row.confirmation||'{}');
  const time=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tehran',dateStyle:'full',timeStyle:'short'}).format(new Date(row.start_at));
- const body=`A new appointment was booked on Desartly.\n\n${time} (Asia/Tehran)\nDuration: 30 minutes\nGoogle Meet: ${confirmation.meetingUrl||'Open the appointment in Google Calendar'}\n\n${formatBrief(brief)}\n\nManage: https://desartly.vercel.app/studio/calendar\nBooking ID: ${row.id}\n`;
+ const body=`A new appointment was booked on Desartly.\n\n${time} (Asia/Tehran)\nDuration: 30 minutes\nGoogle Meet: ${confirmation.meetingUrl||'Open the appointment in Google Calendar'}\n\n${formatBrief(brief)}\n\nManage: ${studioOrigin}/studio/calendar\nBooking ID: ${row.id}\n`;
  const boundary='desartly_'+crypto.randomUUID().replaceAll('-','');
  const encoded=text=>base64(text).match(/.{1,76}/g).join('\r\n');
  const mime=[`From: Desartly <${bookingOwnerEmail}>`,`To: ${bookingOwnerEmail}`,

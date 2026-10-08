@@ -40,3 +40,8 @@ test('media uploads preserve destination and description headers across Vercel',
   assert.equal(options.headers.get('X-Media-Alt'),'Poster');return Response.json({item:{folder:'Campaign assets/Print'}});
  });assert.equal(response.status,200);
 });
+
+test('Google callback returns to the studio domain while preserving connection status',async()=>{
+ const response=await proxy(new Request(base+'/api/studio/calendar/callback?state=fixture'),async()=>new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=success'}}));
+ assert.equal(response.headers.get('Location'),'https://studio.desartly.info/studio/calendar?connection=success');
+});

@@ -1,7 +1,8 @@
+import {publicOrigin} from '../../server/site-domains.js';
 import logoPaths from './presentation-logo.js';
 import {PAGE,INSTAGRAM_PAGE,panoramaCrop,panoramaPlacement} from './presentation-model.js';
 const INK='#202124',MUTED='#686a6d',BG='#fafafa';
-const siteOrigin=()=>/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)?'https://desartly.vercel.app':window.location.origin;
+const siteOrigin=()=>publicOrigin;
 let fontPromise;
 async function fonts(){fontPromise ||= (async()=>{const faces=[new FontFace('PresentationManrope','url(/presentation/manrope-400.ttf)',{weight:'400'}),new FontFace('PresentationManrope','url(/presentation/manrope-700.ttf)',{weight:'700'})];for(const face of faces){await face.load();document.fonts.add(face);}})();return fontPromise;}
 async function image(url){if(!url)return null;const response=await fetch(url,{signal:AbortSignal.timeout(30000)});if(!response.ok)throw Error('An image could not load. Please try again.');const blob=await response.blob();return createImageBitmap(blob);}

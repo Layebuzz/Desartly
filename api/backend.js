@@ -1,3 +1,4 @@
+import {studioOrigin} from '../server/site-domains.js';
 import {optimizeRaster} from '../server/optimize-upload.js';
 // Keep the existing D1 content and media service authoritative on both deployments.
 const backend = 'https://desartly.layebuzz.workers.dev';
@@ -44,7 +45,9 @@ export async function proxy(request, send = fetch) {
     responseHeaders.set('Cache-Control','private, no-store');
     responseHeaders.set('X-Content-Type-Options','nosniff');
     const redirect=responseHeaders.get('Location');
-    if(redirect?.startsWith(backend)) responseHeaders.set('Location',redirect.slice(backend.length)||'/');
+    const localRedirect=redirect?.startsWith(backend)?redirect.slice(backend.length)||'/':redirect;
+    if(localRedirect?.startsWith('/studio/')||localRedirect==='/studio')responseHeaders.set('Location',studioOrigin+localRedirect);
+    else if(redirect?.startsWith(backend))responseHeaders.set('Location',localRedirect);
     return new Response(upstream.body,{status:upstream.status,headers:responseHeaders});
   } catch (error) {
     if(error.status)return Response.json({error:error.message},{status:error.status});

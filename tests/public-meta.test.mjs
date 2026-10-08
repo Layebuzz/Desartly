@@ -9,3 +9,8 @@ test('initial public HTML includes safe page content and crawlable links; unknow
  const home=pageBody('<div id="root"></div>',site,'/');assert.match(home,/href="\/work\/test"/);assert.doesNotMatch(home,/work\/secret/);
  assert.notEqual(metadata(site,'/work').description,metadata(site,'/contact').description);
 });
+import{articleStructuredData}from'../api/public.js';
+test('article JSON-LD uses actual published fields and escapes script terminators',()=>{
+ const s={blogPosts:[{id:'story',title:'A </script> title',author:'Ali',date:'2026-10-07',excerpt:'An actual case study'}]};
+ const html=articleStructuredData(s,'/journal/story');assert.equal((html.match(/<\/script>/g)||[]).length,1);const data=JSON.parse(html.replace(/^<script[^>]+>/,'').replace(/<\/script>$/,''));assert.equal(data.headline,s.blogPosts[0].title);assert.equal(data.author.name,'Ali');assert.equal(articleStructuredData(s,'/about'),'');s.blogPosts[0].hidden=true;assert.equal(articleStructuredData(s,'/journal/story'),'');
+});
