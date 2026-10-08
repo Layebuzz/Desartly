@@ -6,9 +6,14 @@ import {isOwner} from './owner-auth.js';
 const origin='https://desartly.layebuzz.workers.dev';
 export async function telegramProject(env,id){const state=await new D1Store(env.DB).read();const project=materialize(structuredClone(state.draft)).projects.find(p=>p.id===id&&!p.archived);if(!project)throw Error('پروژه پیدا نشد.');return project;}
 const storageConfig=env=>({endpoint:env.S3_ENDPOINT,bucket:env.S3_BUCKET,region:env.S3_REGION,accessKey:env.S3_ACCESS_KEY,secretKey:env.S3_SECRET_KEY});
-export async function privateFile(env,key){if(!key?.startsWith('desartly/private/telegram/'))throw Error('Invalid private file.');const response=await s3Request(storageConfig(env),'GET',key);if(!response.ok)throw Error('فایل خصوصی در دسترس نیست.');return response;}
+async function fileKey(env){return crypto.subtle.importKey('raw',await crypto.subtle.digest('SHA-256',new TextEncoder().encode('desartly:private-pdf:'+env.OWNER_SESSION_SECRET)),{name:'AES-GCM'},false,['encrypt','decrypt']);}
+export async function privateFile(env,key){
+ const ivHex=key?.match(/-([a-f0-9]{24})\.enc$/)?.[1];if(!key?.startsWith('desartly/private/telegram/')||!ivHex)throw Error('Invalid encrypted private file.');
+ const response=await s3Request(storageConfig(env),'GET',key);if(!response.ok)throw Error('فایل خصوصی در دسترس نیست.');
+ const iv=Uint8Array.from(ivHex.match(/../g),x=>parseInt(x,16));const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv},await fileKey(env),await response.arrayBuffer());return new Response(bytes,{headers:{'Content-Type':'application/pdf','Cache-Control':'private, no-store'}});
+}
 export async function projectImage(env,project,url,{original=false}={}){
- if(!projectImages(project).includes(url))throw Error('Image is not part of this project.');
+ if(url!==project.coverImage&&!projectImages(project).includes(url))throw Error('Image is not part of this project.');
  const state=await new D1Store(env.DB).read();
  const mediaId=url.match(/^\/api\/media\/([^/?]+)(?:\?.*)?$/)?.[1];
  if(mediaId){const asset=state.media.find(m=>m.id===mediaId&&!m.trashedAt);if(!asset)throw Error('تصویر در کتابخانه موجود نیست.');const selected=original?asset.variants?.at(-1):asset.variants?.find(v=>v.width===1280)||asset.variants?.[0];const stored=selected?.asset||selected||asset;if(!stored.key?.startsWith('desartly/'))throw Error('Invalid media storage reference.');const response=await s3Request(storageConfig(env),'GET',stored.key);if(!response.ok)throw Error('تصویر در دسترس نیست.');return response;}
@@ -16,16 +21,19 @@ export async function projectImage(env,project,url,{original=false}={}){
  if(parsed.origin!==origin||!/^\/(projects|assets|uploads)\//.test(parsed.pathname)||parsed.search)throw Error('این تصویر باید ابتدا به کتابخانهٔ CMS منتقل شود.');
  const response=await env.ASSETS.fetch(new Request(parsed));if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('تصویر قابل دریافت نیست.');return response;
 }
-export async function savePresentation(env,project,format,bytes){
+export async function savePresentation(env,project,format,bytes,versionOverride){
  if(!['linkedin','instagram'].includes(format)||bytes.length>48*1024*1024||new TextDecoder().decode(bytes.slice(0,5))!=='%PDF-')throw Error('Invalid PDF.');
- const version=await presentationVersion(project,format),key=`desartly/private/telegram/${encodeURIComponent(project.id)}/${format}/${version}.pdf`;
- const response=await s3Request({...storageConfig(env),contentType:'application/pdf'},'PUT',key,bytes);if(!response.ok)throw Error('ذخیرهٔ خصوصی PDF ناموفق بود.');
+ const version=versionOverride||await presentationVersion(project,format),iv=crypto.getRandomValues(new Uint8Array(12)),ivHex=Array.from(iv,x=>x.toString(16).padStart(2,'0')).join(''),key=`desartly/private/telegram/${encodeURIComponent(project.id)}/${format}/${version}-${ivHex}.enc`;
+ const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await fileKey(env),bytes));const response=await s3Request({...storageConfig(env),contentType:'application/octet-stream'},'PUT',key,encrypted);if(!response.ok)throw Error('ذخیرهٔ خصوصی PDF ناموفق بود.');
+ const previous=await env.DB.prepare('SELECT storage_key FROM telegram_exports WHERE project_id=? AND format=?').bind(project.id,format).first();
  await env.DB.prepare('INSERT INTO telegram_exports(project_id,format,version,storage_key,byte_size,created_at) VALUES(?,?,?,?,?,?) ON CONFLICT(project_id,format) DO UPDATE SET version=excluded.version,storage_key=excluded.storage_key,byte_size=excluded.byte_size,created_at=excluded.created_at').bind(project.id,format,version,key,bytes.length,Date.now()).run();
+ if(previous?.storage_key?.startsWith('desartly/private/telegram/')&&previous.storage_key.endsWith('.pdf')){const removed=await s3Request(storageConfig(env),'DELETE',previous.storage_key);if(!removed.ok)throw Error('Encrypted file saved; legacy export cleanup needs review.');}
  return {storage_key:key,version,byte_size:bytes.length};
 }
 export async function presentationFile(env,project,format,{old=false}={}){
  const version=await presentationVersion(project,format),existing=await env.DB.prepare('SELECT * FROM telegram_exports WHERE project_id=? AND format=?').bind(project.id,format).first();
- if(existing&&(existing.version===version||old))return {...existing,stale:existing.version!==version,response:await privateFile(env,existing.storage_key)};
+ if(existing&&existing.storage_key.startsWith('desartly/private/telegram/')&&existing.storage_key.endsWith('.pdf')&&(existing.version===version||old)){const legacy=await s3Request(storageConfig(env),'GET',existing.storage_key);if(!legacy.ok)throw Error('Stored export is unavailable.');const bytes=new Uint8Array(await legacy.arrayBuffer());const saved=await savePresentation(env,project,format,bytes,existing.version);return {...saved,stale:existing.version!==version,response:new Response(bytes,{headers:{'Content-Type':'application/pdf'}})};}
+ if(existing&&existing.storage_key.endsWith('.enc')&&(existing.version===version||old))return {...existing,stale:existing.version!==version,response:await privateFile(env,existing.storage_key)};
  if(!env.PRESENTATION_BROWSER)throw Error('تولید PDF آماده نیست؛ از Presentation studio خروجی را آماده کن.');
  const {default:puppeteer}=await import('@cloudflare/puppeteer');let browser;const job=crypto.randomUUID();
  await env.DB.prepare("INSERT INTO telegram_actions(id,owner_id,kind,payload,expires_at,created_at) VALUES(?,'renderer','browser-render',?,?,?)").bind(job,JSON.stringify({projectId:project.id,format}),Date.now()+300000,Date.now()).run();

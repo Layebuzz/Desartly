@@ -19,7 +19,7 @@ async function sendAsset(env,owner,payload,preparedFile){
  if(['linkedin','instagram'].includes(kind)){
   const file=preparedFile||await presentationFile(env,project,kind,{old:payload.old===true});const result=await sendPrivateFile(env,owner,file.response,`${project.id}-${kind}.pdf`,{caption:project.title+(file.stale?' — نیازمند بازتولید؛ نسخهٔ قدیمی به درخواست شما':' — '+(kind==='instagram'?'پرزنتیشن عمودی':'پرزنتیشن افقی'))});return String(result.message_id);
  }
- if(kind==='cover'){const image=project.heroImage||project.coverImage;if(!image)throw Object.assign(Error('کاور پروژه آماده نیست.'),{rejected:true});const response=await projectImage(env,project,image,{original:true});const result=await sendPrivateFile(env,owner,response,project.id+'-cover.webp',{caption:project.title+' — کاور اصلی'});return String(result.message_id);}
+ if(kind==='cover'){const image=project.coverImage||project.heroImage;if(!image)throw Object.assign(Error('کاور پروژه آماده نیست.'),{rejected:true});const response=await projectImage(env,project,image,{original:true});const result=await sendPrivateFile(env,owner,response,project.id+'-cover.webp',{caption:project.title+' — کاور اصلی'});return String(result.message_id);}
  // Albums have durable chunk rows. Retrying a later chunk cannot resend earlier ones.
  const all=projectImages(project);if(!all.length)throw Object.assign(Error('تصویری برای این پروژه موجود نیست.'),{rejected:true});
  const chunk=all.slice(payload.offset||0,(payload.offset||0)+10),form=new FormData(),media=[];
