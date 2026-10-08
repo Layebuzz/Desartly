@@ -1,6 +1,6 @@
 import {telegramCall,sendPrivateFile} from './telegram-client.js';
 import {telegramProject,presentationFile,projectImage,processRenderJobs} from './telegram-material-service.js';
-import {projectImages} from '../src/cms/telegram-materials.js';
+import {projectImages,presentationVersion} from '../src/cms/telegram-materials.js';
 export const tehranTime=value=>new Intl.DateTimeFormat('fa-IR',{timeZone:'Asia/Tehran',dateStyle:'medium',timeStyle:'short'}).format(new Date(value))+' (تهران)';
 export async function enqueueDelivery(env,id,kind,payload,{bookingId=null,version=null}={}){await env.DB.prepare("INSERT OR IGNORE INTO telegram_deliveries(id,kind,booking_id,version,payload,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(id,kind,bookingId,version,JSON.stringify(payload),Date.now(),Date.now()).run();}
 export async function queueBookingNotifications(env){
@@ -19,7 +19,7 @@ async function sendAsset(env,owner,payload,preparedFile){
  if(['linkedin','instagram'].includes(kind)){
   const file=preparedFile||await presentationFile(env,project,kind,{old:payload.old===true});const result=await sendPrivateFile(env,owner,file.response,`${project.id}-${kind}.pdf`,{caption:project.title+(file.stale?' — نیازمند بازتولید؛ نسخهٔ قدیمی به درخواست شما':' — '+(kind==='instagram'?'پرزنتیشن عمودی':'پرزنتیشن افقی'))});return String(result.message_id);
  }
- if(kind==='cover'){const image=project.heroImage||project.coverImage;if(!image)throw Object.assign(Error('کاور پروژه آماده نیست.'),{rejected:true});const response=await projectImage(env,project,image);const result=await sendPrivateFile(env,owner,response,project.id+'-cover.webp',{caption:project.title+' — کاور اصلی'});return String(result.message_id);}
+ if(kind==='cover'){const image=project.heroImage||project.coverImage;if(!image)throw Object.assign(Error('کاور پروژه آماده نیست.'),{rejected:true});const response=await projectImage(env,project,image,{original:true});const result=await sendPrivateFile(env,owner,response,project.id+'-cover.webp',{caption:project.title+' — کاور اصلی'});return String(result.message_id);}
  // Albums have durable chunk rows. Retrying a later chunk cannot resend earlier ones.
  const all=projectImages(project);if(!all.length)throw Object.assign(Error('تصویری برای این پروژه موجود نیست.'),{rejected:true});
  const chunk=all.slice(payload.offset||0,(payload.offset||0)+10),form=new FormData(),media=[];
@@ -27,7 +27,7 @@ async function sendAsset(env,owner,payload,preparedFile){
  if(media.length===1){try{return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0]),project.id+'-image.webp',{photo:true,caption:project.title})).message_id);}catch(error){if(!error.rejected||error.telegramCode!==400)throw error;return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0]),project.id+'-image.webp',{caption:project.title+' — تصویر اصلی'})).message_id);}}
  form.set('chat_id',owner);form.set('media',JSON.stringify(media));let result;try{result=await telegramCall(env,'sendMediaGroup',form);}catch(error){if(!error.rejected||error.telegramCode!==400)throw error;form.set('media',JSON.stringify(media.map(m=>({...m,type:'document'}))));result=await telegramCall(env,'sendMediaGroup',form);}return result.map(x=>x.message_id).join(',');
 }
-export async function flushTelegramDeliveries(env){
+export async function flushTelegramDeliveries(env,{allowGeneration=true}={}){
  if(!env.DB||!env.DESARTLY_AUTH)return;const settings=await env.DB.prepare('SELECT * FROM telegram_settings WHERE id=1').first();if(!settings?.owner_id)return;
  await env.DB.prepare("UPDATE telegram_deliveries SET status='uncertain' WHERE status='sending' AND updated_at<?").bind(Date.now()-600000).run();
  await env.DB.prepare("UPDATE telegram_deliveries SET status='pending' WHERE status='preparing' AND updated_at<?").bind(Date.now()-240000).run();
@@ -37,6 +37,7 @@ export async function flushTelegramDeliveries(env){
   if(job.booking_id){const row=await env.DB.prepare('SELECT * FROM calendar_bookings WHERE id=?').bind(job.booking_id).first();const note=job.kind==='followup'?await env.DB.prepare('SELECT * FROM telegram_client_notes WHERE booking_id=?').bind(job.booking_id).first():null;
    if(!row||(job.kind!=='followup'&&(row.status!=='confirmed'||String(row.start_at)!==job.version||row.start_at<=Date.now()||(job.kind==='booking'&&!settings.notifications)||(job.kind==='reminder'&&(!settings.reminders||payload.minutes!==settings.reminder_minutes))))||(job.kind==='followup'&&(!settings.reminders||note?.updated_at!==payload.updatedAt||!note.follow_up_at))){await env.DB.prepare("UPDATE telegram_deliveries SET status='obsolete',updated_at=? WHERE id=? AND status='pending'").bind(Date.now(),job.id).run();continue;}}
   const preparation=job.kind==='asset'&&['linkedin','instagram'].includes(payload.material);
+  if(preparation&&!allowGeneration){const p=await telegramProject(env,payload.projectId),saved=await env.DB.prepare('SELECT version FROM telegram_exports WHERE project_id=? AND format=?').bind(p.id,payload.material).first();if(!saved||(!payload.old&&saved.version!==await presentationVersion(p,payload.material)))continue;}
   const claim=await env.DB.prepare("UPDATE telegram_deliveries SET status=?,attempts=attempts+1,updated_at=? WHERE id=? AND status='pending'").bind(preparation?'preparing':'sending',Date.now(),job.id).run();if(!claim.meta?.changes)continue;
   let sending=false;
   try{
