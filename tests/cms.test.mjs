@@ -391,3 +391,18 @@ test("MCP teaches benchmark provenance and exposes all twenty layouts without pu
 test('project personality is required for saving and publishing',()=>{for(const brandPersonality of [undefined,'','unknown'])assert.throws(()=>validateDocument('project',{...document,brandPersonality}),/brand personality is required/);assert.doesNotThrow(()=>validateDocument('project',document));});
 
 test('project mutations cannot create, clear or publish an absent personality',()=>{const state=start();assert.throws(()=>mutateDocument(state,{action:'create',kind:'project',document:{...document,brandPersonality:''}}),/personality is required/);const created=mutateDocument(state,{action:'create',kind:'project',document}).state;const doc=created.draft.projects[0];assert.throws(()=>mutateDocument(created,{action:'save',kind:'project',id:doc.id,version:doc._version,document:{...doc,brandPersonality:''}}),/personality is required/);const legacy=structuredClone(created);delete legacy.draft.projects[0].brandPersonality;assert.throws(()=>mutateDocument(legacy,{action:'publish',kind:'project',id:doc.id,version:doc._version}),/personality is required/);});
+
+test('MCP site and settings access requires separate opt-in permissions',async()=>{
+ const old=await fixture(['read','write','publish']);const list=await(await call(old,'tools/list')).json();
+ assert.ok(list.result.tools.some(t=>t.name==='cms_page_get'));
+ assert.ok(!list.result.tools.some(t=>t.name==='cms_page_save'||t.name==='cms_settings_save'));
+ for(const name of ['cms_page_save','cms_navigation_save','cms_settings_save']){
+  const result=await(await call(old,'tools/call',{name,arguments:{path:'/',page:{},nav:[],settings:{},draftVersion:0}})).json();assert.equal(result.result.isError,true);
+ }
+ const scoped=await fixture(['read','site:write','settings:write']);
+ const draft=await(await call(scoped,'tools/call',{name:'cms_page_save',arguments:{path:'/about',page:{title:'Private biography'},draftVersion:0}})).json();assert.ok(!draft.result.isError);
+ assert.equal((await scoped.read()).draft.pages['/about'].title,'Private biography');assert.notEqual((await scoped.read()).published.pages['/about'].title,'Private biography');
+ const denied=await(await call(scoped,'tools/call',{name:'cms_page_save',arguments:{path:'/about',page:{title:'Private biography'},draftVersion:1,publish:true}})).json();assert.equal(denied.result.isError,true);
+ const stale=await(await call(scoped,'tools/call',{name:'cms_settings_save',arguments:{draftVersion:0,settings:{title:'New'}}})).json();assert.equal(stale.result.isError,true);
+ const applied=await(await call(scoped,'tools/call',{name:'cms_settings_save',arguments:{draftVersion:1,settings:{title:'New',SECRET:'cannot write'}}})).json();assert.ok(!applied.result.isError);assert.equal((await scoped.read()).draft.pages['/site'].settings.SECRET,undefined);
+});

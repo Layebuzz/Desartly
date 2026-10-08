@@ -1,3 +1,4 @@
+import {pageBody,knownPublicPath} from '../server/public-content.js';
 import {metadata} from '../src/cms/metadata.js';
 export {metadata} from '../src/cms/metadata.js';
 import {readFile} from 'node:fs/promises';
@@ -11,6 +12,6 @@ export default {async fetch(request){
  if(path==='/manifest.webmanifest')return Response.json({name:'Desartly — Ali Komeili',short_name:'Desartly',start_url:'/',display:'browser',background_color:'#ffffff',theme_color:'#202632',icons:[{src:'/favicon.svg',sizes:'any',type:'image/svg+xml'}]},{headers:{'Content-Type':'application/manifest+json'}});
  try{const response=await fetch('https://desartly.layebuzz.workers.dev/api/site',{signal:AbortSignal.timeout(10000)});if(!response.ok)throw Error();const {site}=await response.json();
  if(path==='/sitemap.xml')return new Response(sitemap(site),{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public, max-age=60'}});
- const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');return new Response(pageHead(html,site,path),{status:metadata(site,path).missing?404:200,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=0, must-revalidate'}});
+ let html;try{html=await readFile(new URL('../dist/shell.html',import.meta.url),'utf8');}catch{html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');}return new Response(pageBody(pageHead(html,site,path),site,path),{status:knownPublicPath(site,path)?200:404,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=0, must-revalidate'}});
  }catch{return new Response('Content is temporarily unavailable. Please retry.',{status:503,headers:{'Content-Type':'text/plain','Retry-After':'30'}});}
 }};

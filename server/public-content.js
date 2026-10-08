@@ -1,0 +1,17 @@
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const links=[['/','Home'],['/work','Projects'],['/about','About'],['/services','Services'],['/journal','Journal'],['/certificates','Certificates'],['/contact','Book a call']];
+const visible=items=>(items||[]).filter(d=>!d.archived&&!d.hidden);
+const text=value=>typeof value==='string'&&value.trim()?'<p>'+esc(value)+'</p>':'';
+function block(b){if(!b||typeof b!=='object')return '';const heading=b.title?'<h2>'+esc(b.title)+'</h2>':'';if(['text','markdown'].includes(b.type))return '<section>'+heading+text(b.text||b.markdown)+'</section>';if(b.type==='image')return heading+image(b.image,b.alt);if(['grid','composition'].includes(b.type))return heading+(b.images||[]).map((url,i)=>image(url,b.alts?.[i]||'')).join('');if(b.type==='html')return heading+image(b.staticImage,b.title||'')+text(b.description);return heading+text(b.description);}
+function image(url,alt){if(typeof url!=='string'||!/^\/(?![\/\\])|^https:\/\//.test(url))return '';return '<img loading="lazy" src="'+esc(url)+'" alt="'+esc(alt||'')+'" style="max-width:100%;height:auto"/>';}
+export function knownPublicPath(site,path){if(links.some(([p])=>p===path)||path==='/privacy')return true;const[area,id,...extra]=path.split('/').filter(Boolean);return !extra.length&&['work','journal'].includes(area)&&visible(area==='work'?site.projects:site.blogPosts).some(d=>d.id===id);}
+export function initialPublicContent(site,path){
+ if(!knownPublicPath(site,path))return '<main id="main"><h1>Page not found</h1><p>This page is unavailable.</p><a href="/work">Browse projects</a></main>';
+ const[area,id]=path.split('/').filter(Boolean),doc=visible(area==='work'?site.projects:area==='journal'?site.blogPosts:[]).find(d=>d.id===id),page=site.pages?.[path]||{};
+ const titles={'/':'Ali Komeili — Independent designer','/work':'Selected projects','/journal':'Journal','/about':'About Ali Komeili','/services':'Design services','/certificates':'Certificates','/contact':'Book a project conversation','/privacy':'Privacy'};
+ let body=text(doc?.summary||doc?.excerpt||page.intro)+text(doc?null:page.body);
+ if(doc){body+=image(doc.heroImage||doc.coverImage,doc.title);for(const key of ['clientDescription','challenge','role','deliverables','outcome','credits'])body+=text(doc[key]);body+=(doc.blocks||[]).map(block).join('');}
+ else{body+=(page.blocks||[]).map(block).join('');body+=(page.sections||[]).filter(s=>s&&typeof s==='object'&&s.visible!==false).map(block).join('');if(path==='/'||path==='/work')body+='<ul>'+visible(site.projects).map(p=>'<li><a href="/work/'+encodeURIComponent(p.id)+'">'+esc(p.title)+'</a>'+text(p.summary)+'</li>').join('')+'</ul>';if(path==='/journal')body+='<ul>'+visible(site.blogPosts).map(p=>'<li><a href="/journal/'+encodeURIComponent(p.id)+'">'+esc(p.title)+'</a>'+text(p.excerpt)+'</li>').join('')+'</ul>';}
+ return '<header><a href="/">Desartly</a><nav aria-label="Main navigation">'+links.map(([url,label])=>'<a href="'+url+'">'+label+'</a>').join(' · ')+'</nav></header><main id="main"><h1>'+esc(doc?.title||page.title||titles[path])+'</h1>'+body+'</main>';
+}
+export function pageBody(html,site,path){return html.replace(/<div id="root">\s*<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div>');}

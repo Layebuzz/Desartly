@@ -4,9 +4,14 @@ const json=(value,status=200)=>new Response(JSON.stringify(value),{status,header
 import {backupManifest,validateManifest,checksum} from '../src/cms/media-backup-format.js';
 export {backupManifest,validateManifest,checksum};
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
+async function backupReader(request,env){
+ if(request.method!=='GET'||!env.BACKUP_READ_TICKET)return false;
+ const token=request.headers.get('Authorization')?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return false;
+ try{const ticket=JSON.parse(env.BACKUP_READ_TICKET);if(Date.parse(ticket.expiresAt)<=Date.now())return false;const digest=await checksum(new TextEncoder().encode(token));return digest===ticket.hash;}catch{return false;}
+}
 export async function mediaBackupResponse(request,env,store,storage){
  const url=new URL(request.url),base='/api/studio/media-backup';if(!url.pathname.startsWith(base))return null;
- if(!await isOwner(request,env))return json({error:'Owner access required.'},401);
+ if(!await isOwner(request,env)&&!await backupReader(request,env))return json({error:'Owner access required.'},401);
  if(request.method!=='GET'&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  try{
  const read=()=>store.readMedia?store.readMedia():store.read();

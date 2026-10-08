@@ -1,3 +1,5 @@
+import {updateNavigation,updateSettings} from './site-service.js';
+import {updateSeo} from './seo-service.js';
 import {reviewArticle} from './article-review.js';
 import {mediaArchitecture,libraryFolders} from '../src/cms/media-architecture.js';
 import {personalities} from '../src/cms/growth-model.js';
@@ -31,6 +33,13 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
+  ["cms_page_get","Read a page draft and its draftVersion before changing it.",{path:{type:"string"}},["path"],true],
+  ["cms_page_save","Save or publish only one page. Needs site:write; publication also needs site:publish.",{path:{type:"string"},draftVersion:{type:"integer"},page:{type:"object"},homeSections:{type:"array"},stats:{type:"array"},clients:{type:"array"},certificates:{type:"array"},publish:{type:"boolean"}},["path","draftVersion","page"],false],
+  ["cms_navigation_get","Read navigation and its draftVersion.",{},[],true],
+  ["cms_navigation_save","Save navigation. Needs site:write; publication also needs site:publish.",{draftVersion:{type:"integer"},nav:{type:"array"},publish:{type:"boolean"}},["draftVersion","nav"],false],
+  ["cms_settings_get","Read public-facing site settings. Credentials are never returned.",{},[],true],
+  ["cms_settings_save","Save public-facing title, description and favicon. Needs settings:write; publication also needs settings:publish.",{draftVersion:{type:"integer"},settings:{type:"object"},publish:{type:"boolean"}},["draftVersion","settings"],false],
+
   ["cms_media_architecture","Read the mandatory library folder and filename rules and allowed destinations before uploading.",{},[],true],
   ["cms_growth","Read portfolio coverage, achievements and next-project suggestions. Personality labels reflect design intent. Assign by analysis only when the owner explicitly requests it.",{},[],true],
   ["cms_editorial_standard","Read the mandatory portfolio copy standard, evidence rules and paragraph budgets.",{},[],true],
@@ -223,7 +232,7 @@ export async function cmsResponse(request, env, store, media, transform) {
     let state = await store.read();
     const owner = await isOwner(request, env);
     let identity = owner
-      ? { name: "Owner", scopes: ["read", "write", "publish"] }
+      ? { name: "Owner", scopes: ["read", "write", "publish", "site:write", "site:publish", "settings:write", "settings:publish"] }
       : null;
     if (!owner) {
       const token = request.headers
@@ -262,6 +271,17 @@ export async function cmsResponse(request, env, store, media, transform) {
     };
     const execute = async (name, args = {}) => {
       requireScope("read");
+      if(name==='cms_page_get'){
+        if(!['/','/work','/journal','/about','/services','/privacy','/contact','/certificates'].includes(args.path))fail('Choose a supported page.');
+        return {draftVersion:state.draftVersion||0,path:args.path,page:state.draft.pages?.[args.path]||{},...(args.path==='/'?{homeSections:state.draft.homeSections||[],stats:state.draft.stats||[],clients:state.draft.clients||[]}:{}),...(args.path==='/certificates'?{certificates:state.draft.certificates||[]}:{})};
+      }
+      if(name==='cms_navigation_get')return {draftVersion:state.draftVersion||0,nav:state.draft.nav||[]};
+      if(name==='cms_settings_get'){const settings=cmsView(state).settings;return {draftVersion:state.draftVersion||0,settings:{title:settings.title,description:settings.description,favicon:settings.favicon||''}};}
+      if(['cms_page_save','cms_navigation_save','cms_settings_save'].includes(name)){
+        const group=name==='cms_settings_save'?'settings':'site';requireScope(group+':write');if(args.publish)requireScope(group+':publish');
+        const change=name==='cms_page_save'?updatePage:name==='cms_navigation_save'?updateNavigation:updateSettings;
+        await write(change(state,args));return {draftVersion:state.draftVersion,published:args.publish===true};
+      }
       if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One primary personality per project. Owner-authorized analysis may classify visible design intent; never claim consumer-research validation."};
       if (name === "cms_growth") return cmsView(state).growth;
       if (name === "cms_editorial_standard") return editorialStandard;
@@ -396,6 +416,8 @@ export async function cmsResponse(request, env, store, media, transform) {
               (t) =>
                 identity.scopes.includes("write") || t.annotations.readOnlyHint,
             )
+            .filter(t=>!['cms_page_save','cms_navigation_save'].includes(t.name)||identity.scopes.includes('site:write'))
+            .filter(t=>t.name!=='cms_settings_save'||identity.scopes.includes('settings:write'))
             .filter(
               (t) =>
                 t.name !== "cms_publish" || identity.scopes.includes("publish"),
@@ -494,81 +516,26 @@ export async function cmsResponse(request, env, store, media, transform) {
         id: crypto.randomUUID(),
         name: String(body.name || "AI assistant").slice(0, 80),
         hash: await hash(token),
-        scopes: body.publish ? ["read", "write", "publish"] : ["read", "write"],
+        scopes: ["read","write",...(body.publish?["publish"]:[]),...(body.site?["site:write",...(body.publish?["site:publish"]:[])]:[]),...(body.settings?["settings:write",...(body.publish?["settings:publish"]:[])]:[])],
         createdAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 90 * 86400000).toISOString(),
       };
       await write({ ...state, agentKeys: [entry, ...keys].slice(0, 30) });
       return json({ token, key: { ...entry, hash: undefined } });
     }
+    if (route === "seo") {
+      if (!owner) fail("Owner access required.",403);
+      await write(updateSeo(state,body));
+      return json({draftVersion:state.draftVersion});
+    }
     if (route === "page") {
       if (!owner) fail("Owner access required.", 403);
       await write(updatePage(state, body));
       return json({ draftVersion: state.draftVersion });
     }
-    if (route === "navigation") {
-      if (!owner) fail("Owner access required.", 403);
-      if (body.draftVersion !== (state.draftVersion || 0))
-        fail("Navigation changed. Reload before saving.", 409);
-      if (!Array.isArray(body.nav) || body.nav.length > 20)
-        fail("Use at most 20 navigation links.");
-      const nav = body.nav.map((item) => {
-        const to = String(item.to || item.url || "");
-        if (!/^(\/[^/\\]|\/$|https:\/\/)/.test(to) || /[\x00-\x20]/.test(to))
-          fail("Use a site path or HTTPS link.");
-        return {
-          id: String(item.id || crypto.randomUUID()),
-          label: String(item.label || "Link").slice(0, 60),
-          to,
-          visible: item.visible !== false,
-        };
-      });
-      for(const required of ['/work','/contact'])if(!nav.some(item=>item.to===required&&item.visible))fail('Keep visible Projects (/work) and Contact (/contact) links in the navigation.');
-      const draft = { ...state.draft, nav },
-        published = body.publish
-          ? { ...state.published, nav: structuredClone(nav) }
-          : state.published;
-      await write({
-        ...state,
-        draft,
-        published,
-        draftVersion: (state.draftVersion || 0) + 1,
-      });
-      return json({ ok: true });
-    }
-    if (route === "settings") {
-      if (!owner) fail("Owner access required.", 403);
-      if (body.draftVersion !== (state.draftVersion || 0))
-        fail("Settings changed. Reload before saving.", 409);
-      const draft = structuredClone(state.draft);
-      draft.pages["/site"] ||= {};
-      draft.pages["/site"].settings = {
-        ...draft.pages["/site"].settings,
-        title: String(body.settings?.title || "Desartly").slice(0, 120),
-        description: String(body.settings?.description || "").slice(0, 400),
-        favicon:
-          typeof body.settings?.favicon === "string" &&
-          /^(data:image\/(png|webp|x-icon|vnd.microsoft.icon);base64,|\/[^/])/.test(
-            body.settings.favicon,
-          )
-            ? body.settings.favicon.slice(0, 360000)
-            : "",
-      };
-      draft.settings={...draft.settings,siteTitle:draft.pages['/site'].settings.title,description:draft.pages['/site'].settings.description};
-      const published = structuredClone(state.published);
-      if (body.publish) {
-        published.pages["/site"] ||= {};
-        published.pages["/site"].settings = structuredClone(draft.pages["/site"].settings);
-        published.settings={...published.settings,siteTitle:draft.settings.siteTitle,description:draft.settings.description};
-      }
-      await write({
-        ...state,
-        draft,
-        published,
-        draftVersion: (state.draftVersion || 0) + 1,
-        ...(body.publish ? { publishedAt: new Date().toISOString() } : {}),
-      });
-      return json({ ok: true });
+    if(route==='navigation'||route==='settings'){
+      if(!owner)fail('Owner access required.',403);
+      await write((route==='navigation'?updateNavigation:updateSettings)(state,body));return json({ok:true});
     }
     fail("Not found.", 404);
   } catch (e) {
