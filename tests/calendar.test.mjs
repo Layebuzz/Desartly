@@ -175,3 +175,9 @@ test('manual owner email processing requires owner auth, rate limit and an email
  assert.equal((await calendarResponse(request(ownerCookie(env)),env)).status,429);
  env.OWNER_RATE_LIMITER={limit:async()=>({success:true})};assert.equal((await calendarResponse(request(ownerCookie(env)),env)).status,409);
 });
+
+test('successful bookings immediately schedule owner email processing and owner is preaccepted',async t=>{
+ const {env}=await fixture(),work=[];const slot=nextSlot();
+ t.mock.method(globalThis,'fetch',async(url,options)=>{if(String(url).endsWith('freeBusy'))return Response.json({calendars:{primary:{busy:[]}}});const event=JSON.parse(options.body);assert.equal(event.attendees.find(a=>a.email==='komeilipv@gmail.com')?.responseStatus,'accepted');assert.equal(event.attendees.find(a=>a.email===brief.email)?.responseStatus,undefined);return Response.json(event);});
+ const response=await calendarResponse(bookingRequest(slot),env,{waitUntil(p){work.push(p)}});assert.equal(response.status,200);assert.equal(work.length,1);await Promise.all(work);
+});

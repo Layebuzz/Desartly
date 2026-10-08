@@ -108,7 +108,7 @@ async function createBooking(env,s,body){
  if(!locked.meta.changes){const retry=await env.DB.prepare('SELECT signature FROM calendar_bookings WHERE id=?').bind(id).first();if(retry?.signature===signature)throw fail('Your confirmation is in progress. Try again in a moment.');throw fail('This time was just booked. Choose another.',409);}
  }
  try{
-  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`Briefing — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name}],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
+  const event=await google(env,`calendars/${encodeURIComponent(s.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`,{method:'POST',body:JSON.stringify({id,summary:`Briefing — ${brief.company}`,description:formatBrief(brief),start:{dateTime:slot.start,timeZone:s.timeZone},end:{dateTime:slot.end,timeZone:s.timeZone},attendees:[{email:brief.email,displayName:brief.name,...(brief.email.toLowerCase()===bookingOwnerEmail?{responseStatus:'accepted'}:{})},...(brief.email.toLowerCase()!==bookingOwnerEmail?[{email:bookingOwnerEmail,displayName:'Ali Komeili',responseStatus:'accepted'}]:[])],conferenceData:{createRequest:{requestId:id,conferenceSolutionKey:{type:'hangoutsMeet'}}},extendedProperties:{private:{desartlyBooking:id}}})});
   const result=confirmation(event,slot,s);await env.DB.prepare("UPDATE calendar_bookings SET status='confirmed', confirmation=? WHERE id=?").bind(JSON.stringify(result),id).run();return result;
  }catch(error){
   // A failed response can follow a successful Google insert. Keep the hold and
@@ -164,7 +164,7 @@ export async function sendBookingOwnerEmails(env){
  const c=await connection(env,emailConnectionKey);
  if(c?.refreshToken&&c.email===bookingOwnerEmail)await flushBookingEmails(env,()=>token(env,emailConnectionKey));
 }
-export async function calendarResponse(request,env){
+export async function calendarResponse(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
  if(!path.startsWith('/api/calendar/')&&!path.startsWith('/api/studio/calendar'))return null;
  try{
@@ -207,7 +207,7 @@ export async function calendarResponse(request,env){
     email=bookingOwnerEmail;
    }
    await saveConnection(env,{refreshToken:data.refresh_token,accessToken:data.access_token,expires:Date.now()+Number(data.expires_in||3600)*1000,...(email?{email}:{})},stored.emailOnly?emailConnectionKey:CONNECTION);
-   if(stored.emailOnly)await env.DB.prepare("UPDATE booking_owner_emails SET status='pending',attempts=0,next_attempt=0 WHERE status='failed'").bind().run();
+   if(stored.emailOnly){await env.DB.prepare("UPDATE booking_owner_emails SET status='pending',attempts=0,next_attempt=0 WHERE status='failed'").bind().run();ctx?.waitUntil(sendBookingOwnerEmails(env).catch(()=>console.error('Owner booking email processing failed; retry from Studio.')));}
    return new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=success','Cache-Control':'no-store'}});
   }
   if(path==='/api/calendar/availability'&&request.method==='GET'){
@@ -223,7 +223,9 @@ export async function calendarResponse(request,env){
    if(!env.PUBLIC_RATE_LIMITER||!(await env.PUBLIC_RATE_LIMITER.limit({key:'booking:'+(request.headers.get('CF-Connecting-IP')||'local')})).success)return json({error:'Please try again in a minute.'},429);
    if(!configured||!c?.refreshToken)throw fail('The booking calendar is not connected yet.');
    const body=JSON.parse(new TextDecoder().decode(await bounded(request,6000)));if(body.website_trap)return json({error:'Booking could not be confirmed.'},400);
-   return json(await createBooking(env,s,body));
+   const result=await createBooking(env,s,body);
+   ctx?.waitUntil(sendBookingOwnerEmails(env).catch(()=>console.error('Owner booking email processing failed; retry from Studio.')));
+   return json(result);
   }
   return json({error:'Not found'},404);
  }catch(error){return json({error:error.status?error.message:'The calendar could not be reached. Please try again.'},error.status||503);}
