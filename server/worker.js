@@ -1,3 +1,4 @@
+import {workerPageResponse} from './worker-pages.js';
 import {staticAssetResponse} from './static-assets.js';
 import {processTelegramQueue} from './telegram-delivery.js';
 import {presentationRenderResponse,materialResponse} from './telegram-material-service.js';
@@ -37,7 +38,7 @@ export default {
           "Cache-Control": "no-store",
         },
       });
-    const response = await env.ASSETS.fetch(request);
+    const response = await workerPageResponse(request,env,env.DB?new D1Store(env.DB):null);
     if (ownerPath(url.pathname) || url.pathname === "/login") {
       const privateResponse = new Response(response.body, response);
       privateResponse.headers.set("Cache-Control", "no-store");
