@@ -1,3 +1,4 @@
+import {publicOrigin} from '../server/site-domains.js';
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 export function OwnerGate({ children }) {
@@ -51,10 +52,10 @@ export function Login() {
     location = useLocation();
   const requested = new URLSearchParams(location.search).get("next");
   const next =
-    requested && /^\/(?![\/\\])/.test(requested) ? requested : "/edit";
+    requested && /^\/(?![\/\\])/.test(requested) ? requested : "/studio";
   return (
     <main className="owner-login">
-      <a className="logo" href="/">
+      <a className="logo" href={publicOrigin}>
         Desartly<span>®</span>
       </a>
       <span className="eyebrow">OWNER ACCESS</span>
@@ -99,7 +100,7 @@ export function Login() {
         </button>
         {error && <p role="alert">{error}</p>}
       </form>
-      <a className="owner-back" href="/">
+      <a className="owner-back" href={publicOrigin}>
         Return to the portfolio
       </a>
     </main>
