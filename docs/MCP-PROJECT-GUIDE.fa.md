@@ -148,3 +148,9 @@ Studio > Projects > New project offers Product, Branding and Communication Desig
 AI uses cms_project_template({discipline:"Product"}) to get the same blocks and instructions without saving or publishing. Add id, title and brandPersonality in cms_create. Continue cms_upload > cms_get > cms_save > cms_review > cms_publish.
 
 HTML is an isolated self-contained responsive demo, not the case study. Set autoHeight and staticImage for PDFs. The panel accepts HTML under 550 KB to leave space inside the 600 KB document limit. Keep narrative and images in separate native blocks.
+
+
+### Live interface components and deployment storage
+Interface overviews, controls and responsive details must be rendered as native `html` blocks, not cropped screenshots. Upload a complete self-contained HTML document; set `componentSelector` to a CSS selector to show only the chosen component while retaining its scripts and hidden dependencies. Omit it to show the complete interface. Set `previewWidth: 390` for a responsive phone demonstration; `autoHeight: true` avoids nested scrolling. Preview each selector and interact with its controls before publishing. Keep raster images for artwork, branding, communication assets and covers. `staticImage` is a PDF fallback only, never the web interface. All three disciplines share cms_create → cms_upload → cms_get → cms_save → cms_review → cms_publish. Updating case content through the CMS does not require a frontend deployment.
+
+Production builds use `node scripts/build-surfaces.mjs`; Vite `build.copyPublicDir` is disabled for Studio. The build rejects duplicated legacy media directories under studio-app. Existing public assets remain for backward compatibility. Deployment Storage includes retained deployments; output reduction affects new builds, not previously retained versions. Review retention separately; do not delete protected/current deployments or upgrade automatically.

@@ -208,6 +208,8 @@ export const contentSchema = {
       html: "<!doctype html>...",
       autoHeight: true,
       previewHeight: 800,
+      componentSelector: "", // Optional CSS selector; scripts and hidden DOM remain intact.
+      previewWidth: 390, // Optional responsive demonstration width.
       staticImage: "/api/media/snapshot-id",
     },
     markdown: {

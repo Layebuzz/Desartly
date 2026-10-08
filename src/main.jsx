@@ -6,7 +6,7 @@ import {HeroSlideEditor,resolveHeroSlides} from './HeroSlides.jsx';
 import {BookCall,BookingLauncher} from './BookCall.jsx';
 import {FilterTabs} from './FilterTabs.jsx';
 import {WorkFilters} from './WorkFilters.jsx';
-import {previewHtml} from './cms/html-preview.js';
+import {previewHtml,componentHtml} from './cms/html-preview.js';
 import {isVisibleProject} from './cms/visibility.js';
 import React, { useState, useEffect } from "react";
 import { DivarCategories } from "./DivarCategories";
@@ -525,7 +525,7 @@ function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
   const html = block.html || "<main style='font-family:system-ui;padding:32px;background:#f5f6fa;color:#202632'><p style='font-size:12px;letter-spacing:.08em;text-transform:uppercase'>HTML sample</p><h1 style='font-size:36px;margin:18px 0'>Your UX prototype lives here.</h1><button style='padding:12px 16px;border:1px solid #202632;background:white'>Try the interaction</button></main>";
   return <section className={"html-block" + (editable ? " html-block-editor" : "")}>
     {import.meta.env.VITE_APP_TARGET !== "public" && editable && <><label className="html-upload" data-editor-ui>Upload HTML file<input type="file" accept=".html,.htm,text/html" onChange={async e => { const file=e.target.files?.[0]; if (!file) return; if(file.size>2000000){e.target.setCustomValidity("Choose an HTML file under 2 MB.");e.target.reportValidity();return;} onChange?.(await file.text()); }}/></label><input className="html-block-title" aria-label="HTML sample title" value={block.title || "UX sample"} onChange={e=>onTitleChange?.(e.target.value)} /><textarea aria-label="HTML sample source" value={html} onChange={e=>onChange?.(e.target.value)} spellCheck={false} /></>}
-    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={block.autoHeight?{height:frameHeight}:undefined} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={previewHtml(html,block.autoHeight)} />
+    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={{...(block.autoHeight?{height:frameHeight}:{}),...(block.previewWidth?{width:"100%",maxWidth:block.previewWidth,marginInline:"auto",display:"block"}:{})}} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={previewHtml(componentHtml(html,block.componentSelector),block.autoHeight)} />
   </section>;
 }
 function Footer() {

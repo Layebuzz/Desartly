@@ -73,6 +73,11 @@ export function validateDocument(kind, doc) {
     if (block.type === "html" && block.component !== "divar-categories" && typeof block.html !== "string")
       fail("HTML blocks need HTML content.");
   }
+  for(const block of doc.blocks||[]){
+    if(block.type!=='html')continue;
+    if(block.componentSelector!==undefined&&(typeof block.componentSelector!=='string'||block.componentSelector.length>500))fail('Component selector must be text under 500 characters.');
+    if(block.previewWidth!==undefined&&(!Number.isFinite(block.previewWidth)||block.previewWidth<240||block.previewWidth>2400))fail('Preview width must be between 240 and 2400 pixels.');
+  }
   for (const key of ["hidden", "archived"])
     if (doc[key] !== undefined && typeof doc[key] !== "boolean")
       fail(key + " must be a boolean.");
