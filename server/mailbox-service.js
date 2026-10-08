@@ -1,3 +1,4 @@
+import {studioMailHtml} from './mail-template.js';
 import {isOwner} from './owner-auth.js';
 const address='Komeili@desartly.info';
 const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'private, no-store'}});
@@ -45,7 +46,7 @@ export async function mailboxResponse(request,env){
  if(path==='/api/studio/mail'&&request.method==='GET'){
  const folder=['inbox','sent','drafts','trash'].includes(url.searchParams.get('folder'))?url.searchParams.get('folder'):'inbox';
  const rows=await env.DB.prepare('SELECT * FROM mailbox_messages WHERE folder=? ORDER BY created_at DESC LIMIT 100').bind(folder).all();
- return json({address,configured:!!env.RESEND_API_KEY,receivingConfigured:!!env.RESEND_WEBHOOK_SECRET,messages:rows.results});
+ return json({address,configured:!!env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true',receivingConfigured:!!env.RESEND_WEBHOOK_SECRET&&env.RESEND_DOMAIN_READY==='true',messages:rows.results});
  }
  if(request.method!=='POST')return json({error:'Method not allowed'},405);
  if(Number(request.headers.get('Content-Length')||0)>150000)return json({error:'Message too large'},413);
@@ -62,13 +63,13 @@ export async function mailboxResponse(request,env){
  await env.DB.prepare("INSERT INTO mailbox_messages(id,direction,folder,sender,recipient,subject,body,created_at,status) VALUES(?,'outbound','drafts',?,?,?,?,?,'draft') ON CONFLICT(id) DO UPDATE SET recipient=excluded.recipient,subject=excluded.subject,body=excluded.body WHERE mailbox_messages.status='draft'").bind(id,address,mail.recipient,mail.subject,mail.body,Date.now()).run();return json({ok:true});
  }
  if(path==='/api/studio/mail/send'){
- if(!env.RESEND_API_KEY)return json({error:'Connect domain email before sending.'},409);
+ if(!env.RESEND_API_KEY||env.RESEND_DOMAIN_READY!=='true')return json({error:'Domain email verification is not complete yet.'},409);
  if(!env.OWNER_RATE_LIMITER||!(await env.OWNER_RATE_LIMITER.limit({key:'mailbox-send'})).success)return json({error:'Try again in a minute.'},429);
  const existing=await env.DB.prepare('SELECT * FROM mailbox_messages WHERE id=?').bind(id).first();
  if(existing&&existing.status!=='draft')return existing.status==='sent'?json({ok:true}):json({error:'This send is awaiting verification. Do not send it again.'},409);
  const claimed=await env.DB.prepare("INSERT INTO mailbox_messages(id,direction,folder,sender,recipient,subject,body,created_at,status) VALUES(?,'outbound','sent',?,?,?,?,?,'sending') ON CONFLICT(id) DO UPDATE SET recipient=excluded.recipient,subject=excluded.subject,body=excluded.body,folder='sent',status='sending' WHERE mailbox_messages.status='draft'").bind(id,address,mail.recipient,mail.subject,mail.body,Date.now()).run();
  if(!claimed.meta.changes)return json({error:'Message is already being sent.'},409);
- try{const result=await provider(env,'/emails',{method:'POST',headers:{'Idempotency-Key':'mailbox-'+id},body:JSON.stringify({from:'Ali Komeili · Desartly <'+address+'>',to:[mail.recipient],subject:mail.subject,text:mail.body})});
+ try{const result=await provider(env,'/emails',{method:'POST',headers:{'Idempotency-Key':'mailbox-'+id},body:JSON.stringify({from:'Ali Komeili · Desartly <'+address+'>',to:[mail.recipient],subject:mail.subject,text:mail.body,html:studioMailHtml(mail.body)})});
  await env.DB.prepare("UPDATE mailbox_messages SET status='sent',provider_id=? WHERE id=?").bind(result.id,id).run();return json({ok:true});
  }catch{await env.DB.prepare("UPDATE mailbox_messages SET status='uncertain' WHERE id=?").bind(id).run();return json({error:'Delivery is unconfirmed. Check the provider before sending again.'},503);}
  }return json({error:'Not found'},404);

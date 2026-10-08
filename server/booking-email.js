@@ -37,8 +37,9 @@ export async function flushBookingEmails(env,getToken){
   try{
    const response=domainMail?await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env.RESEND_API_KEY,'Content-Type':'application/json','Idempotency-Key':'booking-'+row.id},body:JSON.stringify({from:'Desartly <Komeili@desartly.info>',to:[bookingOwnerEmail],subject:'Desartly — New booking',html:bookingEmailHtml(row),text:formatBrief(JSON.parse(row.brief))}),signal:AbortSignal.timeout(10000)}):await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({raw:bookingEmail(row)}),signal:AbortSignal.timeout(10000)});
    if(response.ok){
-    const message=await response.json();if(!message.id)throw Error('Missing Gmail acceptance ID');
+    const message=await response.json();if(!message.id)throw Error('Missing email acceptance ID');
     await env.DB.prepare("UPDATE booking_owner_emails SET status='sent',message_id=?,updated_at=? WHERE booking_id=?").bind(message.id,Date.now(),row.id).run();
+    if(domainMail)try{await env.DB.prepare("INSERT OR IGNORE INTO mailbox_messages(id,provider_id,direction,folder,sender,recipient,subject,body,created_at,status) VALUES(?,?,'outbound','sent',?,?,?,?,?,'sent')").bind('booking-'+row.id,message.id,'Komeili@desartly.info',bookingOwnerEmail,'Desartly — New booking',formatBrief(JSON.parse(row.brief)),Date.now()).run();}catch{console.error('Could not copy booking notification to Sent.');}
    }else if([401,403,429].includes(response.status)){
     const attempts=row.attempts+1;
     await env.DB.prepare('UPDATE booking_owner_emails SET status=?,next_attempt=?,updated_at=? WHERE booking_id=?').bind(attempts>=5?'failed':'pending',Date.now()+Math.min(3600000,60000*2**attempts),Date.now(),row.id).run();
