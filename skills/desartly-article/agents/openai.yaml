@@ -1,0 +1,4 @@
+interface:
+  display_name: "Desartly Article"
+  short_description: "Natural Persian or English articles with evidence-led SEO"
+  default_prompt: "با $desartly-article دربارهٔ موضوعی که مشخص می‌کنم مقالهٔ فارسی یا انگلیسی با لحن طبیعی من و ساختار سئو بنویس؛ کپشن فارسی، انگلیسی و هشتگ‌ها را هم آماده کن و طبق درخواست من با API ذخیره یا منتشر کن."

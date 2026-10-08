@@ -1,3 +1,5 @@
+import {staticAssetResponse} from './static-assets.js';
+import {MediaStorage} from './media-storage.js';
 import {D1Store} from './content-store.js';
 import {materialize} from '../src/cms/materialize.js';
 import {presentationVersion,projectImages} from '../src/cms/telegram-materials.js';
@@ -19,7 +21,7 @@ export async function projectImage(env,project,url,{original=false}={}){
  if(mediaId){const asset=state.media.find(m=>m.id===mediaId&&!m.trashedAt);if(!asset)throw Error('تصویر در کتابخانه موجود نیست.');const selected=original?asset.variants?.at(-1):asset.variants?.find(v=>v.width===1280)||asset.variants?.[0];const stored=selected?.asset||selected||asset;if(!stored.key?.startsWith('desartly/'))throw Error('Invalid media storage reference.');const response=await s3Request(storageConfig(env),'GET',stored.key);if(!response.ok)throw Error('تصویر در دسترس نیست.');return response;}
  const parsed=new URL(url,origin);
  if(parsed.origin!==origin||!/^\/(projects|assets|uploads)\//.test(parsed.pathname)||parsed.search)throw Error('این تصویر باید ابتدا به کتابخانهٔ CMS منتقل شود.');
- const response=await env.ASSETS.fetch(new Request(parsed));if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('تصویر قابل دریافت نیست.');return response;
+ const imageRequest=new Request(parsed);const response=await staticAssetResponse(imageRequest,env,new MediaStorage(env))||await env.ASSETS.fetch(imageRequest);if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('تصویر قابل دریافت نیست.');return response;
 }
 export async function savePresentation(env,project,format,bytes,versionOverride){
  if(!['linkedin','instagram'].includes(format)||bytes.length>48*1024*1024||new TextDecoder().decode(bytes.slice(0,5))!=='%PDF-')throw Error('Invalid PDF.');
