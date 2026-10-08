@@ -182,7 +182,7 @@ export async function updateSchedule(env,body,expected){return withCalendarLock(
  const current=await schedule(env);if(expected&&JSON.stringify(current)!==JSON.stringify(expected))throw fail('Schedule changed. Review a new preview.',409);
  const next=validateSchedule(body);await env.DB.prepare('INSERT INTO calendar_schedule(id,value) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET value=excluded.value').bind(JSON.stringify(next)).run();return next;
 });}
-export async function calendarSlots(env,month){const s=await schedule(env),candidates=candidateSlots(s,month),busy=await freeBusy(env,s,candidates);const holds=await env.DB.prepare("SELECT start_at,end_at FROM calendar_bookings WHERE status='pending' AND expires_at>?").bind(Date.now()).all();busy.push(...holds.results.map(r=>({start:new Date(r.start_at).toISOString(),end:new Date(r.end_at).toISOString()})));return availableSlots(candidates,busy,s.bufferMinutes);}
+export async function calendarSlots(env,month,calendarId){const configured=await schedule(env),s=calendarId?{...configured,calendarId}:configured,candidates=candidateSlots(s,month),busy=await freeBusy(env,s,candidates);const holds=await env.DB.prepare("SELECT start_at,end_at FROM calendar_bookings WHERE status='pending' AND expires_at>?").bind(Date.now()).all();busy.push(...holds.results.map(r=>({start:new Date(r.start_at).toISOString(),end:new Date(r.end_at).toISOString()})));return availableSlots(candidates,busy,s.bufferMinutes);}
 export async function sendBookingOwnerEmails(env){
  const c=await connection(env,emailConnectionKey);
  if((env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true')||(c?.refreshToken&&c.email===bookingOwnerEmail))await flushBookingEmails(env,()=>token(env,emailConnectionKey));
