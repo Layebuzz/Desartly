@@ -1,11 +1,12 @@
+import {canonicalIndustry} from './industries.js';
 import {targetIndustries,personalities,serviceKeys} from './growth-model.js';
 import {projectDiscipline} from '../project-tags.js';
 export const knowledgeGroups=[{id:'projects',label:'Projects',color:'#50d5df',x:330,y:365},{id:'articles',label:'Journal',color:'#83e4eb',x:805,y:365}];
 export function buildKnowledgeGraph(state={}){
- const nodes=[],edges=[],projects=(state.projects||[]).filter(d=>d.status!=='Archived'),articles=(state.articles||[]).filter(d=>d.status!=='Archived');
+ const nodes=[],edges=[],projects=(state.projects||[]).filter(d=>d.status!=='Archived').map(d=>({...d,industry:canonicalIndustry(d.industry,{legacy:true})})),articles=(state.articles||[]).filter(d=>d.status!=='Archived');
  const add=(id,label,group,parent,extra={})=>{if(nodes.some(n=>n.id===id))return id;nodes.push({id,label,group,parent,active:true,...extra});if(parent)edges.push({source:parent,target:id});return id;};
  for(const g of knowledgeGroups)add(g.id,g.label,g.id,null,{kind:'core',x:g.x,y:g.y,depth:0});
- const industries=[...new Set([...targetIndustries,...projects.map(p=>p.industry)].filter(Boolean))];
+ const industries=targetIndustries;
  for(const [di,discipline] of serviceKeys.entries()){
   const docs=projects.filter(p=>projectDiscipline(p)===discipline),base=-Math.PI/2+di*Math.PI*2/3,branch='discipline:'+discipline;
   add(branch,discipline,'projects','projects',{kind:'category',depth:1,active:docs.length>0,x:330+Math.cos(base)*80,y:365+Math.sin(base)*80});

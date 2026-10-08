@@ -1,3 +1,4 @@
+import {industries,validateIndustry,normalizeIndustryState} from '../src/cms/industries.js';
 import {projectTemplate,projectWorkflows} from '../src/cms/project-workflow.js';
 import {updateNavigation,updateSettings} from './site-service.js';
 import {updateSeo} from './seo-service.js';
@@ -50,7 +51,7 @@ const tools = [
     "Read the art-direction and live-benchmark workflow before creating every case study.",
     {
       discipline: { enum: ["Product", "Branding", "Communication Design"] },
-      industry: { type: "string" },
+      industry: { type: "string", enum:industries },
     },
     [],
     true,
@@ -168,6 +169,8 @@ const tools = [
 }));
 export const contentSchema = {
   version: 1,
+  industries,
+  industryPolicy:"Select from industries; custom names are not allowed.",
   projectTemplates: {tool:"cms_project_template",disciplines:projectWorkflows.map(w=>w.discipline)},
   kinds: ["project", "article"],
   required: ["id", "title", "blocks"],
@@ -289,7 +292,7 @@ export async function cmsResponse(request, env, store, media, transform) {
         await write(change(state,args));return {draftVersion:state.draftVersion,published:args.publish===true};
       }
       if(name === "cms_project_template"){if(!projectWorkflows.some(w=>w.discipline===args.discipline))fail("Choose a supported discipline.");return projectTemplate(args.discipline);}
-      if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One primary personality per project. Owner-authorized analysis may classify visible design intent; never claim consumer-research validation."};
+      if (name === "cms_schema") return {...contentSchema, industries,industryPolicy:"Select an approved industry; custom names are rejected.",brandPersonalities:personalities, personalityPolicy:"One primary personality per project. Owner-authorized analysis may classify visible design intent; never claim consumer-research validation."};
       if (name === "cms_growth") return cmsView(state).growth;
       if (name === "cms_editorial_standard") return editorialStandard;
       if (name === "cms_presentation_guide") return presentationGuide(args);
@@ -473,7 +476,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       );
     }
     if (route === "schema" && request.method === "GET")
-      return json(contentSchema);
+      return json({...contentSchema,industries,industryPolicy:"Select an approved industry; custom names are rejected."});
     if (route === "review" && request.method === "GET") {
       requireScope("read");
       return json(
@@ -494,7 +497,18 @@ export async function cmsResponse(request, env, store, media, transform) {
     }
     if (!body || typeof body !== "object" || Array.isArray(body))
       fail("Request body must be an object.", 400);
-    if(route === "growth"){if(!owner)fail("Owner access required.",403);const industry=String(body.industry||"").trim();if(!industry||industry.length>80)fail("Use an industry name up to 80 characters.");const industries=[...new Set([...(state.growthIndustries||[]),industry])];if(industries.length>60)fail("Keep at most 60 target industries.");await write({...state,growthIndustries:industries});return json({ok:true});}
+    if(route === "industries"){
+      if(!owner)fail("Owner access required.",403);
+      const result=normalizeIndustryState(state);
+      if(body.action==='normalize'){
+        if(body.revision!==state.revision)fail("Content changed. Reload before normalizing industries.",409);
+        if(result.unresolved.length)fail("Review unknown industries before normalizing.");
+        if(result.changes.length)await write(result.state);
+      }else if(body.action!=='review')fail("Choose review or normalize.");
+      return json({industries,changes:result.changes,unresolved:result.unresolved});
+    }
+    if(route === "growth"){if(!owner)fail("Owner access required.",403);validateIndustry(body.industry);return json({ok:true});}
+
     if (route === "document") {
       if (!owner) fail("Use MCP tools for agent content operations.", 403);
       return json(await execute("cms_" + body.action, body));

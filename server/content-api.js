@@ -61,7 +61,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
    const draft=versionedSite(body.site,state.draft);const history=[{id:crypto.randomUUID(),date:new Date().toISOString(),site:state.published},...state.history].slice(0,3);await save({...state,draft,published:structuredClone(draft),publishedAt:new Date().toISOString(),history,draftVersion:(state.draftVersion||0)+1});return json({draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/restore'){
-   const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(version.site),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
+   const version=state.history.find(v=>v.id===body.id);if(!version)return json({error:'Version not found'},404);await save({...state,draft:structuredClone(validateSite(version.site)),draftVersion:(state.draftVersion||0)+1});return json({draft:state.draft,draftVersion:state.draftVersion});
   }
   if(path==='/api/studio/media-action'){await save(mediaAction(state,body));return json({ok:true,revision:state.revision});}
   if(path==='/api/studio/media'){

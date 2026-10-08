@@ -1,3 +1,4 @@
+import {validateIndustry,canonicalIndustry} from '../src/cms/industries.js';
 import {validatePresentationReview} from '../src/cms/presentation-readiness.js';
 import {validateAnnouncement} from '../src/cms/announcement.js';
 import {libraryFolders,organiseMedia} from '../src/cms/media-architecture.js';
@@ -98,7 +99,7 @@ export function validateDocument(kind, doc) {
       ...doc,
       discipline: projectDiscipline(doc),
       category: projectDiscipline(doc),
-      industry: projectIndustry(doc),
+      industry: validateIndustry(projectIndustry(doc),{allowEmpty:true}),
     };
     if (doc.industry.length > 80)
       fail("Industry must be 80 characters or fewer.");
@@ -221,7 +222,8 @@ export function mutateDocument(
       (h) => h.id === historyId && h.kind === kind && h.document.id === id,
     );
     if (!entry) fail("Revision not found.", 404);
-    document = entry.document;
+    document = structuredClone(entry.document);
+    if(kind==='project'&&document.industry){document.industry=canonicalIndustry(document.industry,{legacy:true})||document.industry;validateIndustry(document.industry);}
   }
   if (action === "duplicate") {
     const suffix = " — copy";
