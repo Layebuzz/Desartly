@@ -50,14 +50,16 @@ export async function mailboxResponse(request,env){
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  try{
  if(path==='/api/studio/mail'&&request.method==='GET'){
- const folder=['inbox','sent','drafts','trash','archive','starred'].includes(url.searchParams.get('folder'))?url.searchParams.get('folder'):'inbox';
+ const folder=['inbox','email','briefs','sent','drafts','trash','archive','starred'].includes(url.searchParams.get('folder'))?url.searchParams.get('folder'):'inbox';
  const query=String(url.searchParams.get('q')||'').slice(0,200),offset=Math.min(100000,Math.max(0,parseInt(url.searchParams.get('offset')||'0',10)||0));
  const unread=url.searchParams.get('unread')==='1';
- const clause=(folder==='starred'?"starred=1 AND folder!='trash'":'folder=?')+(unread?' AND unread=1':'')+(query?" AND (subject LIKE ? ESCAPE '\\' OR sender LIKE ? ESCAPE '\\' OR recipient LIKE ? ESCAPE '\\' OR body LIKE ? ESCAPE '\\')":'');
- const pattern='%'+query.replace(/[\\%_]/g,c=>'\\'+c)+'%';const params=[...(folder==='starred'?[]:[folder]),...(query?[pattern,pattern,pattern,pattern]:[])];
- const rows=await env.DB.prepare('SELECT * FROM mailbox_messages WHERE '+clause+' ORDER BY created_at DESC LIMIT 50 OFFSET ?').bind(...params,offset).all();
- const total=await env.DB.prepare('SELECT COUNT(*) AS total FROM mailbox_messages WHERE '+clause).bind(...params).first();
- const counts=await env.DB.prepare('SELECT folder,COUNT(*) AS count,SUM(unread) AS unread FROM mailbox_messages GROUP BY folder').bind().all();
+ const source=folder==='email'?"source='email' AND folder='inbox'":folder==='briefs'?"source='brief'":null;
+ const clause=(source|| (folder==='starred'?"starred=1 AND folder!='trash'":'folder=?'))+(unread?' AND unread=1':'')+(query?" AND (subject LIKE ? ESCAPE '\\' OR sender LIKE ? ESCAPE '\\' OR recipient LIKE ? ESCAPE '\\' OR body LIKE ? ESCAPE '\\')":'');
+ const pattern='%'+query.replace(/[\\%_]/g,c=>'\\'+c)+'%';const params=[...((folder==='starred'||source)?[]:[folder]),...(query?[pattern,pattern,pattern,pattern]:[])];
+ const workspace=`WITH correspondence AS (SELECT id,provider_id,direction,folder,sender,recipient,subject,body,created_at,unread,status,starred,template,template_data,cc,bcc,'email' AS source,NULL AS brief_fields FROM mailbox_messages UNION ALL SELECT 'brief:'||json_extract(b.value,'$.id'),NULL,'inbound','inbox',COALESCE(json_extract(b.value,'$.fields.name'),'Website visitor')||' <'||COALESCE(json_extract(b.value,'$.fields.email'),'')||'>','${address}', 'Project brief · '||COALESCE(json_extract(b.value,'$.fields.service'),'New enquiry'),COALESCE(json_extract(b.value,'$.fields.message'),json_extract(b.value,'$.fields.details'),''),CAST(strftime('%s',json_extract(b.value,'$.createdAt')) AS INTEGER)*1000,CASE WHEN json_extract(b.value,'$.status')='done' THEN 0 ELSE 1 END,CASE WHEN json_extract(b.value,'$.status')='done' THEN 'reviewed' ELSE 'new' END,0,'letter','{}','[]','[]','brief',json_extract(b.value,'$.fields') FROM portfolio_state p,json_each(p.value,'$.inbox') b) `;
+ const rows=await env.DB.prepare(workspace+'SELECT * FROM correspondence WHERE '+clause+' ORDER BY created_at DESC LIMIT 50 OFFSET ?').bind(...params,offset).all();
+ const total=await env.DB.prepare(workspace+'SELECT COUNT(*) AS total FROM correspondence WHERE '+clause).bind(...params).first();
+ const counts=await env.DB.prepare(workspace+"SELECT folder,COUNT(*) AS count,SUM(unread) AS unread FROM correspondence GROUP BY folder UNION ALL SELECT 'briefs',COUNT(*),SUM(unread) FROM correspondence WHERE source='brief' UNION ALL SELECT 'email',COUNT(*),SUM(unread) FROM correspondence WHERE source='email' AND folder='inbox'").bind().all();
  return json({address,configured:!!env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true',receivingConfigured:!!env.RESEND_WEBHOOK_SECRET&&env.RESEND_DOMAIN_READY==='true',messages:rows.results,total:total.total,offset,counts:counts.results});
  }
  if(request.method!=='POST')return json({error:'Method not allowed'},405);
