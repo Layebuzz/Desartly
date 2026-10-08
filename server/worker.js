@@ -1,3 +1,5 @@
+import {processTelegramQueue} from './telegram-delivery.js';
+import {presentationRenderResponse,materialResponse} from './telegram-material-service.js';
 import {telegramResponse} from './telegram-service.js';
 import {portfolioResponse} from './portfolio-service.js';
 import {mailboxResponse} from './mailbox-service.js';
@@ -9,14 +11,16 @@ import { D1Store } from "./content-store.js";
 import {cmsResponse} from "./cms-api.js";
 import { MediaStorage } from "./media-storage.js";
 export default {
-  async scheduled(controller,env,ctx){ctx.waitUntil(sendBookingOwnerEmails(env));},
+  async scheduled(controller,env,ctx){ctx.waitUntil(Promise.allSettled([sendBookingOwnerEmails(env),processTelegramQueue(env)]));},
   async fetch(request, env, ctx) {
-    const telegram=await telegramResponse(request,env);if(telegram)return telegram;
+    const render=await presentationRenderResponse(request,env);if(render)return render;
+    const materials=await materialResponse(request,env,ctx);if(materials)return materials;
+    const telegram=await telegramResponse(request,env,ctx);if(telegram)return telegram;
     const auth = await authResponse(request, env);
     if (auth) return auth;
     const mailbox=await mailboxResponse(request,env);if(mailbox)return mailbox;
     const portfolio=await portfolioResponse(request,env,env.DB?new D1Store(env.DB):null);if(portfolio)return portfolio;
-    const calendar=await calendarResponse(request,env,ctx);if(calendar)return calendar;
+    const calendar=await calendarResponse(request,env,ctx);if(calendar){if(request.method==='POST'&&new URL(request.url).pathname==='/api/calendar/book'&&calendar.ok)ctx.waitUntil(processTelegramQueue(env));return calendar;}
     const url = new URL(request.url);
     const backup=await mediaBackupResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env));if(backup)return backup;
     const cms=await cmsResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),null);

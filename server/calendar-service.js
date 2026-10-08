@@ -14,7 +14,7 @@ const un64=text=>Uint8Array.from(atob(text),c=>c.charCodeAt(0));
 async function encryptionKey(env){return crypto.subtle.importKey('raw',await crypto.subtle.digest('SHA-256',enc.encode(env.OWNER_SESSION_SECRET)),{name:'AES-GCM'},false,['encrypt','decrypt']);}
 async function saveConnection(env,value,key=CONNECTION){const iv=crypto.getRandomValues(new Uint8Array(12));const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},await encryptionKey(env),enc.encode(JSON.stringify(value)));await env.DESARTLY_AUTH.put(key,JSON.stringify({iv:b64(iv),data:b64(data)}));}
 async function connection(env,key=CONNECTION){const stored=await env.DESARTLY_AUTH?.get(key,'json');if(!stored)return null;try{return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(stored.iv)},await encryptionKey(env),un64(stored.data))));}catch{return null;}}
-async function schedule(env){return {...defaultSchedule,...await env.DESARTLY_AUTH?.get(SCHEDULE,'json')};}
+export async function schedule(env){const row=env.DB?await env.DB.prepare('SELECT value FROM calendar_schedule WHERE id=1').bind().first():null;return {...defaultSchedule,...(row?JSON.parse(row.value):await env.DESARTLY_AUTH?.get(SCHEDULE,'json'))};}
 export function validateSchedule(body){
  const s={...defaultSchedule,...body};
  if(!Number.isInteger(s.bufferMinutes)||s.bufferMinutes<0||s.bufferMinutes>120||!Array.isArray(s.holidays)||s.holidays.length>100||s.holidays.some(d=>typeof d!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d+'T00:00:00Z'))||new Date(d+'T00:00:00Z').toISOString().slice(0,10)!==d))throw fail('Choose valid holidays and a buffer from 0 to 120 minutes.',400);
@@ -123,7 +123,7 @@ async function createBooking(env,s,body){
   throw error;
  }
 }
-async function manageBooking(env,s,body){
+async function manageBookingInner(env,s,body){
  const id=String(body.id||'');if(!/^[a-f0-9]{32}$/.test(id))throw fail('Choose a website appointment.',400);
  const row=await env.DB.prepare('SELECT * FROM calendar_bookings WHERE id=?').bind(id).first();
  if(!row)throw fail('Appointment not found.',404);
@@ -166,6 +166,22 @@ async function manageBooking(env,s,body){
  await env.DB.prepare("UPDATE calendar_bookings SET status='cancelled' WHERE id=?").bind(hold).run();
  return result;
 }
+export async function withCalendarLock(env,id,operation){
+ const key=crypto.randomUUID(),now=Date.now();
+ const lock=await env.DB.prepare('INSERT INTO calendar_operation_locks(id,token,expires_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires_at=excluded.expires_at WHERE calendar_operation_locks.expires_at<?').bind(id,key,now+180000,now).run();
+ if(!lock.meta?.changes)throw fail('Another calendar change is in progress. Refresh before retrying.',409);
+ try{return await operation();}finally{await env.DB.prepare('DELETE FROM calendar_operation_locks WHERE id=? AND token=?').bind(id,key).run();}
+}
+export async function manageBooking(env,s,body){return withCalendarLock(env,'booking:'+body.id,async()=>{
+ const row=await env.DB.prepare('SELECT * FROM calendar_bookings WHERE id=?').bind(String(body.id)).first();
+ if(body.expected&&(row?.start_at!==body.expected.start_at||row?.end_at!==body.expected.end_at||row?.status!==body.expected.status))throw fail('Appointment changed. Review a new preview.',409);
+ return manageBookingInner(env,s,body);
+});}
+export async function updateSchedule(env,body,expected){return withCalendarLock(env,'schedule',async()=>{
+ const current=await schedule(env);if(expected&&JSON.stringify(current)!==JSON.stringify(expected))throw fail('Schedule changed. Review a new preview.',409);
+ const next=validateSchedule(body);await env.DB.prepare('INSERT INTO calendar_schedule(id,value) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET value=excluded.value').bind(JSON.stringify(next)).run();return next;
+});}
+export async function calendarSlots(env,month){const s=await schedule(env),candidates=candidateSlots(s,month),busy=await freeBusy(env,s,candidates);const holds=await env.DB.prepare("SELECT start_at,end_at FROM calendar_bookings WHERE status='pending' AND expires_at>?").bind(Date.now()).all();busy.push(...holds.results.map(r=>({start:new Date(r.start_at).toISOString(),end:new Date(r.end_at).toISOString()})));return availableSlots(candidates,busy,s.bufferMinutes);}
 export async function sendBookingOwnerEmails(env){
  const c=await connection(env,emailConnectionKey);
  if((env.RESEND_API_KEY&&env.RESEND_DOMAIN_READY==='true')||(c?.refreshToken&&c.email===bookingOwnerEmail))await flushBookingEmails(env,()=>token(env,emailConnectionKey));
@@ -183,7 +199,7 @@ export async function calendarResponse(request,env,ctx){
   if(path==='/api/studio/calendar/email-status'&&request.method==='GET'){const rows=await env.DB.prepare('SELECT booking_id,status,attempts,updated_at FROM booking_owner_emails ORDER BY updated_at DESC LIMIT 100').bind().all();return json({emails:rows.results});}
   if(path==='/api/studio/calendar/manage'&&request.method==='POST')return json(await manageBooking(env,s,JSON.parse(new TextDecoder().decode(await bounded(request,2000)))));
   if(path==='/api/studio/calendar/schedule'&&request.method==='POST'){
-   const body=JSON.parse(new TextDecoder().decode(await bounded(request,8000)));const next=validateSchedule(body);await env.DESARTLY_AUTH.put(SCHEDULE,JSON.stringify(next));return json({ok:true,schedule:next});
+   const body=JSON.parse(new TextDecoder().decode(await bounded(request,8000)));const next=await updateSchedule(env,body);return json({ok:true,schedule:next});
   }
   if(path==='/api/studio/calendar/bookings'&&request.method==='GET'){
    const rows=await env.DB.prepare("SELECT id,start_at,end_at,status,brief,confirmation,created_at FROM calendar_bookings WHERE status!='cancelled' AND signature NOT LIKE 'reschedule:%' AND end_at>? ORDER BY start_at LIMIT 100").bind(Date.now()-86400000).all();return json({bookings:rows.results.map(r=>({...r,brief:JSON.parse(r.brief),confirmation:r.confirmation?JSON.parse(r.confirmation):null}))});

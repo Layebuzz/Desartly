@@ -11,6 +11,7 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "browser": {"binding":"PRESENTATION_BROWSER"},
   "triggers": {"crons": ["* * * * *"]},
   "observability": {
     "enabled": true

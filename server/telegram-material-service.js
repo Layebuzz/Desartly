@@ -1,0 +1,66 @@
+import {D1Store} from './content-store.js';
+import {materialize} from '../src/cms/materialize.js';
+import {presentationVersion,projectImages} from '../src/cms/telegram-materials.js';
+import {s3Request} from './s3.js';
+import {isOwner} from './owner-auth.js';
+const origin='https://desartly.layebuzz.workers.dev';
+export async function telegramProject(env,id){const state=await new D1Store(env.DB).read();const project=materialize(structuredClone(state.draft)).projects.find(p=>p.id===id&&!p.archived);if(!project)throw Error('پروژه پیدا نشد.');return project;}
+const storageConfig=env=>({endpoint:env.S3_ENDPOINT,bucket:env.S3_BUCKET,region:env.S3_REGION,accessKey:env.S3_ACCESS_KEY,secretKey:env.S3_SECRET_KEY});
+export async function privateFile(env,key){if(!key?.startsWith('desartly/private/telegram/'))throw Error('Invalid private file.');const response=await s3Request(storageConfig(env),'GET',key);if(!response.ok)throw Error('فایل خصوصی در دسترس نیست.');return response;}
+export async function projectImage(env,project,url){
+ if(!projectImages(project).includes(url))throw Error('Image is not part of this project.');
+ const state=await new D1Store(env.DB).read();
+ const mediaId=url.match(/^\/api\/media\/([^/?]+)(?:\?.*)?$/)?.[1];
+ if(mediaId){const asset=state.media.find(m=>m.id===mediaId&&!m.trashedAt);if(!asset)throw Error('تصویر در کتابخانه موجود نیست.');const selected=asset.variants?.find(v=>v.width===1280)||asset.variants?.[0]||asset;const response=await s3Request(storageConfig(env),'GET',selected.key);if(!response.ok)throw Error('تصویر در دسترس نیست.');return response;}
+ const parsed=new URL(url,origin);
+ if(parsed.origin!==origin||!/^\/(projects|assets|uploads)\//.test(parsed.pathname)||parsed.search)throw Error('این تصویر باید ابتدا به کتابخانهٔ CMS منتقل شود.');
+ const response=await env.ASSETS.fetch(new Request(parsed));if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('تصویر قابل دریافت نیست.');return response;
+}
+export async function savePresentation(env,project,format,bytes){
+ if(!['linkedin','instagram'].includes(format)||bytes.length>48*1024*1024||new TextDecoder().decode(bytes.slice(0,5))!=='%PDF-')throw Error('Invalid PDF.');
+ const version=await presentationVersion(project,format),key=`desartly/private/telegram/${encodeURIComponent(project.id)}/${format}/${version}.pdf`;
+ const response=await s3Request({...storageConfig(env),contentType:'application/pdf'},'PUT',key,bytes);if(!response.ok)throw Error('ذخیرهٔ خصوصی PDF ناموفق بود.');
+ await env.DB.prepare('INSERT INTO telegram_exports(project_id,format,version,storage_key,byte_size,created_at) VALUES(?,?,?,?,?,?) ON CONFLICT(project_id,format) DO UPDATE SET version=excluded.version,storage_key=excluded.storage_key,byte_size=excluded.byte_size,created_at=excluded.created_at').bind(project.id,format,version,key,bytes.length,Date.now()).run();
+ return {storage_key:key,version,byte_size:bytes.length};
+}
+export async function presentationFile(env,project,format,{old=false}={}){
+ const version=await presentationVersion(project,format),existing=await env.DB.prepare('SELECT * FROM telegram_exports WHERE project_id=? AND format=?').bind(project.id,format).first();
+ if(existing&&(existing.version===version||old))return {...existing,stale:existing.version!==version,response:await privateFile(env,existing.storage_key)};
+ if(!env.PRESENTATION_BROWSER)throw Error('تولید PDF آماده نیست؛ از Presentation studio خروجی را آماده کن.');
+ const {default:puppeteer}=await import('@cloudflare/puppeteer');let browser;const job=crypto.randomUUID();
+ await env.DB.prepare("INSERT INTO telegram_actions(id,owner_id,kind,payload,expires_at,created_at) VALUES(?,'renderer','browser-render',?,?,?)").bind(job,JSON.stringify({projectId:project.id,format}),Date.now()+300000,Date.now()).run();
+ try{
+ browser=await puppeteer.launch(env.PRESENTATION_BROWSER);const page=await browser.newPage();
+ await page.setCookie({name:'desartly_render',value:job,domain:new URL(origin).hostname,path:'/',secure:true,httpOnly:true,sameSite:'Strict'});
+ await page.goto(origin+'/_presentation-render',{waitUntil:'networkidle0',timeout:60000});
+ await page.waitForFunction('window.desartlyRenderResult !== undefined',{timeout:180000});
+ const result=await page.evaluate(()=>window.desartlyRenderResult);if(result.error)throw Error('تولید PDF ناموفق بود؛ تصاویر پروژه را در CMS بررسی کن.');
+ const bytes=Uint8Array.from(atob(result.base64),c=>c.charCodeAt(0));
+ const latest=await telegramProject(env,project.id);if(await presentationVersion(latest,format)!==version)throw Error('محتوای پروژه هنگام تولید تغییر کرد. دوباره درخواست بده.');
+ const saved=await savePresentation(env,project,format,bytes);return {...saved,stale:false,response:new Response(bytes,{headers:{'Content-Type':'application/pdf'}})};
+ }catch(error){if(error.status===429||/429|rate limit|acquisition/i.test(error.message||''))throw Object.assign(Error('تولید PDF در صف محدودیت سرویس قرار گرفت.'),{rejected:true,retryAfter:60});throw error;}finally{if(browser)await browser.close().catch(()=>{});await env.DB.prepare("DELETE FROM telegram_actions WHERE id=? AND kind='browser-render'").bind(job).run();}
+}
+export async function presentationRenderResponse(request,env){
+ const url=new URL(request.url),internal=['/_presentation-render','/api/internal/presentation'].includes(url.pathname),image=url.pathname.startsWith('/api/media/')&&request.headers.get('cookie')?.includes('desartly_render=');if(!internal&&!image)return null;
+ const code=request.headers.get('cookie')?.match(/(?:^|;\s*)desartly_render=([a-f0-9-]{36})(?:;|$)/)?.[1],record=code?await env.DB.prepare("SELECT payload FROM telegram_actions WHERE id=? AND kind='browser-render' AND expires_at>?").bind(code,Date.now()).first():null,job=record?JSON.parse(record.payload):null;
+ if(!job)return new Response('Private render request expired.',{status:403,headers:{'Cache-Control':'no-store'}});
+ if(request.method!=='GET')return new Response('Method not allowed',{status:405});
+ const project=await telegramProject(env,job.projectId);
+ if(image){const imageUrl=url.pathname+url.search;const response=await projectImage(env,project,imageUrl);return new Response(response.body,{headers:{'Content-Type':response.headers.get('Content-Type'),'Cache-Control':'private, no-store'}});}
+ if(url.pathname==='/api/internal/presentation')return Response.json({project,format:job.format},{headers:{'Cache-Control':'private, no-store'}});
+ const response=await env.ASSETS.fetch(new Request(origin+'/presentation-render.html'));const headers=new Headers(response.headers);headers.set('Cache-Control','private, no-store');headers.set('X-Robots-Tag','noindex, nofollow');return new Response(response.body,{status:response.status,headers});
+}
+export async function processRenderJobs(env){
+ await env.DB.prepare("UPDATE telegram_actions SET status='pending' WHERE kind='render' AND status='processing' AND expires_at<?").bind(Date.now()).run();
+ const jobs=await env.DB.prepare("SELECT * FROM telegram_actions WHERE kind='render' AND status='pending' ORDER BY created_at LIMIT 1").all();
+ for(const job of jobs.results){const claim=await env.DB.prepare("UPDATE telegram_actions SET status='processing',expires_at=? WHERE id=? AND status='pending'").bind(Date.now()+240000,job.id).run();if(!claim.meta?.changes)continue;
+ try{const payload=JSON.parse(job.payload);await presentationFile(env,await telegramProject(env,payload.projectId),payload.format);await env.DB.prepare("UPDATE telegram_actions SET status='done' WHERE id=?").bind(job.id).run();}catch(error){await env.DB.prepare("UPDATE telegram_actions SET status=? WHERE id=?").bind(error.retryAfter?'pending':'failed',job.id).run();}}
+}
+export async function materialResponse(request,env,ctx){
+ const url=new URL(request.url);if(url.pathname!=='/api/studio/telegram/materials')return null;
+ if(!await isOwner(request,env))return Response.json({error:'Owner sign-in required.'},{status:401});
+ const headers={'Cache-Control':'private, no-store'};
+ if(request.method==='GET'){const rows=await env.DB.prepare('SELECT project_id,format,version,byte_size,created_at FROM telegram_exports ORDER BY created_at DESC').all(),state=await new D1Store(env.DB).read(),projects=materialize(structuredClone(state.draft)).projects.filter(p=>!p.archived),jobs=await env.DB.prepare("SELECT id,payload,status,created_at FROM telegram_actions WHERE kind='render' ORDER BY created_at DESC LIMIT 20").all();return Response.json({exports:rows.results,projects:projects.map(p=>({id:p.id,title:p.title})),jobs:jobs.results},{headers});}
+ if(request.method!=='POST')return Response.json({error:'Method not allowed'},{status:405});if(request.headers.get('Origin')!==url.origin)return Response.json({error:'Request origin rejected.'},{status:403});
+ try{const raw=await request.text();if(raw.length>2000)throw Error('Request too large.');const body=JSON.parse(raw);const p=await telegramProject(env,body.projectId);if(!['linkedin','instagram','both'].includes(body.format))throw Error('Choose a presentation format.');for(const format of body.format==='both'?['linkedin','instagram']:[body.format])await env.DB.prepare("INSERT INTO telegram_actions(id,owner_id,kind,payload,status,expires_at,created_at) VALUES(?,'studio','render',?,'pending',?,?)").bind(crypto.randomUUID().replaceAll('-',''),JSON.stringify({projectId:p.id,format}),Date.now()+240000,Date.now()).run();ctx?.waitUntil(processRenderJobs(env));return Response.json({ok:true},{status:202,headers});}catch(error){return Response.json({error:error.message},{status:400,headers});}
+}
