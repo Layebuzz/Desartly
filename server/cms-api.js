@@ -1,3 +1,4 @@
+import {projectTemplate,projectWorkflows} from '../src/cms/project-workflow.js';
 import {updateNavigation,updateSettings} from './site-service.js';
 import {updateSeo} from './seo-service.js';
 import {reviewArticle} from './article-review.js';
@@ -33,6 +34,7 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
+  ["cms_project_template","Read the shared Product, Branding or Communication Design upload path and empty native blocks. Does not save or publish.",{discipline:{enum:["Product","Branding","Communication Design"]}},["discipline"],true],
   ["cms_page_get","Read a page draft and its draftVersion before changing it.",{path:{type:"string"}},["path"],true],
   ["cms_page_save","Save or publish only one page. Needs site:write; publication also needs site:publish.",{path:{type:"string"},draftVersion:{type:"integer"},page:{type:"object"},homeSections:{type:"array"},stats:{type:"array"},clients:{type:"array"},certificates:{type:"array"},publish:{type:"boolean"}},["path","draftVersion","page"],false],
   ["cms_navigation_get","Read navigation and its draftVersion.",{},[],true],
@@ -166,6 +168,7 @@ const tools = [
 }));
 export const contentSchema = {
   version: 1,
+  projectTemplates: {tool:"cms_project_template",disciplines:projectWorkflows.map(w=>w.discipline)},
   kinds: ["project", "article"],
   required: ["id", "title", "blocks"],
   projectFields: [
@@ -205,6 +208,7 @@ export const contentSchema = {
       html: "<!doctype html>...",
       autoHeight: true,
       previewHeight: 800,
+      staticImage: "/api/media/snapshot-id",
     },
     markdown: {
       id: "unique-id",
@@ -282,6 +286,7 @@ export async function cmsResponse(request, env, store, media, transform) {
         const change=name==='cms_page_save'?updatePage:name==='cms_navigation_save'?updateNavigation:updateSettings;
         await write(change(state,args));return {draftVersion:state.draftVersion,published:args.publish===true};
       }
+      if(name === "cms_project_template"){if(!projectWorkflows.some(w=>w.discipline===args.discipline))fail("Choose a supported discipline.");return projectTemplate(args.discipline);}
       if (name === "cms_schema") return {...contentSchema, brandPersonalities:personalities, personalityPolicy:"One primary personality per project. Owner-authorized analysis may classify visible design intent; never claim consumer-research validation."};
       if (name === "cms_growth") return cmsView(state).growth;
       if (name === "cms_editorial_standard") return editorialStandard;
