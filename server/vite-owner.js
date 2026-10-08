@@ -1,3 +1,4 @@
+import {portfolioResponse} from './portfolio-service.js';
 import {mediaBackupResponse} from './media-backup.js';
 import {cmsResponse} from "./cms-api.js";
 import sharp from "sharp";
@@ -28,6 +29,7 @@ export function ownerAccessPlugin() {
             : { body: req, duplex: "half" }),
         });
         let response = await authResponse(request, env);
+        if(!response) response=await portfolioResponse(request,env,store);
         if(!response) response=await mediaBackupResponse(request,env,store,store);
         if(!response) response=await cmsResponse(request,env,store,store,null);
         if (!response && requestUrl.pathname.startsWith("/api/")) response = await contentResponse(request, env, store, store, async bytes => {
