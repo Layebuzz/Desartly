@@ -1,3 +1,4 @@
+import {marketingAction} from './marketing-service.js';
 import {agentWorkflow} from '../src/cms/agent-workflow.js';
 import {industries,validateIndustry,normalizeIndustryState} from '../src/cms/industries.js';
 import {projectTemplate,projectWorkflows} from '../src/cms/project-workflow.js';
@@ -528,6 +529,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       }else if(body.action!=='review')fail("Choose review or normalize.");
       return json({industries,changes:result.changes,unresolved:result.unresolved});
     }
+    if(route==='marketing'){if(!owner)fail('Owner access required.',403);await write(marketingAction(state,body));return json({ok:true,revision:state.revision,...(body.action==='create-program'?{programId:state.marketing.programs.at(-1).id}:{})});}
     if(route === "growth"){if(!owner)fail("Owner access required.",403);validateIndustry(body.industry);return json({ok:true});}
 
     if (route === "document") {

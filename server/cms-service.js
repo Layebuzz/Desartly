@@ -148,7 +148,8 @@ export function cmsView(state) {
     published: materialize(structuredClone(state.published)),
   };
   return {
-    growth:growthMetrics({projects:state.published.projects,draftProjects:state.draft.projects,articles:state.draft.blogPosts,certificates:state.draft.certificates,pages:state.draft.pages,inbox:state.inbox,industries:state.growthIndustries||[]}),
+    marketing:state.marketing||{programs:[],tasks:[]},
+    growth:growthMetrics({marketing:state.marketing,projects:state.published.projects,draftProjects:state.draft.projects,articles:state.draft.blogPosts,certificates:state.draft.certificates,pages:state.draft.pages,inbox:state.inbox,industries:state.growthIndustries||[]}),
     knowledge:{certificates:(state.draft.certificates||[]).map(c=>({id:c.id,title:c.title||c.name}))},
     seo: Object.fromEntries(Object.entries(state.draft.pages||{}).map(([path,page])=>[path,page.seo||{}])),
     revision: state.revision,
