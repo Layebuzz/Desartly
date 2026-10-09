@@ -1,3 +1,4 @@
+import {withPhotoEncoder} from './telegram-photos.js';
 import {queueMarketingNotifications,marketingDeliveryCurrent} from './marketing-telegram.js';
 import {zipSync} from 'fflate';
 import {telegramCall,sendPrivateFile} from './telegram-client.js';
@@ -16,19 +17,24 @@ export async function queueBookingNotifications(env){
  const notes=await env.DB.prepare('SELECT * FROM telegram_client_notes WHERE follow_up_at IS NOT NULL AND follow_up_at<=?').bind(Date.now()).all();
  if(settings.reminders)for(const n of notes.results)await enqueueDelivery(env,`followup:${n.booking_id}:${n.updated_at}`,'followup',{text:'👥 پیگیری مشتری\n'+n.note,updatedAt:n.updated_at},{bookingId:n.booking_id});
 }
-async function sendAsset(env,owner,payload,preparedFile){
+export async function sendAsset(env,owner,payload,preparedFile,photoEncoder=withPhotoEncoder){
  const project=await telegramProject(env,payload.projectId),kind=payload.material;
  if(['linkedin','instagram'].includes(kind)){
   const file=preparedFile||await presentationFile(env,project,kind,{old:payload.old===true});const result=await sendPrivateFile(env,owner,file.response,`${project.id}-${kind}.pdf`,{caption:project.title+(file.stale?' — نیازمند بازتولید؛ نسخهٔ قدیمی به درخواست شما':' — '+(kind==='instagram'?'پرزنتیشن عمودی':'پرزنتیشن افقی'))});return String(result.message_id);
  }
  if(kind==='cover'){const image=project.coverImage||project.heroImage;if(!image)throw Object.assign(Error('کاور پروژه آماده نیست.'),{rejected:true});const response=await projectImage(env,project,image,{original:true});const result=await sendPrivateFile(env,owner,response,project.id+'-cover.webp',{caption:project.title+' — کاور اصلی'});return String(result.message_id);}
- // Original-file albums have durable chunk rows. Retrying a later chunk cannot resend earlier ones.
  const all=projectImages(project);if(!all.length)throw Object.assign(Error('تصویری برای این پروژه موجود نیست.'),{rejected:true});
- const chunk=all.slice(payload.offset||0,(payload.offset||0)+10),form=new FormData(),media=[],originals={};let webp=false;
- for(const [i,url] of chunk.entries()){const response=await projectImage(env,project,url,{original:true}),bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>48*1024*1024)throw Object.assign(Error('یکی از تصاویر برای آلبوم بزرگ است. از کاور یا فایل پروژه استفاده کن.'),{rejected:true});const mime=response.headers.get('content-type')||'image/webp';const extension=mime.includes('png')?'png':mime.includes('jpeg')?'jpg':mime.includes('webp')?'webp':'bin';webp ||= extension==='webp';originals[`${project.id}-${String((payload.offset||0)+i+1).padStart(2,'0')}.${extension}`]=bytes;form.set('image'+i,new Blob([bytes],{type:response.headers.get('content-type')||'image/webp'}),`${i+1}.${extension}`);media.push({type:'document',media:'attach://image'+i,...(i===0?{caption:project.title+' — آلبوم '+(Math.floor((payload.offset||0)/10)+1)}:{})});}
- if(webp){const bytes=zipSync(originals,{level:0});return String((await sendPrivateFile(env,owner,new Response(bytes,{headers:{'Content-Type':'application/zip'}}),`${project.id}-album-${Math.floor((payload.offset||0)/10)+1}.zip`,{caption:project.title+' — آلبوم فایل‌های اصلی؛ بدون کاهش کیفیت'})).message_id);}
- if(media.length===1)return String((await sendPrivateFile(env,owner,await projectImage(env,project,chunk[0],{original:true}),project.id+'-image.webp',{caption:project.title+' — تصویر اصلی'})).message_id);
- form.set('chat_id',owner);form.set('media',JSON.stringify(media));const result=await telegramCall(env,'sendMediaGroup',form);return result.map(x=>x.message_id).join(',');
+ const chunk=all.slice(payload.offset||0,(payload.offset||0)+10);if(!chunk.length)throw Object.assign(Error('این بخش آلبوم موجود نیست.'),{rejected:true});
+ if(kind==='originals'){
+  const originals={};for(const [i,url] of chunk.entries()){const response=await projectImage(env,project,url,{original:true}),bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>48*1024*1024)throw Error('فایل اصلی از محدودیت دریافت بزرگ‌تر است.');const mime=response.headers.get('content-type')||'',extension=mime.includes('png')?'png':mime.includes('jpeg')?'jpg':mime.includes('webp')?'webp':'bin';originals[project.id+'-'+String((payload.offset||0)+i+1).padStart(2,'0')+'.'+extension]=bytes;}
+  const bytes=zipSync(originals,{level:0});return String((await sendPrivateFile(env,owner,new Response(bytes,{headers:{'Content-Type':'application/zip'}}),project.id+'-originals-'+(Math.floor((payload.offset||0)/10)+1)+'.zip',{caption:project.title+' — فایل‌های اصلی بدون تغییر'})).message_id);
+ }
+ return photoEncoder(env,async encode=>{
+  const form=new FormData(),media=[];
+  for(const [i,url] of chunk.entries()){const response=await projectImage(env,project,url,{original:true}),bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>48*1024*1024)throw Error('تصویر اصلی برای آماده‌سازی بزرگ است.');const jpeg=await encode(bytes,response.headers.get('content-type')||'image/webp');form.set('image'+i,new Blob([jpeg],{type:'image/jpeg'}),project.id+'-'+((payload.offset||0)+i+1)+'.jpg');media.push({type:'photo',media:'attach://image'+i,...(i===0?{caption:project.title+' — آلبوم عکس '+(Math.floor((payload.offset||0)/10)+1)}:{})});}
+  form.set('chat_id',owner);if(media.length===1){form.set('photo',form.get('image0'));form.delete('image0');form.set('caption',media[0].caption);return String((await telegramCall(env,'sendPhoto',form)).message_id);}form.set('media',JSON.stringify(media));const result=await telegramCall(env,'sendMediaGroup',form);return result.map(x=>x.message_id).join(',');
+ });
+
 }
 export async function flushTelegramDeliveries(env,{allowGeneration=true}={}){
  if(!env.DB||!env.DESARTLY_AUTH)return;const settings=await env.DB.prepare('SELECT * FROM telegram_settings WHERE id=1').first();if(!settings?.owner_id)return;

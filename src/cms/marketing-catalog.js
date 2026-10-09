@@ -1,3 +1,4 @@
+import {expandedMarketingActions} from './marketing-actions-expanded.js';
 import {additionalMarketingActions} from './marketing-actions.js';
 export const marketingStages=[['awareness','Awareness'],['consideration','Consideration'],['acquisition','Acquisition'],['conversion','Conversion'],['retention','Retention & expansion']];
 const definitions=[
@@ -42,7 +43,7 @@ const actionable=[
 ['international','پورتفولیوی انگلیسی را بازبینی کن','Review the English portfolio','زبان، نقش واقعی، کیفیت تصاویر و تناسب پروژه‌ها با بازار هدف را بررسی کن.','Review language, actual role, image quality and relevance to the target market.'],
 ['international','یک بازار خارجی را انتخاب کن','Define one international target market','صنعت، نوع مشتری و دلیل تناسب خدماتت با یک بازار مشخص را بنویس.','Define an industry, customer profile and why your services fit one specific market.']
 ];
-for(const [channel,fa,en,briefFa,briefEn] of [...actionable,...additionalMarketingActions]){const c=marketingChannels.find(c=>c.id===channel),index=c.templates.filter(t=>t.id.includes('-action-')).length;for(const language of ['fa','en'])c.templates.push({id:channel+'-action-'+index+'-'+language,channel,stage:c.stage,language,title:language==='fa'?fa:en,brief:language==='fa'?briefFa:briefEn,minutes:45});}
+for(const [channel,fa,en,briefFa,briefEn] of [...actionable,...additionalMarketingActions,...expandedMarketingActions]){const c=marketingChannels.find(c=>c.id===channel),index=c.templates.filter(t=>t.id.includes('-action-')).length;for(const language of ['fa','en'])c.templates.push({id:channel+'-action-'+index+'-'+language,channel,stage:c.stage,language,title:language==='fa'?fa:en,brief:language==='fa'?briefFa:briefEn,minutes:45});}
 for(const c of marketingChannels)for(const t of c.templates){t.language||=/[\u0600-\u06ff]/.test(t.title)?'fa':'en';if(!t.id.includes('-action-')&&t.language==='fa')t.brief='یک خروجی مشخص، مخاطب هدف و قدم بعدی تعریف کن؛ پس از اجرا، لینک یا یادداشت نتیجه را ثبت کن.';}
 export const marketingTemplates=marketingChannels.flatMap(c=>c.templates);
 export const taskStatus=task=>task.done?'done':task.status==='doing'?'doing':'todo';

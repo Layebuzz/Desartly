@@ -17,6 +17,7 @@ async function projectCard(env,owner,p){
  await reply(env,owner,p.title+'\n\n'+String(p.summary||'').replace(/<[^>]*>/g,'').slice(0,1500)+'\n\nوضعیت: '+(p.status==='published'?'منتشرشده':'پیش‌نویس')+'\nخدمات: '+String(p.deliverables||p.discipline||'در CMS ثبت نشده').slice(0,350)+'\nخروجی PDF: '+(labels.join('، ')||'در اولین درخواست تولید می‌شود.')+'\nدریافت فقط در همین گفت‌وگوی خصوصی انجام می‌شود.',[
  [{text:'پرزنتیشن افقی',callback_data:action('linkedin')},{text:'پرزنتیشن عمودی',callback_data:action('instagram')}],
  [{text:'هر دو PDF',callback_data:action('both')},{text:'آلبوم تصاویر',callback_data:action('album')}],
+ [{text:'فایل‌های اصلی ZIP',callback_data:action('originals')}],
  [{text:'کاور اصلی',callback_data:action('cover')},{text:'کپشن فارسی',callback_data:action('fa')},{text:'English caption',callback_data:action('en')}],
  ...rows.results.length?[[{text:'دریافت PDF قدیمی با برچسب',callback_data:action('old')}]]:[],
  ...(p.status==='published'?[[{text:'پروژه در سایت',url:'https://www.desartly.info/work/'+encodeURIComponent(p.id)}]]:[]),
@@ -26,9 +27,9 @@ async function projectCard(env,owner,p){
 async function requestMaterial(env,owner,project,material,updateId){
  if(['fa','en'].includes(material)){const caption=projectCaption(project,material);if(!caption){await reply(env,owner,'کپشن '+(material==='fa'?'فارسی':'انگلیسی')+' این پروژه هنوز در CMS نوشته نشده است.');return;}for(let i=0;i<caption.length;i+=3800)await reply(env,owner,caption.slice(i,i+3800));return;}
  if(material==='old'){await reply(env,owner,'این گزینه نسخهٔ ذخیره‌شده را حتی اگر قدیمی باشد، با برچسب نیازمند بازتولید می‌فرستد.',[[{text:'نسخهٔ ذخیره‌شدهٔ افقی',callback_data:'asset:old-linkedin:'+project.id},{text:'نسخهٔ ذخیره‌شدهٔ عمودی',callback_data:'asset:old-instagram:'+project.id}]]);return;}
- const allowed=['linkedin','instagram','both','album','cover','old-linkedin','old-instagram'];if(!allowed.includes(material))throw Error('نوع فایل معتبر انتخاب کن.');
+ const allowed=['linkedin','instagram','both','album','originals','cover','old-linkedin','old-instagram'];if(!allowed.includes(material))throw Error('نوع فایل معتبر انتخاب کن.');
  const kinds=material==='both'?['linkedin','instagram']:[material];let count=0;
- for(const requested of kinds){const old=requested.startsWith('old-'),kind=requested.replace('old-','');if(old&&!await env.DB.prepare('SELECT project_id FROM telegram_exports WHERE project_id=? AND format=?').bind(project.id,kind).first())throw Error('نسخهٔ ذخیره‌شده‌ای وجود ندارد.');const parts=kind==='album'?Math.ceil(projectImages(project).length/10):1;if(!parts)throw Error('آلبوم این پروژه هنوز تصویر ندارد.');for(let i=0;i<parts;i++){await enqueueDelivery(env,`asset:${updateId}:${kind}:${i}`,'asset',{projectId:project.id,material:kind,old,offset:i*10});count++;}}
+ for(const requested of kinds){const old=requested.startsWith('old-'),kind=requested.replace('old-','');if(old&&!await env.DB.prepare('SELECT project_id FROM telegram_exports WHERE project_id=? AND format=?').bind(project.id,kind).first())throw Error('نسخهٔ ذخیره‌شده‌ای وجود ندارد.');const parts=['album','originals'].includes(kind)?Math.ceil(projectImages(project).length/10):1;if(!parts)throw Error('آلبوم این پروژه هنوز تصویر ندارد.');for(let i=0;i<parts;i++){await enqueueDelivery(env,`asset:${updateId}:${kind}:${i}`,'asset',{projectId:project.id,material:kind,old,offset:i*10});count++;}}
  await reply(env,owner,'درخواست '+project.title+' ثبت شد. فایل آماده مستقیماً می‌رسد؛ تولید PDF جدید ممکن است کمی زمان ببرد.'+(count>1?' آلبوم/فایل‌ها به ترتیب در '+count+' بخش ارسال می‌شوند.':''));
 }
 export async function handleUpdate(update,env,settings,ctx){
