@@ -5,7 +5,7 @@ export async function putToken(env,value){const iv=crypto.getRandomValues(new Ui
 export async function telegramCall(env,method,body){
  const secret=await token(env);if(!secret)throw Object.assign(Error('Connect your Telegram bot first.'),{rejected:true});
  let response,data;try{response=await fetch(`https://api.telegram.org/bot${secret}/${method}`,{method:'POST',...(body instanceof FormData?{}:{headers:{'Content-Type':'application/json'}}),body:body instanceof FormData?body:JSON.stringify(body),signal:AbortSignal.timeout(body instanceof FormData?45000:15000)});data=await response.json();}catch{throw Object.assign(Error('Telegram did not confirm the request. Check connection before retrying.'),{uncertain:true});}
- if(!response.ok||!data.ok)throw Object.assign(Error('Telegram rejected the request. Check bot access and connection.'),{rejected:response.status<500,telegramCode:data.error_code,retryAfter:data.parameters?.retry_after});return data.result;
+ if(!response.ok||!data.ok)throw Object.assign(Error('Telegram rejected the request: '+String(data.description||'Check bot access and connection.').replaceAll(secret,'[redacted]').replace(/https?:\/\/\S+/g,'[URL]').slice(0,300)),{rejected:response.status<500,telegramCode:data.error_code,retryAfter:data.parameters?.retry_after});return data.result;
 }
 export async function sendPrivateFile(env,chatId,response,name,{photo=false,caption=''}={}){
  const bytes=new Uint8Array(await response.arrayBuffer());if(bytes.length>48*1024*1024)throw Object.assign(Error('فایل از محدودیت تلگرام بزرگ‌تر است.'),{rejected:true});

@@ -1,3 +1,4 @@
+import {unzipSync} from 'fflate';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
@@ -21,7 +22,7 @@ test('owner can request saved captions and hidden/unpaired or foreign users get 
 
 test('ordered original-file albums attach private bytes and partial failures cannot resend completed parts',async t=>{
  const {env,db,project}=fixture();project.blocks=Array.from({length:11},(_,i)=>({type:'image',image:`/projects/fixture/${i}.webp`}));db.prepare('UPDATE portfolio_state SET value=? WHERE id=1').run(JSON.stringify({draft:{cmsVersion:2,projects:[project]},media:[]}));let calls=0;
- t.mock.method(globalThis,'fetch',async(url,options)=>{if(String(url).includes('sendMediaGroup')){calls++;const media=JSON.parse(options.body.get('media'));assert.equal(media[0].type,'document');assert.equal(media[0].media,'attach://image0');assert(options.body.get('image0') instanceof Blob);if(calls===2)throw Error('Response lost');return Response.json({ok:true,result:media.map((_,i)=>({message_id:i+1}))});}return Response.json({ok:true,result:{message_id:100}});});
+ t.mock.method(globalThis,'fetch',async(url,options)=>{if(String(url).includes('sendDocument')){calls++;const document=options.body.get('document');assert.equal(document.type,'application/zip');const files=unzipSync(new Uint8Array(await document.arrayBuffer()));assert.equal(Object.keys(files).length,calls===1?10:2);assert.deepEqual([...Object.values(files)[0]],[1,2,3]);if(calls===2)throw Error('Response lost');return Response.json({ok:true,result:{message_id:100}});}assert(!String(url).includes('sendMediaGroup'));return Response.json({ok:true,result:{message_id:100}});});
  for(const offset of [0,10])await enqueueDelivery(env,'album:'+offset,'asset',{projectId:'fixture',material:'album',offset});await flushTelegramDeliveries(env);await flushTelegramDeliveries(env);assert.equal(calls,2);assert.deepEqual(db.prepare('SELECT status FROM telegram_deliveries ORDER BY rowid').all().map(r=>r.status),['sent','uncertain']);
 });
 

@@ -21,7 +21,7 @@ export function mediaOwnerFolder(state,item){
 }
 export function organiseMedia(state){
  const next=structuredClone(state);next.mediaFolders=libraryFolders(next);
- for(const item of next.media||[])item.folder=mediaOwnerFolder(next,item);
+ for(const item of next.media||[])if(!item.trashedAt)item.folder=mediaOwnerFolder(next,item);
  return next;
 }
 export const mediaArchitecture={

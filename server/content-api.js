@@ -1,3 +1,4 @@
+import {encodeStoredState,stateStorageLimit} from './state-storage.js';
 import {validateFolder,organiseMedia} from '../src/cms/media-architecture.js';
 import {mediaAction} from './media-service.js';
 import {webpSize} from './webp-size.js';
@@ -19,6 +20,10 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  const save=async next=>{state=await store.write(organiseMedia(next),state.revision);return state;};
  if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
  if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',s3:!!(env.S3_ENDPOINT&&env.S3_BUCKET&&env.S3_ACCESS_KEY&&env.S3_SECRET_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
+ if(path==='/api/studio/storage'&&request.method==='GET'){
+  const assets=new Map();let unknown=0;for(const item of state.media||[])for(const variant of item.variants||[]){const key=JSON.stringify(variant.asset||{id:item.id,width:variant.width});if(!Number.isFinite(variant.size)){unknown++;continue;}assets.set(key,variant.size);}const libraryBytes=[...assets.values()].reduce((a,b)=>a+b,0),storedBytes=new TextEncoder().encode(state.historyStorageVersion===1?encodeStoredState(state):JSON.stringify(state)).length;
+  return json({cms:{used:storedBytes,capacity:stateStorageLimit,remaining:Math.max(0,stateStorageLimit-storedBytes)},library:{used:libraryBytes,capacity:state.mediaStorageCapacity||null,remaining:state.mediaStorageCapacity?Math.max(0,state.mediaStorageCapacity-libraryBytes):null,unknown,scope:'Registered library assets and their variants, including Trash. Private exports and provider backups are excluded.'}});
+ }
  if(path==='/api/studio/upload'&&request.method==='POST'){
   const folder=validateFolder(state,decodeURIComponent(request.headers.get('X-Media-Folder')||'Site assets'));
   const bytes=await bounded(request,12*1024*1024);const type=request.headers.get('Content-Type')||'';const id=crypto.randomUUID();const name=decodeURIComponent(request.headers.get('X-File-Name')||'Upload').slice(0,180);let variants=[];
@@ -54,6 +59,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
   const body=JSON.parse(new TextDecoder().decode(await bounded(request,8*1024*1024)));
   // Activate only after every deployed reader supports the lossless history codec.
   if(path==='/api/studio/storage'){
+   if(body.action==='media-capacity'){if(body.revision!==state.revision)return json({error:'The library changed. Refresh before trying again.'},409);if(body.bytes!==null&&(!Number.isSafeInteger(body.bytes)||body.bytes<=0||body.bytes>10**15))return json({error:'Use a valid storage capacity.'},400);await save({...state,mediaStorageCapacity:body.bytes});return json({ok:true,revision:state.revision});}
    if(body.action!=='compact-history')return json({error:'Choose a supported storage action.'},400);
    if(body.revision!==state.revision)return json({error:'Content changed. Reload before compacting history.'},409);
    await save({...state,historyStorageVersion:1});return json({ok:true,revision:state.revision,historyStorageVersion:1});

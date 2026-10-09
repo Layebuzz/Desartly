@@ -22,7 +22,7 @@ function largeHistory(){
 test('lossless history storage preserves legacy state, revisions and Unicode while reducing the oversized row',()=>{
  const state=largeHistory(),plain=JSON.stringify(state),stored=encodeStoredState(state);
  assert.ok(Buffer.byteLength(plain)>stateStorageLimit);assert.ok(Buffer.byteLength(stored)<stateStorageLimit);assert.deepEqual(decodeStoredState(stored),state);
- const raw=JSON.parse(stored);assert.equal(raw._historyArchive.encoding,'gzip-base64-v1');assert.deepEqual(raw.media,state.media);assert.deepEqual(raw.draft,state.draft);assert.deepEqual(decodeStoredState(plain),state);assert.equal(encodeStoredState({history:[],media:[]}),JSON.stringify({history:[],media:[]}));
+ const raw=JSON.parse(stored);assert.equal(raw._historyArchive.encoding,'gzip-base64-v1');assert.deepEqual(raw.media,state.media);assert.deepEqual(raw.draft.projects.map(p=>p.id),state.draft.projects.map(p=>p.id));assert.deepEqual(decodeStoredState(plain),state);assert.equal(encodeStoredState({history:[],media:[]}),JSON.stringify({history:[],media:[]}));
 });
 test('an optimized JPEG upload succeeds with a formerly over-budget history and preserves every snapshot',async()=>{
  const before=largeHistory(),{db,store}=fixture(before),files=new Map();
@@ -49,4 +49,8 @@ test('compression activation is explicit and preserves a plain legacy row until 
  const activate=revision=>contentResponse(new Request('https://site.test/api/studio/storage',{method:'POST',headers:{Cookie:cookie,Origin:'https://site.test','Content-Type':'application/json'},body:JSON.stringify({action:'compact-history',revision})}),env,store,{},null);
  assert.equal((await activate(2)).status,409);assert.equal((await activate(3)).status,200);
  const after=await store.read();assert.equal(after.historyStorageVersion,1);assert.deepEqual(after.history,state.history);assert.deepEqual(after.documentHistory,state.documentHistory);assert.deepEqual(after.draft,state.draft);assert.deepEqual(after.published,state.published);
+});
+
+test('active HTML is deduplicated losslessly and survives atomic media changes',async()=>{
+ const state=largeHistory();const html='<section>آزمایش علمی</section>'.repeat(100000);state.draft.projects[0].blocks=[{id:'demo',type:'html',html}];state.published=structuredClone(state.draft);const original=structuredClone(state);const stored=encodeStoredState(state);assert.ok(Buffer.byteLength(stored)<stateStorageLimit);assert.deepEqual(state,original);assert.deepEqual(decodeStoredState(stored),state);const {store}=fixture(state);await store.write(state,3);const media=await store.readMedia();await store.writeMedia(media,4);const after=await store.read();assert.deepEqual(after.draft,state.draft);assert.deepEqual(after.published,state.published);assert.deepEqual(after.history,state.history);
 });

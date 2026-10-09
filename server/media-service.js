@@ -8,6 +8,18 @@ export function mediaAction(state,body){
  const folder=String(body.folder||'Site assets').trim().replace(/^\/+|\/+$/g,'');
  if(!folder||folder.length>160||/[\\\x00-\x1f\x7f]/.test(folder)||folder.split('/').some(p=>!p||p==='.'||p==='..'))fail('Use a valid folder path up to 160 characters.');
  if(body.action==='folder'){if(!next.mediaFolders.includes(folder)){next.customMediaFolders=[...new Set([...(next.customMediaFolders||[]),folder])];next.mediaFolders=libraryFolders(next);}return next;}
+ if(body.action==='folder-color'){if(!next.mediaFolders.includes(folder))fail('Folder not found.',404);if(body.color!==null&&!/^#[0-9a-f]{6}$/i.test(body.color||''))fail('Choose a valid folder color.');next.mediaFolderColors={...next.mediaFolderColors};if(body.color===null)delete next.mediaFolderColors[folder];else next.mediaFolderColors[folder]=body.color;return next;}
+ if(body.action==='trash-folder'){
+  const source=String(body.source||folder),inside=path=>path===source||path?.startsWith(source+'/');
+  const automatic=libraryFolders({...next,customMediaFolders:[]});if(!next.mediaFolders.includes(source)||automatic.some(inside))fail('Folders belonging to live content are protected. Archive the content first.',409);
+  const items=next.media.filter(m=>!m.trashedAt&&inside(m.folder));for(const item of items)if(references(next.draft,item.id)||references(next.published,item.id)||references(next.history,item.id)||references(next.documentHistory,item.id))fail('This folder contains files used by content or history.',409);
+  const date=new Date().toISOString();next.trashedMediaFolders=[...(next.trashedMediaFolders||[]),{path:source,paths:(next.customMediaFolders||[]).filter(inside),ids:items.map(m=>m.id),date}];for(const item of items)item.trashedAt=date;
+  next.customMediaFolders=(next.customMediaFolders||[]).filter(path=>!inside(path));next.mediaFolders=libraryFolders(next);return next;
+ }
+ if(body.action==='restore-folder'){
+  const record=(next.trashedMediaFolders||[]).find(r=>r.path===body.source);if(!record)fail('Trashed folder not found.',404);if(next.mediaFolders.includes(record.path))fail('A folder already exists at this path. Rename it before restoring.',409);
+  next.customMediaFolders=[...new Set([...(next.customMediaFolders||[]),...record.paths,record.path])];for(const item of next.media)if(record.ids.includes(item.id)&&item.trashedAt===record.date)delete item.trashedAt;next.trashedMediaFolders=next.trashedMediaFolders.filter(r=>r!==record);next.mediaFolders=libraryFolders(next);return next;
+ }
  if(['move-folder','copy-folder'].includes(body.action)){
   const source=String(body.source||'');
   if(!next.mediaFolders.includes(source)||['Projects','Journal','Certificates','Site assets'].includes(source))fail('Choose a movable folder.');
@@ -16,6 +28,7 @@ export function mediaAction(state,body){
   const inside=path=>path===source||path?.startsWith(source+'/');
   const relocate=path=>folder+path.slice(source.length);
   const paths=next.mediaFolders.filter(inside);
+  const colors={...next.mediaFolderColors};for(const [path,color] of Object.entries(colors))if(inside(path)){colors[relocate(path)]=color;if(body.action==='move-folder')delete colors[path];}next.mediaFolderColors=colors;
   if(body.action==='move-folder'){
    next.customMediaFolders=(next.customMediaFolders||[]).map(path=>inside(path)?relocate(path):path);
    const locations={...(next.mediaFolderLocations||{})};
