@@ -426,3 +426,5 @@ test('all three shared project templates are read-only and create valid private 
  const invalid=await (await call(store,'tools/call',{name:'cms_project_template',arguments:{discipline:'Unknown'}})).json();
  assert.ok(invalid.error||invalid.result?.isError);
 });
+
+test('reference tools authenticate without expanding large CMS content',async()=>{const store=await fixture(['read']);const access=await store.read();store.readAccess=async()=>({agentKeys:access.agentKeys});store.read=async()=>{throw Error('Heavy content must not be read');};for(const name of ['cms_presentation_guide','cms_benchmarks','cms_grid_presets']){const response=await call(store,'tools/call',{name,arguments:{}});const body=await response.json();assert.ok(!body.result.isError,JSON.stringify(body));}});

@@ -239,7 +239,8 @@ export async function cmsResponse(request, env, store, media, transform) {
       request.headers.get("Origin") !== url.origin
     )
       fail("Request origin rejected.", 403);
-    let state = await store.read();
+    let loaded=!store.readAccess,state=store.readAccess?await store.readAccess():await store.read();
+    const loadState=async()=>{if(!loaded){state=await store.read();loaded=true;}};
     const owner = await isOwner(request, env);
     let identity = owner
       ? { name: "Owner", scopes: ["read", "write", "publish", "site:write", "site:publish", "settings:write", "settings:publish"] }
@@ -281,6 +282,13 @@ export async function cmsResponse(request, env, store, media, transform) {
     };
     const execute = async (name, args = {}) => {
       requireScope("read");
+      if(name==='cms_schema')return {...contentSchema,industries,brandPersonalities:personalities,industryPolicy:'Select an approved industry; custom names are rejected.'};
+      if(name==='cms_editorial_standard')return editorialStandard;
+      if(name==='cms_presentation_guide')return presentationGuide(args);
+      if(name==='cms_benchmarks')return benchmarkSearch(args);
+      if(name==='cms_grid_presets')return gridPresets();
+      if(name==='cms_project_template'){if(!projectWorkflows.some(w=>w.discipline===args.discipline))fail('Choose a supported discipline.');return projectTemplate(args.discipline);}
+      await loadState();
       if(name==='cms_page_get'){
         if(!['/','/work','/journal','/about','/services','/privacy','/contact','/certificates'].includes(args.path))fail('Choose a supported page.');
         return {draftVersion:state.draftVersion||0,path:args.path,page:state.draft.pages?.[args.path]||{},...(args.path==='/'?{homeSections:state.draft.homeSections||[],stats:state.draft.stats||[],clients:state.draft.clients||[]}:{}),...(args.path==='/certificates'?{certificates:state.draft.certificates||[]}:{})};
@@ -462,6 +470,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       return json({ jsonrpc: "2.0", id: rpc.id, result });
     }
     const route = url.pathname.slice("/api/cms/".length);
+    if(route!=="schema")await loadState();
     if (route === "seo-report" && request.method === "GET") {
       if(!owner)fail("Owner access required.",403);
       return json(url.searchParams.has("auditPage")?await liveSeoAudit(state,url.searchParams.get("auditPage")):seoInventory(state));

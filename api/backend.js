@@ -14,7 +14,7 @@ export async function proxy(request, send = fetch) {
   const target = new URL(path, backend);
   for (const [key,value] of incoming.searchParams) if(key !== '__route') target.searchParams.append(key,value);
   const headers = new Headers();
-  for (const key of ['accept','content-type','authorization','cookie','x-file-name','x-media-folder','x-media-alt','mcp-protocol-version','mcp-session-id','last-event-id','range']) {
+  for (const key of ['accept','content-type','authorization','cookie','x-file-name','x-media-folder','x-media-alt','x-replace-media','mcp-protocol-version','mcp-session-id','last-event-id','range']) {
     const value=request.headers.get(key); if(value) headers.set(key,value);
   }
   if(origin) headers.set('Origin',backend);

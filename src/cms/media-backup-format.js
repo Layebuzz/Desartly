@@ -2,7 +2,7 @@ import {libraryFolders} from './media-architecture.js';
 export const checksum=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('');
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 const safeFolder=s=>typeof s==='string'&&s.length<=500&&!s.split('/').some(p=>!p||p==='.'||p==='..')&&!/[\\\x00-\x1f]/.test(s);
-const types=new Set(['image/webp','image/jpeg','image/png','image/gif','image/svg+xml','image/avif','application/pdf']);
+const types=new Set(['image/webp','image/jpeg','image/png','image/gif','image/svg+xml','image/avif','application/pdf','video/mp4','video/webm','audio/mpeg','audio/wav','audio/ogg','text/plain']);
 export const mediaArchivePath=(m,i)=>`files/${m.folder}/${m.id}--${i}--${m.name.replace(/[\\/\x00-\x1f<>:"|?*]/g,'_').slice(0,180)||'file'}`;
 export function backupManifest(state){return {format:'desartly-media',version:1,createdAt:new Date().toISOString(),folders:libraryFolders(state),locations:state.mediaFolderLocations||{},media:state.media.map(m=>({...Object.fromEntries(['id','name','alt','folder','type','createdAt','trashedAt'].filter(k=>m[k]!==undefined).map(k=>[k,m[k]])),variants:m.variants.map((v,i)=>({width:v.width,size:v.size,path:mediaArchivePath(m,i),source:JSON.stringify(v.asset)}))}))};}
 export function validateManifest(value){
