@@ -3,6 +3,9 @@ import {encodeStoredStateAsync,decodeStoredStateAsync,stateStorageLimit} from '.
 export function initialState(){return {revision:0,draft:defaults(),published:defaults(),history:[],media:[],inbox:[],events:{},updatedAt:null};}
 export class D1Store{
  constructor(db){this.db=db;}
+ async skillList(){const rows=await this.db.prepare('SELECT value FROM agent_skills').all();return rows.results.map(r=>JSON.parse(r.value));}
+ async skillGet(id){const row=await this.db.prepare('SELECT value FROM agent_skills WHERE id=?').bind(id).first();return row?JSON.parse(row.value):null;}
+ async skillWrite(skill,expected){const statement=expected===0?this.db.prepare('INSERT OR IGNORE INTO agent_skills(id,revision,value) VALUES(?,?,?)').bind(skill.id,skill.revision,JSON.stringify(skill)):this.db.prepare('UPDATE agent_skills SET revision=?,value=? WHERE id=? AND revision=?').bind(skill.revision,JSON.stringify(skill),skill.id,expected);const result=await statement.run();if(!result.meta.changes)throw Object.assign(Error('Skill changed. Refresh before uploading.'),{status:409});}
  async readAccess(){const row=await this.db.prepare("SELECT json_extract(value,'$.agentKeys') AS keys FROM portfolio_state WHERE id=1").first();return {agentKeys:JSON.parse(row?.keys||'[]')};}
  async storageUsage(){const row=await this.db.prepare('SELECT length(CAST(value AS BLOB)) AS bytes FROM portfolio_state WHERE id=1').first();return row?.bytes||0;}
  async read(){const row=await this.db.prepare('SELECT value FROM portfolio_state WHERE id = 1').first();return row?await decodeStoredStateAsync(row.value):initialState();}

@@ -3,7 +3,7 @@ name: desartly-article
 description: Write or revise evidence-led, SEO-focused Persian or English articles for Desartly in Ali’s natural caption voice; prepare editable CMS articles and bilingual private social captions, and save or publish through existing API functions when requested. Use for Journal articles, not project case studies or website engineering.
 metadata:
   author: Ali / Desartly
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # Desartly article
@@ -36,3 +36,7 @@ Verify language and reading direction, mobile readability, heading hierarchy, li
 Report briefly in Persian: draft/live link or local deliverable, primary language, key editorial/SEO decisions and checks actually completed. If authentication or source verification is blocked, preserve the draft and state the precise gap without claiming publication.
 
 Example: «با $desartly-article دربارهٔ نقش تایپوگرافی در اعتماد به برند، یک مقالهٔ فارسی برای طراح‌ها بنویس و به‌صورت پیش‌نویس در CMS ذخیره کن.»
+
+## Agent connection and live versions
+
+Start with `cms_workflow {kind:"article"}` through MCP, or POST `/api/cms/tools` with `{name:"cms_workflow",arguments:{kind:"article"}}`. The same token scopes and optimistic document versions apply. The active skill catalog is `/api/skills`; `/api/skills/desartly-article/download` serves the current package independently of deployments. Use filtered/paged media inventories and `/api/cms/upload` for binary uploads to the draft’s Journal folder. Read reference tools once, preserve fresh document versions before writes, and check state after timeout/503 before any bounded retry. Avoid whole-site saves.

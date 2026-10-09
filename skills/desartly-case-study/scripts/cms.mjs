@@ -3,7 +3,7 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-const readTools=new Set(['cms_schema','cms_editorial_standard','cms_presentation_guide','cms_project_template','cms_benchmarks','cms_grid_presets','cms_media_architecture','cms_media_list','cms_list','cms_get','cms_review']);
+const readTools=new Set(['cms_workflow','cms_schema','cms_editorial_standard','cms_presentation_guide','cms_project_template','cms_benchmarks','cms_grid_presets','cms_media_architecture','cms_media_list','cms_list','cms_get','cms_review']);
 const writeTools=new Set(['cms_create','cms_save','cms_upload']);
 export function createClient({endpoint='https://studio.desartly.info/mcp',token,cookie,fetchImpl=fetch}={}){
  const url=new URL(endpoint);

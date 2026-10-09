@@ -1,3 +1,4 @@
+import {skillResponse} from './skill-service.js';
 import {workerPageResponse} from './worker-pages.js';
 import {staticAssetResponse} from './static-assets.js';
 import {processTelegramQueue} from './telegram-delivery.js';
@@ -15,6 +16,7 @@ import { MediaStorage } from "./media-storage.js";
 export default {
   async scheduled(controller,env,ctx){ctx.waitUntil(Promise.allSettled([sendBookingOwnerEmails(env),processTelegramQueue(env)]));},
   async fetch(request, env, ctx) {
+    if(new URL(request.url).pathname.startsWith('/api/skills'))return skillResponse(request,env,env.DB?new D1Store(env.DB):null,new MediaStorage(env));
     const staticAsset=await staticAssetResponse(request,env,new MediaStorage(env));if(staticAsset)return staticAsset;
     const render=await presentationRenderResponse(request,env);if(render)return render;
     const materials=await materialResponse(request,env,ctx);if(materials)return materials;

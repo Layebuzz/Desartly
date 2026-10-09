@@ -1,3 +1,4 @@
+import {agentWorkflow} from '../src/cms/agent-workflow.js';
 import {industries,validateIndustry,normalizeIndustryState} from '../src/cms/industries.js';
 import {projectTemplate,projectWorkflows} from '../src/cms/project-workflow.js';
 import {updateNavigation,updateSettings} from './site-service.js';
@@ -36,6 +37,7 @@ const hash = async (token) =>
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 const tools = [
+  ["cms_workflow","Get compact project/article agent setup, routes, scopes and safe publishing steps.",{kind:{enum:["project","article"]}},[],true],
   ["cms_project_template","Read the shared Product, Branding or Communication Design upload path and empty native blocks. Does not save or publish.",{discipline:{enum:["Product","Branding","Communication Design"]}},["discipline"],true],
   ["cms_page_get","Read a page draft and its draftVersion before changing it.",{path:{type:"string"}},["path"],true],
   ["cms_page_save","Save or publish only one page. Needs site:write; publication also needs site:publish.",{path:{type:"string"},draftVersion:{type:"integer"},page:{type:"object"},homeSections:{type:"array"},stats:{type:"array"},clients:{type:"array"},certificates:{type:"array"},publish:{type:"boolean"}},["path","draftVersion","page"],false],
@@ -139,7 +141,7 @@ const tools = [
     ["kind", "id", "version"],
     false,
   ],
-  ["cms_media_list", "List reusable media assets.", {}, [], true],
+  ["cms_media_list", "List reusable media; filter by exact folder, query and paginate.", {folder:{type:"string"},query:{type:"string"},offset:{type:"integer"},limit:{type:"integer"}}, [], true],
   [
     "cms_upload",
     "Upload media as base64. On Vercel keep decoded files under 3 MB for JSON overhead. Raster images are optimized automatically; use the returned URL.",
@@ -282,6 +284,7 @@ export async function cmsResponse(request, env, store, media, transform) {
     };
     const execute = async (name, args = {}) => {
       requireScope("read");
+      if(name==='cms_workflow')return {...agentWorkflow(args),scopes:identity.scopes};
       if(name==='cms_schema')return {...contentSchema,industries,brandPersonalities:personalities,industryPolicy:'Select an approved industry; custom names are rejected.'};
       if(name==='cms_editorial_standard')return editorialStandard;
       if(name==='cms_presentation_guide')return presentationGuide(args);
@@ -327,7 +330,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       }
       if (name === "cms_get") return readDocument(state, args.kind, args.id);
       if (name === "cms_media_list")
-        return (state.media || []).map(({ variants, ...item }) => item);
+        {const list=(state.media||[]).filter(m=>!m.trashedAt&&(!args.folder||m.folder===args.folder)&&(!args.query||[m.name,m.alt].join(' ').toLowerCase().includes(String(args.query).toLowerCase()))).map(({variants,...item})=>item);if(args.limit===undefined&&args.offset===undefined)return list;const offset=Math.max(0,Math.trunc(Number(args.offset)||0)),limit=Math.min(100,Math.max(1,Math.trunc(Number(args.limit)||40)));return {items:list.slice(offset,offset+limit),total:list.length,nextOffset:offset+limit<list.length?offset+limit:null};}
       if (name === "cms_media_architecture") return {...mediaArchitecture,allowedFolders:libraryFolders(state)};
       if (name === "cms_upload") {
         requireScope("write");
@@ -470,6 +473,10 @@ export async function cmsResponse(request, env, store, media, transform) {
       return json({ jsonrpc: "2.0", id: rpc.id, result });
     }
     const route = url.pathname.slice("/api/cms/".length);
+    if(route==='workflow'&&request.method==='GET'){requireScope('read');return json({...agentWorkflow({kind:url.searchParams.get('kind')||'project'}),scopes:identity.scopes});}
+    if(route==='tools'&&request.method==='GET'){requireScope('read');return json({tools:tools.filter(t=>identity.scopes.includes('write')||t.annotations.readOnlyHint)});}
+    if(route==='tools'&&request.method==='POST'){const body=JSON.parse(new TextDecoder().decode(await bounded(request,7*1024*1024)));if(!tools.some(t=>t.name===body.name))fail('Unknown CMS tool.',404);return json({result:await execute(body.name,body.arguments||{})});}
+    if(route==='upload'&&request.method==='POST'){requireScope('write');const headers=new Headers(request.headers);headers.set('Origin',url.origin);return contentResponse(new Request(url.origin+'/api/studio/upload',{method:'POST',headers,body:request.body,duplex:'half'}),env,store,media,transform,{upload:true});}
     if(route!=="schema")await loadState();
     if (route === "seo-report" && request.method === "GET") {
       if(!owner)fail("Owner access required.",403);

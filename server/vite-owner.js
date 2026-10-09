@@ -1,3 +1,4 @@
+import {skillResponse} from './skill-service.js';
 import {portfolioResponse} from './portfolio-service.js';
 import {mediaBackupResponse} from './media-backup.js';
 import {cmsResponse} from "./cms-api.js";
@@ -29,6 +30,7 @@ export function ownerAccessPlugin() {
             : { body: req, duplex: "half" }),
         });
         let response = await authResponse(request, env);
+        if(!response) response=await skillResponse(request,env,store,store);
         if(!response) response=await portfolioResponse(request,env,store);
         if(!response) response=await mediaBackupResponse(request,env,store,store);
         if(!response) response=await cmsResponse(request,env,store,store,null);
