@@ -1,3 +1,4 @@
+import {signSkillRequest} from './s3.js';
 import { S3Media } from './s3.js';
 
 export class MediaStorage {
@@ -9,6 +10,7 @@ export class MediaStorage {
   if(!this.s3)throw Object.assign(Error('Media storage is not configured.'),{status:503});
   return this.s3.put(id,bytes,type);
  }
+ authorizeSkill(key,sha256){if(!this.s3)throw Error('Media storage is not configured.');return signSkillRequest(this.s3.config,'PUT',key,sha256,'application/zip');}
  authorizeStatic(asset){if(!this.s3)throw Error('Media storage is not configured.');return this.s3.authorizeStatic(asset);}
  discardStaged(id){if(!this.s3)throw Error('Media storage is not configured.');return this.s3.discardStaged(id);}
  get(asset,range){

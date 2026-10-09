@@ -56,3 +56,16 @@ export async function signStaticRequest(config,method,key,sha256,type){
  const signing=await hmac(await hmac(await hmac(await hmac('AWS4'+config.secretKey,day),region),'s3'),'aws4_request');
  return {url:url.href,headers:{'x-amz-date':date,'x-amz-content-sha256':digest,...(method==='PUT'?{'Content-Type':type}:{}),Authorization:'AWS4-HMAC-SHA256 Credential='+config.accessKey+'/'+scope+', SignedHeaders='+names+', Signature='+hex(await hmac(signing,toSign))}};
 }
+
+export async function signSkillRequest(config,method,key,sha256,type){
+ if(['.','..'].includes(key.split('/').at(-1))||!['GET','PUT'].includes(method)||!/^desartly\/private\/skills-staging\/[a-f0-9]{64}\/[a-zA-Z0-9_.-]+$/.test(key)||! /^[a-f0-9]{64}$/.test(sha256))throw Error('Invalid skill transfer.');
+ const url=new URL(config.endpoint);if(url.protocol!=='https:')throw Error('Storage requires HTTPS.');
+ url.pathname='/'+[config.bucket,key].join('/').split('/').map(escape).join('/');
+ const date=new Date().toISOString().replace(/[:-]|\.\d{3}/g,''),day=date.slice(0,8),region=config.region||'us-east-1';
+ const digest=method==='PUT'?sha256:await hash(new Uint8Array());
+ const names='host;x-amz-content-sha256;x-amz-date';
+ const canonical=[method,url.pathname,'','host:'+url.host+'\nx-amz-content-sha256:'+digest+'\nx-amz-date:'+date+'\n',names,digest].join('\n');
+ const scope=day+'/'+region+'/s3/aws4_request',toSign='AWS4-HMAC-SHA256\n'+date+'\n'+scope+'\n'+await hash(enc.encode(canonical));
+ const signing=await hmac(await hmac(await hmac(await hmac('AWS4'+config.secretKey,day),region),'s3'),'aws4_request');
+ return {url:url.href,headers:{'x-amz-date':date,'x-amz-content-sha256':digest,...(method==='PUT'?{'Content-Type':type}:{}),Authorization:'AWS4-HMAC-SHA256 Credential='+config.accessKey+'/'+scope+', SignedHeaders='+names+', Signature='+hex(await hmac(signing,toSign))}};
+}
