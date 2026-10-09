@@ -1,3 +1,4 @@
+import {publicSite} from '../src/cms/schema.js';
 import {privacyBody} from '../src/privacy-content.js';
 import {resolveAbout} from '../src/about-content.js';
 import {practiceStats} from '../src/cms/practice-stats.js';
@@ -28,4 +29,9 @@ export function initialPublicContent(site,path){
  if(path==='/'&&(!site.homeSections?.length||site.homeSections.some(s=>(typeof s==='string'?s:s.id)==='stats'&&s.visible!==false)))body+='<section aria-label="Selected practice statistics">'+practiceStats(site).map(s=>'<article><strong>'+esc(s.value)+'</strong><h3>'+esc(s.label)+'</h3>'+text(s.detail)+'</article>').join('')+'</section>';
  return '<header><a href="/">Desartly</a><nav aria-label="Main navigation">'+links.map(([url,label])=>'<a href="'+url+'">'+label+'</a>').join(' · ')+'</nav></header><main id="main"><h1>'+esc(doc?.title||page.title||titles[path])+'</h1>'+body+'</main><footer>'+((site.footer||[]).filter(i=>i.visible!==false&&typeof i.url==='string'&&/^\/(?![\/\\])/.test(i.url)).map(i=>'<a href="'+esc(i.url)+'">'+esc(i.label)+'</a>').join(' · '))+'</footer>';
 }
-export function pageBody(html,site,path){return html.replace(/<div id="root">\s*<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div>');}
+export function publicBootstrap(site){
+ const visible=publicSite(site),keys=['projects','categories','certificates','pages','nav','stats','clients','blogPosts','homeSections','settings'];
+ return JSON.stringify({site:Object.fromEntries(keys.filter(k=>visible[k]!==undefined).map(k=>[k,visible[k]]))}).replaceAll('<','\\u003c').replaceAll('\u2028','\\u2028').replaceAll('\u2029','\\u2029');
+}
+export function pageBody(html,site,path){return html.replace(/<div id="root">\s*<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div><script id="desartly-published" type="application/json">'+publicBootstrap(site)+'</script>');}
+

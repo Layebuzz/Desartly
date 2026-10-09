@@ -33,3 +33,15 @@ test('server HTML includes real about experience and certificate content',()=>{
  const s=initialState().published;s.certificates=[{title:'Verified course',issuer:'Provider',description:'Course details',image:'/api/media/1'}];const about=initialPublicContent(s,'/about');assert(about.includes('Divar'));assert(about.includes('Creative direction'));const cert=initialPublicContent(s,'/certificates');assert(cert.includes('Verified course'));assert(cert.includes('Course details'));
  const profile=JSON.parse(pageStructuredData(s,'/about').match(/>(.*)<\/script>/)[1]);assert.equal(profile['@type'],'ProfilePage');assert.equal(profile.mainEntity.name,'Ali Komeili');
 });
+
+import{publicBootstrap,pageBody}from'../server/public-content.js';
+test('public bootstrap excludes hidden documents and safely embeds HTML without ending its script',()=>{
+ const site=initialState().published;site.projects.push({id:'hidden',hidden:true,title:'Private',blocks:[]});site.blogPosts=[{id:'test',title:'</script><script>alert(1)</script>',blocks:[]}];site.media=[{id:'private-media'}];
+ const json=publicBootstrap(site);assert(!json.includes('</script>'));const data=JSON.parse(json).site;assert(!data.projects.some(p=>p.id==='hidden'));assert.equal(data.media,undefined);assert.equal(data.blogPosts[0].title,site.blogPosts[0].title);
+ const html=pageBody('<body><div id="root"></div></body>',site,'/');assert(html.includes('id="desartly-published"'));assert(html.includes('initial-public-content'));
+});
+test('browser bootstrap renders published server data without needing the robots-blocked API',async()=>{
+ const originalDocument=globalThis.document,originalFetch=globalThis.fetch,originalLocation=globalThis.location;
+ try{globalThis.document={getElementById:()=>({textContent:JSON.stringify({site:{projects:[],categories:['Branding']}})})};globalThis.location={pathname:'/'};globalThis.fetch=()=>{throw Error('The API must not be requested')};const {bootstrapCloud,cloud}=await import('../src/cloud.js');await bootstrapCloud();assert.equal(cloud.ready,true);assert.equal(cloud.error,'');assert.deepEqual(cloud.values['pol-categories'],['Branding']);}
+ finally{globalThis.document=originalDocument;globalThis.fetch=originalFetch;globalThis.location=originalLocation;}
+});

@@ -12,7 +12,7 @@ export async function workerPageResponse(request,env,store){
  const route=surfaceRoute(url.hostname,path,url.search.slice(1));
  if(route.redirect)return new Response(null,{status:302,headers:{Location:route.redirect,'Cache-Control':'no-store'}});
  const respond=(body,status=200,type='text/html; charset=utf-8',extra={})=>new Response(request.method==='HEAD'?null:body,{status,headers:{'Content-Type':type,'Cache-Control':'public, max-age=0, must-revalidate','X-Desartly-Host':'cloudflare',...extra}});
- if(path==='/robots.txt')return respond('User-agent: *\nAllow: /\nDisallow: /studio\nDisallow: /login\nDisallow: /preview/\nDisallow: /api/\nDisallow: /*/edit\nSitemap: '+publicOrigin+'/sitemap.xml\n',200,'text/plain; charset=utf-8');
+ if(path==='/robots.txt')return respond('User-agent: *\nAllow: /\nAllow: /api/site\nAllow: /api/media/\nAllow: /api/static\nDisallow: /studio\nDisallow: /login\nDisallow: /preview/\nDisallow: /api/\nDisallow: /*/edit\nSitemap: '+publicOrigin+'/sitemap.xml\n',200,'text/plain; charset=utf-8');
  if(path==='/manifest.webmanifest')return respond(JSON.stringify({name:'Desartly — Ali Komeili',short_name:'Desartly',start_url:'/',display:'browser',background_color:'#ffffff',theme_color:'#202632',icons:[{src:'/favicon.svg',sizes:'any',type:'image/svg+xml'}]}),200,'application/manifest+json');
  try{
   const shellPath=route.studio?'/studio-app/index.html':'/shell.html';

@@ -3,7 +3,8 @@ const fields={'pol-published':'projects','pol-draft':'projects','pol-categories'
 function load(site){if(!site)return;site={...site,pages:{...site.pages,'/site':{...site.pages?.['/site'],settings:{...site.settings,title:site.settings?.siteTitle||'Desartly',...site.pages?.['/site']?.settings}}}};for(const [key,field]of Object.entries(fields)){if(site[field]!==undefined)cloud.values[key]=site[field];}}
 export async function bootstrapCloud(){
  try{
-  let data;for(let attempt=0;attempt<2;attempt++){try{const r=await fetch('/api/site',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('Cloud content unavailable');data=await r.json();break;}catch(error){if(attempt===1)throw error;}}if(!data.site||!Array.isArray(data.site.projects))throw Error('Published content unavailable');cloud.ready=true;
+  let data;const snapshot=globalThis.document?.getElementById('desartly-published')?.textContent;if(snapshot){try{data=JSON.parse(snapshot)}catch{}}
+  if(!data?.site)for(let attempt=0;attempt<2;attempt++){try{const r=await fetch('/api/site',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('Cloud content unavailable');data=await r.json();break;}catch(error){if(attempt===1)throw error;}}if(!data.site||!Array.isArray(data.site.projects))throw Error('Published content unavailable');cloud.ready=true;
   const editing=/\/(edit|new)\/?$/.test(location.pathname)||location.pathname==='/admin'||location.pathname.startsWith('/studio')||location.pathname.startsWith('/preview/');
   cloud.allowLocal=editing;
   if(editing){const response=await fetch('/api/studio');if(response.ok){const state=await response.json();cloud.version=state.draftVersion||0;load(state.draftVersion?state.draft:data.site);return;}}
