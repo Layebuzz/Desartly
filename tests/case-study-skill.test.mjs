@@ -55,3 +55,8 @@ test('existing owner session fallback stays on Studio, redacts credentials and y
  const bearer=createClient({token:'fixture-token',cookie,fetchImpl:async(url,options)=>{assert.equal(options.headers.Cookie,undefined);assert.equal(options.headers.Authorization,'Bearer fixture-token');return Response.json({result:{structuredContent:{ok:true}}});}});await bearer('cms_schema');
  const failed=createClient({cookie,fetchImpl:async()=>Response.json({result:{isError:true,content:[{type:'text',text:'fixture-owner-session '+cookie}]}})});await assert.rejects(failed('cms_schema'),e=>!e.message.includes('fixture-owner-session'));
 });
+
+test('article download contains the complete current research-led bilingual skill',async()=>{
+ const data=await readFile(new URL('../public/downloads/desartly-article.zip',import.meta.url));const archive=unzipSync(data);const files=['SKILL.md','agents/openai.yaml','references/editorial.md','references/seo.md','references/cms.md','references/research-quality.md'];assert.equal(Object.keys(archive).length,files.length);
+ for(const file of files)assert.equal(strFromU8(archive['desartly-article/'+file]),await readFile(new URL('../skills/desartly-article/'+file,import.meta.url),'utf8'));
+});

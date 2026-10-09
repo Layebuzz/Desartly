@@ -1,6 +1,8 @@
 # CMS connection and economical operations
 
-Default Studio: `https://studio.desartly.info`; public site: `https://www.desartly.info`; Streamable HTTP MCP: `https://studio.desartly.info/mcp`. ## Connection discovery
+Default Studio: `https://studio.desartly.info`; public site: `https://www.desartly.info`; Streamable HTTP MCP: `https://studio.desartly.info/mcp`.
+
+## Connection discovery
 
 Use the first available authorized route:
 
@@ -34,6 +36,18 @@ node scripts/cms.mjs call cms_publish @work/publish-arguments.json work/publishe
 Search `cms_list` by confirmed title and compare `cms_get` media references to the inventory. Folder paths may be moved or custom; `Projects/foo` does not prove `foo` is the intended document. Preserve existing URLs/ownership and stable slug. Reuse media by returned URL, not guessed storage paths. Build contact sheets locally from authorized media; then view full detail only where necessary. Do not read every PDF page or generate images by default.
 
 For genuinely new assets, `cms_create` establishes `Projects/<slug>` before upload. Refresh allowed folders, then call `cms_upload` with `{name,mimeType,folder,alt,base64}`. Read file bytes in a script so base64 never enters model context or logs. On the Vercel path keep decoded uploads under 3 MB; check the live image-transformation capability before relying on server optimization. When unavailable, optimize raster files locally to WebP before API upload; browser uploads already use client optimization. Preserve legibility and aspect ratio. Use meaningful kebab-case filenames and returned URLs. Do not upload copies merely to reorganize library folders.
+
+## Current-chat attachments and missing folders
+
+This branch applies only to project assets the human owner actually attached in the current chat and identified as inputs to the case study/upload. A file path mentioned in text, assets discovered elsewhere, or an attached screenshot reporting a CMS problem is not by itself authorization to import project assets. If the intended project cannot be established from the request and assets, ask one focused identity question before creating anything.
+
+1. Read `cms_schema`, `cms_media_architecture`, and a targeted `cms_list`; inspect `cms_get` for a candidate existing project. Preserve its ID and allowed folder. Do not create a second project merely to get a folder.
+2. If no project exists, choose a meaningful stable lowercase kebab-case slug supported by the project identity; create its private project draft via `cms_create {kind:"project",document}` using live required fields and template. This establishes `Projects/<slug>` in the current CMS. Refresh `cms_media_architecture` and use the exact allowed path. Do not invent a mkdir tool, use database writes or create a local directory as a substitute for the site library. For an existing document with no allowed folder, inspect the current functions and their supported repair route; do not duplicate the document or bypass the API. Report a genuine API limitation if no supported route exists.
+3. Import only the supplied project attachments using `cms_upload` with the confirmed folder, meaningful filenames, correct MIME and descriptive alt where relevant. Inspect and optimize raster assets when necessary, preserving legibility and aspect ratio. Keep HTML/PDF content usable. Read bytes in a script; never expose base64 in model context. Unsupported file types must be reported and preserved privately, not silently dropped, disguised with a new extension or claimed as uploaded.
+4. Check the existing folder inventory before uploads. Reuse a known identical existing asset when identity can be verified; filename alone is insufficient. After a timeout, reread the media inventory before retrying. Keep a compact private mapping from attachment path/name to returned media ID/URL and exact folder; verify all supplied project assets are accounted for, uploaded or explicitly reported as blocked.
+5. Continue the case study using returned media URLs, complete all three caption fields, save/review/visually verify and publish according to the owner’s request. Creating the draft/folder and importing attachments does not authorize unrelated project or taxonomy changes. Never delete the owner’s originals.
+
+For named-folder requests without actual project attachments, use the existing-folder resolution workflow. A missing named folder requires clarification; it must not create an empty project or import arbitrary local files automatically.
 
 ## Caption fields on the project document
 

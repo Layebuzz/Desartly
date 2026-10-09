@@ -1,6 +1,6 @@
 import {buildPresentation,buildInstagramPresentation} from './presentation-model.js';
 // Hash only fields that contribute to the rendered PDF, plus a renderer version.
-export const presentationRendererVersion='private-delivery-2026-10-08-v1';
+export const presentationRendererVersion='private-delivery-2026-10-09-v2';
 export async function presentationVersion(project,format){
  const slides=(format==='instagram'?buildInstagramPresentation(project):buildPresentation(project)).slides;
  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify({renderer:presentationRendererVersion,format,slides})));
