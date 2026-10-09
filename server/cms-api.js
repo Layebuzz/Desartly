@@ -464,7 +464,7 @@ export async function cmsResponse(request, env, store, media, transform) {
     const route = url.pathname.slice("/api/cms/".length);
     if (route === "seo-report" && request.method === "GET") {
       if(!owner)fail("Owner access required.",403);
-      return json(url.searchParams.has("path")?await liveSeoAudit(state,url.searchParams.get("path")):seoInventory(state));
+      return json(url.searchParams.has("auditPage")?await liveSeoAudit(state,url.searchParams.get("auditPage")):seoInventory(state));
     }
     if (route === "state" && request.method === "GET") {
       if (!owner) fail("Owner access required.", 403);
