@@ -1,4 +1,5 @@
 import {defaults} from '../src/cms/schema.js';
+import {isVisibleProject} from '../src/cms/visibility.js';
 import {encodeStoredStateAsync,decodeStoredStateAsync,stateStorageLimit} from './state-storage.js';
 export function initialState(){return {revision:0,draft:defaults(),published:defaults(),history:[],media:[],inbox:[],events:{},updatedAt:null};}
 export class D1Store{
@@ -17,7 +18,10 @@ export class D1Store{
   if(!row)return {revision:0,media:[],customMediaFolders:[],mediaFolderLocations:{}};
   const state={revision:row.revision,media:JSON.parse(row.media||'[]'),customMediaFolders:JSON.parse(row.folders||'[]'),mediaFolderLocations:JSON.parse(row.locations||'{}'),mediaActivity:JSON.parse(row.activity||'[]'),mediaUndo:JSON.parse(row.undo||'[]'),mediaFolderColors:JSON.parse(row.colors||'{}'),mediaFolderMetadata:JSON.parse(row.metadata||'{}'),trashedMediaFolders:JSON.parse(row.trash||'[]')};
   const roots=await this.db.prepare("SELECT 'Projects/'||json_extract(p.value,'$.id') AS folder FROM portfolio_state s,json_each(s.value,'$.draft.projects') p UNION SELECT 'Projects/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.published.projects') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.draft.blogPosts') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.published.blogPosts') p").all();
-  state.customMediaFolders=[...new Set([...state.customMediaFolders,...roots.results.map(r=>state.mediaFolderLocations[r.folder]||r.folder)])];return state;
+  const summaries=await this.db.prepare("SELECT 'Projects/'||json_extract(p.value,'$.id') AS folder, json_extract(p.value,'$.id') AS id, json_extract(p.value,'$.hidden') AS hidden, json_extract(p.value,'$.archived') AS archived, json_extract(p.value,'$.managed') AS managed FROM portfolio_state s,json_each(s.value,'$.draft.projects') p UNION SELECT 'Projects/'||json_extract(p.value,'$.id'),json_extract(p.value,'$.id'),json_extract(p.value,'$.hidden'),json_extract(p.value,'$.archived'),json_extract(p.value,'$.managed') FROM portfolio_state s,json_each(s.value,'$.published.projects') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id'),json_extract(p.value,'$.id'),0,json_extract(p.value,'$.archived'),0 FROM portfolio_state s,json_each(s.value,'$.draft.blogPosts') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id'),json_extract(p.value,'$.id'),0,json_extract(p.value,'$.archived'),0 FROM portfolio_state s,json_each(s.value,'$.published.blogPosts') p").all();
+  state._registeredCustomMediaFolders=[...state.customMediaFolders];
+  const allowed=new Set(summaries.results.filter(r=>r.folder.startsWith('Journal/')?!r.archived:isVisibleProject({...r,managed:Boolean(r.managed)})||(!r.archived&&r.managed)).map(r=>r.folder));
+  state.customMediaFolders=[...new Set([...state.customMediaFolders,...roots.results.filter(r=>allowed.has(r.folder)).map(r=>state.mediaFolderLocations[r.folder]||r.folder)])];return state;
  }
  async writeMedia(state,expected){
   const updatedAt=new Date().toISOString();
