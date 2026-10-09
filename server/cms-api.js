@@ -2,6 +2,7 @@ import {industries,validateIndustry,normalizeIndustryState} from '../src/cms/ind
 import {projectTemplate,projectWorkflows} from '../src/cms/project-workflow.js';
 import {updateNavigation,updateSettings} from './site-service.js';
 import {updateSeo} from './seo-service.js';
+import {seoInventory,liveSeoAudit} from './seo-audit.js';
 import {reviewArticle} from './article-review.js';
 import {mediaArchitecture,libraryFolders} from '../src/cms/media-architecture.js';
 import {personalities} from '../src/cms/growth-model.js';
@@ -461,6 +462,10 @@ export async function cmsResponse(request, env, store, media, transform) {
       return json({ jsonrpc: "2.0", id: rpc.id, result });
     }
     const route = url.pathname.slice("/api/cms/".length);
+    if (route === "seo-report" && request.method === "GET") {
+      if(!owner)fail("Owner access required.",403);
+      return json(url.searchParams.has("path")?await liveSeoAudit(state,url.searchParams.get("path")):seoInventory(state));
+    }
     if (route === "state" && request.method === "GET") {
       if (!owner) fail("Owner access required.", 403);
       return json(cmsView(state));

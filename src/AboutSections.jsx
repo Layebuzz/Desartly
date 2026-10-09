@@ -1,22 +1,9 @@
 import React,{useState} from 'react';
 import {Link} from 'react-router-dom';
 import {resumeProfile} from './ResumeProfile';
-export const aboutSectionOrder=['experience','selected-work','expertise','practice-map','impact','selected-credentials','learning'];
-export const aboutDefaults={experienceTitle:'Experience & creative leadership',expertiseTitle:'Skills, craft & tools',impactTitle:'Design impact',learningTitle:'Courses & continuing education',toolsNote:'Advanced Adobe workflows, with fluency across PC, Mac and Office applications.',learningNote:'My development connects human-centred design, strategic thinking and emerging creative technologies.',sectionOrder:aboutSectionOrder,hiddenSections:[],intro:'My practice brings together product design, AI agents, branding and advertising. I’m interested in the space where a useful experience meets a distinct visual voice.',body:'I work across the full journey of an idea: understanding the problem, finding a direction, building a visual system and carrying it through the details of delivery. The medium changes; the care behind the work stays consistent.',practice:'I think in systems. I care about the details.',availability:'I’m open to joining thoughtful teams and collaborating on independent projects.',projectsTitle:'The thinking, made tangible.',projectsIntro:'A selection of identities, campaigns and digital experiences. Each project is a different expression of the same connected practice.',certificatesTitle:'Learning that keeps moving.',certificatesIntro:'Selected credentials from my continuing education in design and creative technology.',radarTitle:'One practice. Many dimensions.',radarIntro:'A map of the disciplines I bring together, from human-centred product thinking to visual craft and creative systems.',radarCaption:'Relative emphasis across my current practice.',radar:[
- {label:'Product & UX',shortLabel:'UX',value:75,items:['UX and UI design','Wireframing & prototyping','Human-centred product development']},
- {label:'Research & strategy',shortLabel:'Research',value:75,items:['Human–Computer Interaction','User research','Design thinking']},
- {label:'Brand identity',shortLabel:'Brand',value:90,items:['Visual identity systems','Branding & advertising']},
- {label:'Visual communication',shortLabel:'Visual',value:90,items:['2D illustration','Campaign artwork','Visual storytelling']},
- {label:'3D & illustration',shortLabel:'3D',value:70,items:['3D modelling & illustration','Character design','Blender & Eevee']},
- {label:'Creative direction',shortLabel:'Direction',value:85,items:['Creative direction','Art direction','Team leadership']},
- {label:'Design operations',shortLabel:'Ops',value:85,items:['Workflow optimisation','Vendor management','Production systems']},
- {label:'AI & systems',shortLabel:'AI',value:75,items:['AI prompting & integration','Creative automation','AI-assisted design']}
- ]};
-export function resolveAbout(page={},fallback=resumeProfile){
- const supplied=Array.isArray(page.radar)&&page.radar.length>=3?page.radar:null;
- const radar=supplied?[...supplied.map(axis=>({...aboutDefaults.radar.find(a=>a.label===axis.label),...axis})),...aboutDefaults.radar.filter(a=>!supplied.some(axis=>axis.label===a.label))].slice(0,8):aboutDefaults.radar;
- return {...aboutDefaults,...page,sectionOrder:[...new Set([...(page.sectionOrder||aboutSectionOrder),...aboutSectionOrder])].filter(id=>aboutSectionOrder.includes(id)),resumeProfile:{...resumeProfile,...fallback,...page.resumeProfile},radar};
-}
+import {aboutSectionOrder,aboutDefaults,resolveAbout} from './about-content.js';
+export {aboutSectionOrder,aboutDefaults,resolveAbout} from './about-content.js';
+
 const axisLabel=axis=>String(axis.shortLabel||axis.label.split(' ')[0]).slice(0,14);
 export function PracticeRadar({page}){
  const [selected,setSelected]=useState(null),axes=page.radar,center=160,radius=104;

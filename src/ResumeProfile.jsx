@@ -1,26 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export const resumeProfile = {
-  experience: [
-    {company:'Azki',role:'Senior Creative Designer',period:'Past six months',description:'Delivered multiple design projects across graphic design and product design, bringing a consistent creative approach to visual communication and digital experiences.'},
-    {company:'Divar',role:'Senior Design Expert',description:'Led the graphic production ecosystem, large-scale visual projects and outsourcing workflows. Developed an external vendor network, evolved the visual identity and improved the request-to-delivery process across teams. Integrated AI tools and shared emerging practices to strengthen production quality and scalability.'},
-    {company:'Comica',role:'Design Manager',description:'Led creative direction and end-to-end design delivery across strategy, marketing and production. Managed designers, refined creative standards and built scalable processes connecting brand communication with business goals.'},
-    {company:'Flightio',role:'Design Team Lead',description:'Directed user-centred, performance-driven design from concept to execution. Aligned work with product strategy, mentored designers and improved creative workflows and quality standards.'},
-    {company:'National Elite Foundation',role:'Art Director',description:'Led artistic direction and visual identity across branding, campaigns and multimedia. Guided designers and artists from concept through execution, collaborating with cross-functional teams to support the foundation’s mission.'},
-    {company:'Lingoland',role:'Senior Graphic Designer',description:'Created visual and interface design for a language-learning startup. Worked with the product team to translate complex learning concepts into clear, engaging educational experiences.'},
-    {company:'3x4 Studio',role:'Senior Graphic Designer',description:'Developed visual identities for a diverse client portfolio, from logos to complete brand guidelines. Built coherent systems expressing each client’s values and positioning.'},
-  ],
-  skills: [
-    {title:'Product & experience',items:['UX and UI design','Wireframing & prototyping','Human-centred product development']},
-    {title:'Identity & craft',items:['Visual identity systems','2D illustration','3D modelling & illustration','Branding & advertising']},
-    {title:'Creative systems',items:['Creative direction','Design operations & workflow optimisation','Vendor management','AI prompting & integration']},
-  ],
-  impact: ['Built a scalable graphic production system for a national-scale platform.','Optimised cross-functional workflows to improve clarity and delivery.','Developed an external vendor network supporting consistent, scalable production.','Guided visual identity across multiple campaigns and touchpoints.','Integrated AI tools into design operations and creative practice.'],
-  training: ['Graphic Design — Inverseschool, 2015','Human–Computer Interaction','Design for the 21st Century with Don Norman','Visual Design: The Ultimate Guide','Design Thinking: The Ultimate Guide','Emotional Design: How to Make Products People Will Love','The Ultimate Guide to Visual Perception and Design','User Research: Methods and Best Practices','The Practical Guide to Usability','Become a UX Designer from Scratch','Developing a Creative Concept for Branding Projects','3D Self-Portrait Creation for Social Media in Cinema 4D','3D Character Creation in Blender','Low Poly Character Modeling for Video Games','Midjourney Mastery: Create Visually Stunning AI Art — Udemy','Prompt Engineering — LinkedIn Learning'],
-  honours:['Top 10% — Visual Design: The Ultimate Guide, Interaction Design Foundation','Top 10% — Human–Computer Interaction, Interaction Design Foundation','Top 10% — Design for the 21st Century with Don Norman','Selected Art Director — National Opportunity Event, Iranian National Elite Foundation Program, 2021','UX Career Track Completion — Interaction Design Foundation'],
-  tools:['Figma','Adobe Photoshop','Adobe Illustrator','Adobe InDesign','Adobe Creative Cloud','Blender','Eevee Renderer'],
-};
+import {resumeProfile} from './resume-content.js';
+export {resumeProfile} from './resume-content.js';
 
 export function ResumeProfile({profile=resumeProfile,afterExperience,afterExpertise,beforeLearning,sectionOrder,hiddenSections=[],labels={}}) {
   const content=<div className="resume-profile">
