@@ -1,3 +1,4 @@
+import {marketingBotAction} from './marketing-telegram.js';
 import {isOwner} from './owner-auth.js';
 import {D1Store} from './content-store.js';
 import {materialize} from '../src/cms/materialize.js';
@@ -36,6 +37,7 @@ export async function handleUpdate(update,env,settings,ctx){
  if(String(user.id)!==settings.owner_id||String(message.chat.id)!==settings.owner_id)return;
  if(callback)await telegramCall(env,'answerCallbackQuery',{callback_query_id:callback.id});const owner=String(user.id),action=callback?.data||text;
  try{
+ if(await marketingBotAction(env,owner,action,{callback:!!callback}))return;
  if(!callback&&!text.startsWith('/')){const input=await env.DB.prepare("SELECT * FROM telegram_actions WHERE owner_id=? AND kind='input' AND status='pending' AND expires_at>? ORDER BY created_at DESC LIMIT 1").bind(owner,Date.now()).first();if(input){const payload=JSON.parse(input.payload);await operationAction(env,owner,'/'+payload.kind+' '+payload.id+' '+text,settings);await env.DB.prepare("UPDATE telegram_actions SET status='done' WHERE id=? AND status='pending'").bind(input.id).run();return;}}
  if(callback&&!action.startsWith('input:')&&!action.startsWith('dismiss:'))await env.DB.prepare("UPDATE telegram_actions SET status='cancelled' WHERE owner_id=? AND kind='input' AND status='pending'").bind(owner).run();
  if(action.startsWith('asset:')){const [,material,id]=action.split(':');await requestMaterial(env,owner,await telegramProject(env,id),material,update.update_id);if(ctx)ctx.waitUntil(flushTelegramDeliveries(env,{allowGeneration:false}));else await flushTelegramDeliveries(env);return;}

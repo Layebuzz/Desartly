@@ -529,7 +529,7 @@ export async function cmsResponse(request, env, store, media, transform) {
       }else if(body.action!=='review')fail("Choose review or normalize.");
       return json({industries,changes:result.changes,unresolved:result.unresolved});
     }
-    if(route==='marketing'){if(!owner)fail('Owner access required.',403);await write(marketingAction(state,body));return json({ok:true,revision:state.revision,...(body.action==='create-program'?{programId:state.marketing.programs.at(-1).id}:{})});}
+    if(route==='marketing'){if(!owner)fail('Owner access required.',403);if(body.action==='save-schedule'&&body.schedule?.enabled&&!((await env.DB.prepare('SELECT owner_id FROM telegram_settings WHERE id=1').first())?.owner_id))fail('Connect your private Telegram owner account first.',400);await write(marketingAction(state,body));return json({ok:true,revision:state.revision,...(body.action==='create-program'?{programId:state.marketing.programs.at(-1).id}:{})});}
     if(route === "growth"){if(!owner)fail("Owner access required.",403);validateIndustry(body.industry);return json({ok:true});}
 
     if (route === "document") {

@@ -1,3 +1,4 @@
+import {queueMarketingNotifications,marketingDeliveryCurrent} from './marketing-telegram.js';
 import {zipSync} from 'fflate';
 import {telegramCall,sendPrivateFile} from './telegram-client.js';
 import {telegramProject,presentationFile,projectImage,processRenderJobs} from './telegram-material-service.js';
@@ -36,6 +37,7 @@ export async function flushTelegramDeliveries(env,{allowGeneration=true}={}){
  const pending=await env.DB.prepare("SELECT * FROM telegram_deliveries WHERE status='pending' AND next_attempt<=? ORDER BY CASE WHEN kind='asset' THEN 1 ELSE 0 END,created_at,rowid LIMIT 4").bind(Date.now()).all();
  for(const job of pending.results){
   const payload=JSON.parse(job.payload||'{}');
+  if(job.kind==='marketing'&&!await marketingDeliveryCurrent(env,payload)){await env.DB.prepare("UPDATE telegram_deliveries SET status='obsolete',updated_at=? WHERE id=? AND status='pending'").bind(Date.now(),job.id).run();continue;}
   if(job.booking_id){const row=await env.DB.prepare('SELECT * FROM calendar_bookings WHERE id=?').bind(job.booking_id).first();const note=job.kind==='followup'?await env.DB.prepare('SELECT * FROM telegram_client_notes WHERE booking_id=?').bind(job.booking_id).first():null;
    if(!row||(job.kind!=='followup'&&(row.status!=='confirmed'||String(row.start_at)!==job.version||row.start_at<=Date.now()||(job.kind==='booking'&&!settings.notifications)||(job.kind==='reminder'&&(!settings.reminders||payload.minutes!==settings.reminder_minutes))))||(job.kind==='followup'&&(!settings.reminders||note?.updated_at!==payload.updatedAt||!note.follow_up_at))){await env.DB.prepare("UPDATE telegram_deliveries SET status='obsolete',updated_at=? WHERE id=? AND status='pending'").bind(Date.now(),job.id).run();continue;}}
   const preparation=job.kind==='asset'&&['linkedin','instagram'].includes(payload.material);
@@ -44,9 +46,9 @@ export async function flushTelegramDeliveries(env,{allowGeneration=true}={}){
   let sending=false;
   try{
    let preparedFile;if(preparation){preparedFile=await presentationFile(env,await telegramProject(env,payload.projectId),payload.material,{old:payload.old===true});const ready=await env.DB.prepare("UPDATE telegram_deliveries SET status='sending',updated_at=? WHERE id=? AND status='preparing'").bind(Date.now(),job.id).run();if(!ready.meta?.changes)continue;}
-   let messageId;if(job.kind==='asset'){sending=true;messageId=await sendAsset(env,settings.owner_id,payload,preparedFile);}else{sending=true;const result=await telegramCall(env,'sendMessage',{chat_id:settings.owner_id,text:payload.text.slice(0,3900),reply_markup:{inline_keyboard:[[{text:'مشاهدهٔ جلسه و مشتری',callback_data:'booking:'+job.booking_id}]]}});messageId=String(result.message_id);}
+   let messageId;if(job.kind==='asset'){sending=true;messageId=await sendAsset(env,settings.owner_id,payload,preparedFile);}else{sending=true;const result=await telegramCall(env,'sendMessage',{chat_id:settings.owner_id,text:payload.text.slice(0,3900),reply_markup:{inline_keyboard:job.kind==='marketing'?payload.rows:[[{text:'مشاهدهٔ جلسه و مشتری',callback_data:'booking:'+job.booking_id}]]}});messageId=String(result.message_id);}
    await env.DB.prepare("UPDATE telegram_deliveries SET status='sent',message_id=?,updated_at=? WHERE id=?").bind(messageId,Date.now(),job.id).run();
   }catch(error){const retry=error.rejected&&error.retryAfter&&job.attempts<3;const status=retry?'pending':error.uncertain?'uncertain':'failed';await env.DB.prepare('UPDATE telegram_deliveries SET status=?,next_attempt=?,updated_at=? WHERE id=?').bind(status,Date.now()+(error.retryAfter||60)*1000,Date.now(),job.id).run();await env.DB.prepare('UPDATE telegram_deliveries SET last_error=? WHERE id=?').bind(String(error.message||'Delivery failed').slice(0,500),job.id).run();try{await telegramCall(env,'sendMessage',{chat_id:settings.owner_id,text:status==='uncertain'?'نتیجهٔ تحویل فایل/اعلان نامشخص است. برای جلوگیری از تکرار، خودکار دوباره ارسال نمی‌شود. وضعیت را در Studio بررسی کن.':status==='pending'?'تلگرام محدودیت موقت گذاشته؛ درخواست در صف می‌ماند.':'تحویل انجام نشد. اتصال یا فایل پروژه را در Studio بررسی کن؛ سپس دوباره درخواست بده.'});}catch{}}
  }
 }
-export async function processTelegramQueue(env){await queueBookingNotifications(env);await flushTelegramDeliveries(env);await processRenderJobs(env);}
+export async function processTelegramQueue(env){await Promise.allSettled([queueMarketingNotifications(env),queueBookingNotifications(env)]);await flushTelegramDeliveries(env);await processRenderJobs(env);}
