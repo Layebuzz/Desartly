@@ -3,7 +3,7 @@ name: desartly-case-study
 description: Write evidence-led, human portfolio case studies for Desartly from a named CMS media-library folder or project files attached in the current chat, then save or publish through existing API functions. Covers product UI/UX, branding, packaging, campaigns and visual communication. Use for project uploads and case-study rewrites, not website engineering or social posting.
 metadata:
   author: Ali / Desartly
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # Desartly case study
@@ -59,3 +59,7 @@ Run `cms_review` after the coherent draft. Resolve actionable findings, and dist
 The owner's standing Desartly workflow is: invoke this skill to case-study/upload a named library folder or explicitly attached project files → write, validate and publish that project through the API. Treat that request as publication authorization unless current instructions say draft/review-only; no second permission question is needed. After completing checks, publish **only this document** with `cms_publish` and a freshly read version. A bare skill mention outside this project-input workflow, or work for another site, does not authorize publication. If essential facts, authentication or verification are blocked, preserve the draft and state the precise gap. After a timed-out write, reread state before retrying to avoid duplicates. Verify public URL and saved content after publishing. Never publish the whole site, post an announcement externally, or change other projects.
 
 Report briefly in Persian: draft/live link, meaningful design/editorial changes, verification performed and any genuine limitation. Example invocation: **«با $desartly-case-study پوشهٔ Projects/نام‌پوشه رو کیس‌استادی کن و منتشر کن.»**
+
+## Asset naming and export quality
+
+Name uploaded assets by project slug, role and sequence (for example `tesla-track-mode-thermal-management-01.webp`); use the actual extension and avoid duplicate uploads. Keep source files intact. For UI screenshots, capture the complete component at its intended viewport with enough source pixels for its export frame, retain original proportions and use contain fitting unless the owner requests a crop. Verify the right edge, small text and full-frame image in both presentation and album output. An uploaded low-quality sample is evidence of the defect, not a replacement master. After an uncertain album delivery, inspect the project assets and specific delivery result before retrying once.

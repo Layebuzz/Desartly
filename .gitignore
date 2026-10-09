@@ -10,3 +10,5 @@ dist/
 
 graphify-out/
 *.log
+
+private-artifacts/
