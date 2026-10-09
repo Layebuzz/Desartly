@@ -14,10 +14,10 @@ export async function queueMarketingNotifications(env,now=Date.now()){
   const deadline=new Intl.DateTimeFormat(t.language==='en'?'en-GB':'fa-IR',{timeZone:'Asia/Tehran',dateStyle:'medium',timeStyle:'short'}).format(t.deadlineAt);
   if(added>=8)break;
   if(!ids.has('marketing:assign:'+t.id)){added++;await enqueueDelivery(env,'marketing:assign:'+t.id,'marketing',{taskId:t.id,phase:'assignment',text:(t.language==='en'?'Your next marketing action':'قدم بعدی مارکتینگ')+'\n\n'+t.title+'\n'+t.brief+'\n\n'+(t.language==='en'?'Report due: ':'موعد گزارش: ')+deadline+' · Tehran',rows:marketingButtons(t)});}
-  if(!ids.has('marketing:deadline:'+t.id)&&t.deadlineAt<=now&&!t.reports?.length){added++;await enqueueDelivery(env,'marketing:deadline:'+t.id,'marketing',{taskId:t.id,phase:'deadline',text:(t.language==='en'?'How did it go? Report completed work, progress or a blocker.':'موعد گزارش رسید. کار انجام شد، هنوز در جریان است یا مانعی داری؟ گزارش کوتاهت را ثبت کن.')+'\n\n'+t.title,rows:marketingButtons(t)});}
+  if(!ids.has('marketing:deadline:'+t.id)&&t.deadlineAt<=now&&!t.reports?.some(r=>Date.parse(r.at)>=t.deadlineAt)){added++;await enqueueDelivery(env,'marketing:deadline:'+t.id,'marketing',{taskId:t.id,phase:'deadline',text:(t.language==='en'?'How did it go? Report completed work, progress or a blocker.':'موعد گزارش رسید. کار انجام شد، هنوز در جریان است یا مانعی داری؟ گزارش کوتاهت را ثبت کن.')+'\n\n'+t.title,rows:marketingButtons(t)});}
  }
 }
-export async function marketingDeliveryCurrent(env,payload){const {marketing:m}=await new D1Store(env.DB).readMarketing(),t=m.tasks.find(t=>t.id===payload.taskId);return !!t&&!t.archived&&!t.done&&m.programs.some(p=>p.id===t.programId&&!p.archived)&&(payload.phase!=='deadline'||!t.reports?.length);}
+export async function marketingDeliveryCurrent(env,payload){const {marketing:m}=await new D1Store(env.DB).readMarketing(),t=m.tasks.find(t=>t.id===payload.taskId);return !!t&&!t.archived&&!t.done&&m.programs.some(p=>p.id===t.programId&&!p.archived)&&(payload.phase!=='deadline'||!t.reports?.some(r=>Date.parse(r.at)>=t.deadlineAt));}
 export async function marketingBotAction(env,owner,action,{callback=false,now=Date.now()}={}){
  const send=(text,rows=[])=>telegramCall(env,'sendMessage',{chat_id:owner,text,reply_markup:{inline_keyboard:rows}});
  const {marketing:m}=await new D1Store(env.DB).readMarketing();
