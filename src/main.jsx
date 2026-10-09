@@ -1,3 +1,4 @@
+import {privacyBody} from './privacy-content.js';
 import {practiceStats} from './cms/practice-stats.js';
 import { ArticleIntro } from './ArticleIntro.jsx';
 import {ArticleChart} from './ArticleChart.jsx';
@@ -1042,7 +1043,7 @@ function App() {
                   <main className="page narrow">
                     <div className="page-title"><h1>{pages["/privacy"]?.title || "Privacy, simply."}</h1></div>
                     <p>
-                      {pages["/privacy"]?.body || "When you contact me, I use the details you share to discuss your project and prepare a proposal. If you choose the email option, your email app sends the message to Komeilipv@gmail.com. Requests submitted directly through this site are stored privately in my workspace. To ask about your information or request its removal, email Komeilipv@gmail.com. Owner access uses a secure session cookie."}
+                      {pages["/privacy"]?.body || privacyBody}
                     </p>
                     <p>Booking details, including your name, email, company and project brief, are stored privately in Desartly and shared with Google Calendar to arrange your appointment and send an invitation. A booking notification with these details is also emailed privately to Ali through Gmail. Your unfinished brief stays in this browser tab for up to 24 hours; you can clear it from the booking form. To change or cancel a booking, or request removal of your information, email Komeilipv@gmail.com.</p>
                   </main>
