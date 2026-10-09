@@ -56,3 +56,9 @@ test('active HTML is deduplicated losslessly and survives atomic media changes',
 });
 
 test('native stream codecs and legacy codecs read each other without losing content',async()=>{const {encodeStoredStateAsync,decodeStoredStateAsync}=await import('../server/state-storage.js');const state=largeHistory();state.draft.projects=[{id:'native',blocks:[{html:'<p>فارسی</p>'.repeat(20000)}]}];assert.deepEqual(await decodeStoredStateAsync(encodeStoredState(state)),state);assert.deepEqual(decodeStoredState(await encodeStoredStateAsync(state)),state);const {store}=fixture(state);assert.equal(await store.storageUsage(),Buffer.byteLength(JSON.stringify(state)));});
+test('normal media upload avoids full state inflation and recompression while preserving history bytes',async()=>{
+ const before=largeHistory(),{db,store}=fixture(before);await store.write(before,3);const rawBefore=JSON.parse(db.prepare('SELECT value FROM portfolio_state').get().value);
+ store.read=async()=>{throw Error('Full history must not load for an upload');};store.write=async()=>{throw Error('Full history must not re-encode for an upload');};
+ const response=await contentResponse(new Request('https://site.test/api/studio/upload',{method:'POST',headers:{Origin:'https://site.test','Content-Type':'text/plain','X-File-Name':'test.txt'},body:'sample text'}),{},store,{put:async()=>({storage:'test',key:'test'})},null,{upload:true});
+ assert.equal(response.status,200);const after=JSON.parse(db.prepare('SELECT value FROM portfolio_state').get().value);assert.deepEqual(after._historyArchive,rawBefore._historyArchive);assert.equal(after.mediaActivity[0].action,'upload');assert.equal(after.media.length,1);
+});

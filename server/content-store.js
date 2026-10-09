@@ -13,16 +13,24 @@ export class D1Store{
  async readMarketing(){const row=await this.db.prepare("SELECT revision,json_extract(value,'$.marketing') AS marketing FROM portfolio_state WHERE id=1").first();return {revision:row?.revision||0,marketing:JSON.parse(row?.marketing||'{"programs":[],"tasks":[]}')};}
  async writeMarketing(marketing,expected){const value=JSON.stringify(marketing);if(new TextEncoder().encode(value).length>220000)throw Object.assign(Error('Marketing records reached their storage budget.'),{status:413});const result=await this.db.prepare("UPDATE portfolio_state SET revision=?,value=json_set(value,'$.marketing',json(?),'$.revision',?,'$.updatedAt',?) WHERE id=1 AND revision=? AND length(CAST(json_set(value,'$.marketing',json(?)) AS BLOB))<=1800000").bind(expected+1,value,expected+1,new Date().toISOString(),expected,value).run();if(!result.meta.changes)throw Object.assign(Error('Marketing changed. Retry with fresh records.'),{status:409});}
  async readMedia(){
-  const row=await this.db.prepare("SELECT revision, json_extract(value,'$.media') AS media, json_extract(value,'$.customMediaFolders') AS folders, json_extract(value,'$.mediaFolderLocations') AS locations FROM portfolio_state WHERE id=1").first();
+  const row=await this.db.prepare("SELECT revision, json_extract(value,'$.media') AS media, json_extract(value,'$.customMediaFolders') AS folders, json_extract(value,'$.mediaFolderLocations') AS locations, json_extract(value,'$.mediaActivity') AS activity, json_extract(value,'$.mediaUndo') AS undo, json_extract(value,'$.mediaFolderColors') AS colors, json_extract(value,'$.mediaFolderMetadata') AS metadata, json_extract(value,'$.trashedMediaFolders') AS trash FROM portfolio_state WHERE id=1").first();
   if(!row)return {revision:0,media:[],customMediaFolders:[],mediaFolderLocations:{}};
-  const state={revision:row.revision,media:JSON.parse(row.media||'[]'),customMediaFolders:JSON.parse(row.folders||'[]'),mediaFolderLocations:JSON.parse(row.locations||'{}')};
+  const state={revision:row.revision,media:JSON.parse(row.media||'[]'),customMediaFolders:JSON.parse(row.folders||'[]'),mediaFolderLocations:JSON.parse(row.locations||'{}'),mediaActivity:JSON.parse(row.activity||'[]'),mediaUndo:JSON.parse(row.undo||'[]'),mediaFolderColors:JSON.parse(row.colors||'{}'),mediaFolderMetadata:JSON.parse(row.metadata||'{}'),trashedMediaFolders:JSON.parse(row.trash||'[]')};
   const roots=await this.db.prepare("SELECT 'Projects/'||json_extract(p.value,'$.id') AS folder FROM portfolio_state s,json_each(s.value,'$.draft.projects') p UNION SELECT 'Projects/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.published.projects') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.draft.blogPosts') p UNION SELECT 'Journal/'||json_extract(p.value,'$.id') FROM portfolio_state s,json_each(s.value,'$.published.blogPosts') p").all();
   state.customMediaFolders=[...new Set([...state.customMediaFolders,...roots.results.map(r=>state.mediaFolderLocations[r.folder]||r.folder)])];return state;
  }
  async writeMedia(state,expected){
-  const updatedAt=new Date().toISOString(),media=JSON.stringify(state.media),folders=JSON.stringify(state.customMediaFolders||[]),locations=JSON.stringify(state.mediaFolderLocations||{});
-  const result=await this.db.prepare("WITH next AS (SELECT json_set(value,'$.media',json(?),'$.customMediaFolders',json(?),'$.mediaFolderLocations',json(?),'$.revision',?,'$.updatedAt',?) AS value FROM portfolio_state WHERE id=1 AND revision=?) UPDATE portfolio_state SET revision=?,value=(SELECT value FROM next) WHERE id=1 AND revision=? AND length(CAST((SELECT value FROM next) AS BLOB))<=1800000").bind(media,folders,locations,expected+1,updatedAt,expected,expected+1,expected).run();
-  if(!result.meta.changes)throw Object.assign(Error('Media changed or the library exceeded its storage budget. Reload before restoring.'),{status:409});return {...state,revision:expected+1,updatedAt};
+  const updatedAt=new Date().toISOString();
+  const fields={media:[],customMediaFolders:[],mediaFolderLocations:{},mediaActivity:[],mediaUndo:[],mediaFolderColors:{},mediaFolderMetadata:{},trashedMediaFolders:[]};
+  const setters=Object.keys(fields).map(key=>`'$.${key}',json(?)`).join(',');
+  const values=Object.entries(fields).map(([key,fallback])=>JSON.stringify(state[key]??fallback));
+  const result=await this.db.prepare(`WITH next AS (SELECT json_set(value,${setters},'$.revision',?,'$.updatedAt',?) AS value FROM portfolio_state WHERE id=1 AND revision=?) UPDATE portfolio_state SET revision=?,value=(SELECT value FROM next) WHERE id=1 AND revision=? AND length(CAST((SELECT value FROM next) AS BLOB))<=1800000`).bind(...values,expected+1,updatedAt,expected,expected+1,expected).run();
+  if(!result.meta.changes){
+   // One-time migration for a legacy oversized row whose codec was enabled but
+   // whose historical snapshots have not yet been physically compressed.
+   if(await this.storageUsage()>stateStorageLimit){const full=await this.read();if(full.revision===expected&&full.historyStorageVersion===1)return this.write({...full,...Object.fromEntries(Object.keys(fields).map(key=>[key,state[key]??fields[key]]))},expected);}
+   throw Object.assign(Error('Media changed or the library exceeded its storage budget. Reload before retrying.'),{status:409});
+  }return {...state,revision:expected+1,updatedAt};
  }
 
 }

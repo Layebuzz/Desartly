@@ -45,3 +45,7 @@ test('Google callback returns to the studio domain while preserving connection s
  const response=await proxy(new Request(base+'/api/studio/calendar/callback?state=fixture'),async()=>new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=success'}}));
  assert.equal(response.headers.get('Location'),'https://studio.desartly.info/studio/calendar?connection=success');
 });
+test('upstream HTML errors are normalized with the provider trace and no HTML leakage',async()=>{
+ const response=await proxy(new Request(base+'/api/studio/media-state'),async()=>new Response('<html>private diagnostics</html>',{status:503,headers:{'Content-Type':'text/html','CF-Ray':'fixture-ray'}}));
+ assert.equal(response.status,503);assert.equal(response.headers.get('X-Request-Id'),'fixture-ray');const body=await response.json();assert.ok(!JSON.stringify(body).includes('private diagnostics'));assert.equal(body.requestId,'fixture-ray');
+});

@@ -13,9 +13,23 @@ import { contentResponse } from "./content-api.js";
 import { D1Store } from "./content-store.js";
 import {cmsResponse} from "./cms-api.js";
 import { MediaStorage } from "./media-storage.js";
+import {logsResponse,logLater,pruneLogs} from './runtime-logs.js';
 export default {
-  async scheduled(controller,env,ctx){ctx.waitUntil(Promise.allSettled([sendBookingOwnerEmails(env),processTelegramQueue(env)]));},
+  async scheduled(controller,env,ctx){ctx.waitUntil(Promise.allSettled([sendBookingOwnerEmails(env),processTelegramQueue(env),controller.scheduledTime%3600000<60000?pruneLogs(env):Promise.resolve()]));},
   async fetch(request, env, ctx) {
+    const started=Date.now(),requestId=crypto.randomUUID(),url=new URL(request.url);
+    try{
+      const logResponse=await logsResponse(request,env,ctx);if(logResponse)return logResponse;
+      const response=await handleRequest(request,env,ctx);
+      if(url.pathname.startsWith('/api/')&&(response.status>=400||!['GET','HEAD'].includes(request.method))){
+        let message='';if(response.status>=400&&response.headers.get('Content-Type')?.includes('application/json')){try{message=(await response.clone().json()).error||'';}catch{}}
+        logLater(env,ctx,{source:'worker',event:request.method+' request',level:response.status>=500?'error':response.status>=400?'warning':'info',path:url.pathname,requestId,status:response.status,duration:Date.now()-started,message});
+      }
+      const result=new Response(response.body,response);result.headers.set('X-Request-Id',requestId);return result;
+    }catch(error){logLater(env,ctx,{source:'worker',event:'request-exception',level:'error',path:url.pathname,requestId,status:500,duration:Date.now()-started,message:error.message});return Response.json({error:'The service could not complete this request.',requestId},{status:500,headers:{'X-Request-Id':requestId,'Cache-Control':'no-store'}});}
+  },
+};
+async function handleRequest(request,env,ctx){
     if(new URL(request.url).pathname.startsWith('/api/skills'))return skillResponse(request,env,env.DB?new D1Store(env.DB):null,new MediaStorage(env));
     const staticAsset=await staticAssetResponse(request,env,new MediaStorage(env));if(staticAsset)return staticAsset;
     const render=await presentationRenderResponse(request,env);if(render)return render;
@@ -48,5 +62,4 @@ export default {
       return privateResponse;
     }
     return response;
-  },
-};
+}

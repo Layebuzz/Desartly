@@ -48,10 +48,16 @@ export async function proxy(request, send = fetch) {
     const localRedirect=redirect?.startsWith(backend)?redirect.slice(backend.length)||'/':redirect;
     if(localRedirect?.startsWith('/studio/')||localRedirect==='/studio')responseHeaders.set('Location',studioOrigin+localRedirect);
     else if(redirect?.startsWith(backend))responseHeaders.set('Location',localRedirect);
+    if(upstream.status>=400&&!upstream.headers.get('Content-Type')?.includes('application/json')){
+      const requestId=upstream.headers.get('X-Request-Id')||upstream.headers.get('CF-Ray')||crypto.randomUUID();
+      console.error(JSON.stringify({event:'upstream-error',path,status:upstream.status,requestId}));
+      return Response.json({error:upstream.status===413?'Processed file exceeds the upload limit.':'Content service could not finish the request. Check System logs and retry.',requestId},{status:upstream.status,headers:{'X-Request-Id':requestId,'Cache-Control':'no-store'}});
+    }
     return new Response(upstream.body,{status:upstream.status,headers:responseHeaders});
   } catch (error) {
     if(error.status)return Response.json({error:error.message},{status:error.status});
-    return Response.json({error:'Content service unavailable. Please retry.'},{status:502});
+    const requestId=crypto.randomUUID();console.error(JSON.stringify({event:'proxy-error',path,requestId,reason:error.name}));
+    return Response.json({error:'Content service unavailable. Please retry.',requestId},{status:502,headers:{'X-Request-Id':requestId,'Cache-Control':'no-store'}});
   }
 }
 export default {fetch(request){return proxy(request);}};

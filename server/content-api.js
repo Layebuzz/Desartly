@@ -1,5 +1,5 @@
 import {encodeStoredStateAsync,stateStorageLimit} from './state-storage.js';
-import {validateFolder,organiseMedia} from '../src/cms/media-architecture.js';
+import {validateFolder,organiseMedia,libraryFolders} from '../src/cms/media-architecture.js';
 import {mediaAction} from './media-service.js';
 import {webpSize} from './webp-size.js';
 import {proposalPayload,telegramProposalText} from './proposal-payload.js';
@@ -16,8 +16,11 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  const owner=await isOwner(request,env)||(trustedAccess.upload&&path==='/api/studio/upload');const privatePath=path.startsWith('/api/studio');
  if(privatePath&&!owner)return json({error:'Owner sign-in required.'},401);
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
- let state=owner&&path.startsWith('/api/media/')&&store.readMedia?await store.readMedia():await store.read();
- const save=async next=>{state=await store.write(organiseMedia(next),state.revision);return state;};
+ const mediaOnly=owner&&(path.startsWith('/api/media/')||['/api/studio/upload','/api/studio/media-state'].includes(path))&&store.readMedia;
+ let state=mediaOnly?await store.readMedia():await store.read();
+ const libraryWrite=['/api/studio/upload','/api/studio/media-action','/api/studio/media','/api/studio/media-text'].includes(path)&&store.writeMedia;
+ const save=async next=>{state=await (libraryWrite?store.writeMedia(organiseMedia(next),state.revision):store.write(organiseMedia(next),state.revision));return state;};
+ if(path==='/api/studio/media-state'&&request.method==='GET')return json({...state,mediaFolders:libraryFolders(state),mediaCanUndo:Boolean(state.mediaUndo?.length)});
  if(path==='/api/site'&&request.method==='GET')return json({site:state.publishedAt?publicSite(state.published):null,revision:state.revision});
  if(path==='/api/studio'&&request.method==='GET')return json({...state,capabilities:{storage:env.LOCAL?'local-server':'cloud',s3:!!(env.S3_ENDPOINT&&env.S3_BUCKET&&env.S3_ACCESS_KEY&&env.S3_SECRET_KEY),images:!!transform,turnstile:!!env.TURNSTILE_SECRET_KEY}});
  if(path==='/api/studio/storage'&&request.method==='GET'){

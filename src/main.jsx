@@ -1,4 +1,6 @@
 import {privacyBody} from './privacy-content.js';
+import {installRuntimeMonitor} from './cms/runtime-monitor.js';
+installRuntimeMonitor();
 import {practiceStats} from './cms/practice-stats.js';
 import { ArticleIntro } from './ArticleIntro.jsx';
 import {ArticleChart} from './ArticleChart.jsx';
