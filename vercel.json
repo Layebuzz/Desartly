@@ -984,6 +984,17 @@
   },
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://www.desartly.info/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [
         {
