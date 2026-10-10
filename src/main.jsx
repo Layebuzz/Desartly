@@ -11,7 +11,7 @@ import {HeroSlideEditor,resolveHeroSlides} from './HeroSlides.jsx';
 import {BookCall,BookingLauncher} from './BookCall.jsx';
 import {FilterTabs} from './FilterTabs.jsx';
 import {WorkFilters} from './WorkFilters.jsx';
-import {previewHtml,componentHtml} from './cms/html-preview.js';
+import {previewHtml,componentHtml,dialogPreviewHtml} from './cms/html-preview.js';
 import {isVisibleProject} from './cms/visibility.js';
 import React, { useState, useEffect } from "react";
 import { DivarCategories } from "./DivarCategories";
@@ -496,14 +496,20 @@ function HtmlPreview(props) {
     return ()=>{document.body.style.overflow=previous;};
   },[open]);
   const close=()=>{dialogRef.current?.close();setOpen(false);launchRef.current?.focus();};
-  const specimen=(modal=false)=>block.component === "divar-categories" ? <DivarCategories/> : <HtmlFrame {...props} block={modal?{...block,scrollSync:false,autoHeight:false}:block} editable={modal?false:props.editable}/>;
+  useEffect(()=>{
+    if(!open)return;
+    const dismiss=event=>{const frame=dialogRef.current?.querySelector('iframe');if(frame&&event.source===frame.contentWindow&&event.data?.type==='desartly:preview-close')close();};
+    window.addEventListener('message',dismiss);
+    return()=>window.removeEventListener('message',dismiss);
+  },[open]);
+  const specimen=(modal=false)=>block.component === "divar-categories" ? <DivarCategories/> : <HtmlFrame {...props} block={modal?{...block,scrollSync:false,autoHeight:false}:block} editable={modal?false:props.editable} dialogMode={modal}/>;
   return <div className="interactive-sample" style={{maxWidth:block.previewWidth || 1100}}>
     <div className="interactive-sample-bar"><span>Live, responsive demo · Try the controls</span><button ref={launchRef} onClick={()=>setOpen(true)}>Open interactive demo <span aria-hidden="true">↗</span></button></div>
     {specimen()}
     {open&&<dialog ref={dialogRef} className="interactive-dialog" aria-label={block.title||"Interactive demo"} onCancel={close} onClick={e=>{if(e.target===e.currentTarget)close();}}><div className="interactive-dialog-shell"><div className="interactive-dialog-toolbar"><div><small>INTERACTIVE DEMO</small><span>{block.title||"Interactive demo"}</span></div><button autoFocus onClick={close} aria-label="Close interactive demo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg><span>Close</span></button></div><div className="interactive-dialog-body">{specimen(true)}</div></div></dialog>}
   </div>;
 }
-function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
+function HtmlFrame({ block, editable = false, onChange, onTitleChange, dialogMode=false }) {
   const frameRef = React.useRef(null);
   const [frameHeight, setFrameHeight] = useState(() => window.matchMedia("(max-width:700px)").matches ? (block.mobileHeight || 640) : (block.previewHeight || 640));
   useEffect(() => {
@@ -548,7 +554,7 @@ function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
     {import.meta.env.VITE_APP_TARGET !== "public" && editable && <><label className="html-upload" data-editor-ui>Upload HTML file<input type="file" accept=".html,.htm,text/html" onChange={async e => { const file=e.target.files?.[0]; if (!file) return; if(file.size>2000000){e.target.setCustomValidity("Choose an HTML file under 2 MB.");e.target.reportValidity();return;} onChange?.(await file.text()); }}/></label><input className="html-block-title" aria-label="HTML sample title" value={block.title || "UX sample"} onChange={e=>onTitleChange?.(e.target.value)} /><textarea aria-label="HTML sample source" value={html} onChange={e=>onChange?.(e.target.value)} spellCheck={false} /></>}
     <div className="live-component-label" style={block.previewWidth?{maxWidth:block.previewWidth}:undefined}><span aria-hidden="true">↔</span><span>Responsive component</span></div>
     <div className="live-component-frame" style={block.previewWidth?{maxWidth:block.previewWidth}:undefined}>
-    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={{...(block.autoHeight?{height:frameHeight}:{}),...(block.previewWidth?{width:"100%",maxWidth:block.previewWidth,marginInline:"auto",display:"block"}:{})}} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={previewHtml(componentHtml(html,block.componentSelector),block.autoHeight)} />
+    <iframe ref={frameRef} loading={block.scrollSync ? "eager" : "lazy"} scrolling={block.autoHeight?"no":undefined} className={block.autoHeight?"auto-height-preview":undefined} style={{...(block.autoHeight?{height:frameHeight}:{}),...(block.previewWidth?{width:"100%",maxWidth:block.previewWidth,marginInline:"auto",display:"block"}:{})}} title={block.title || "HTML UX sample"} sandbox="allow-scripts" srcDoc={dialogMode?dialogPreviewHtml(componentHtml(html,block.componentSelector)):previewHtml(componentHtml(html,block.componentSelector),block.autoHeight)} />
     </div>
   </section>;
 }
