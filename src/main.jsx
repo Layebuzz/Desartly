@@ -496,11 +496,11 @@ function HtmlPreview(props) {
     return ()=>{document.body.style.overflow=previous;};
   },[open]);
   const close=()=>{dialogRef.current?.close();setOpen(false);launchRef.current?.focus();};
-  const specimen=(modal=false)=>block.component === "divar-categories" ? <DivarCategories/> : <HtmlFrame {...props} block={modal?{...block,scrollSync:false}:block} editable={modal?false:props.editable}/>;
-  return <div className="interactive-sample">
+  const specimen=(modal=false)=>block.component === "divar-categories" ? <DivarCategories/> : <HtmlFrame {...props} block={modal?{...block,scrollSync:false,autoHeight:false}:block} editable={modal?false:props.editable}/>;
+  return <div className="interactive-sample" style={{maxWidth:block.previewWidth || 1100}}>
     <div className="interactive-sample-bar"><span>Live, responsive demo · Try the controls</span><button ref={launchRef} onClick={()=>setOpen(true)}>Open interactive demo <span aria-hidden="true">↗</span></button></div>
     {specimen()}
-    {open&&<dialog ref={dialogRef} className="interactive-dialog" aria-label={block.title||"Interactive demo"} onCancel={close} onClick={e=>{if(e.target===e.currentTarget)close();}}><div className="interactive-dialog-shell"><header><span>{block.title||"Interactive demo"}</span><button autoFocus onClick={close} aria-label="Close interactive demo">Close ×</button></header><div className="interactive-dialog-body">{specimen(true)}</div></div></dialog>}
+    {open&&<dialog ref={dialogRef} className="interactive-dialog" aria-label={block.title||"Interactive demo"} onCancel={close} onClick={e=>{if(e.target===e.currentTarget)close();}}><div className="interactive-dialog-shell"><div className="interactive-dialog-toolbar"><div><small>INTERACTIVE DEMO</small><span>{block.title||"Interactive demo"}</span></div><button autoFocus onClick={close} aria-label="Close interactive demo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg><span>Close</span></button></div><div className="interactive-dialog-body">{specimen(true)}</div></div></dialog>}
   </div>;
 }
 function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
