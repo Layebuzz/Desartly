@@ -1,0 +1,7 @@
+# Studio workspace repair
+English UI, Persian content retains Vazirmatn. Calm Finder-inspired workspace: white content, cool neutral background, purple only for selection/focus, charcoal primary actions. Shared 28px page titles, 20px section titles, 13px body, 12px controls, 8px control radius, 12px panel radius, 24px spacing.
+Settings: vertical grouped rows; every row has icon, title, description and disclosure, with identical alignment for upload labels and buttons. Technical limits sit in disclosures.
+Transfers: preparing, byte transfer, server saving, saved/error. Saved rows expose Show file, select the returned ID and clear filters. Keep both retains both records; replace retains prior versions. Refresh responses cannot overwrite newer revisions.
+Folders: sorting uses the active pane preference; sizes include descendants, dates use contained assets; names break ties. System roots protected. Other folders may be recoverably trashed unless their assets are referenced by content/history. Trashed automatic folders stay hidden until restored; content is not archived.
+Loading: one accessible branded motion treatment for bootstrap, access check, lazy Studio bundle and CMS data. Reduced motion disables animation. Critical initial style prevents an unstyled boot frame.
+Verify actual XHR through New text file, duplicate upload, Show file, folder sorting, Trash/restore, settings and representative CMS pages at desktop/mobile; image chooser depends on local Chrome extension file access.

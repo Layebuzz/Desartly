@@ -2,7 +2,7 @@ import {isVisibleProject} from './visibility.js';
 const uses=(value,id)=>JSON.stringify(value||{}).includes('/api/media/'+id);
 export function libraryFolders(state){
  const sites=[state.draft||state,state.published||{}];
- return [...new Set([...(state.customMediaFolders||[]),...sites.flatMap(s=>(s.projects||[]).filter(p=>isVisibleProject(p)||(!p.archived&&p.managed)).map(p=>state.mediaFolderLocations?.['Projects/'+p.id]||'Projects/'+p.id)),...sites.flatMap(s=>(s.blogPosts||s.articles||[]).filter(p=>!p.archived).map(p=>state.mediaFolderLocations?.['Journal/'+p.id]||'Journal/'+p.id)),'Projects','Journal','Certificates','Site assets'])].sort();
+ return [...new Set([...(state.customMediaFolders||[]),...sites.flatMap(s=>(s.projects||[]).filter(p=>isVisibleProject(p)||(!p.archived&&p.managed)).map(p=>state.mediaFolderLocations?.['Projects/'+p.id]||'Projects/'+p.id)),...sites.flatMap(s=>(s.blogPosts||s.articles||[]).filter(p=>!p.archived).map(p=>state.mediaFolderLocations?.['Journal/'+p.id]||'Journal/'+p.id)),'Projects','Journal','Certificates','Site assets'])].filter(path=>!(state.trashedMediaFolders||[]).some(r=>path===r.path||path.startsWith(r.path+'/'))).sort();
 }
 export function validateFolder(state,folder){
  if(!libraryFolders(state).includes(folder))throw Object.assign(Error('Choose a site folder or a registered custom folder. Create the content first; its folder is automatic.'),{status:400});

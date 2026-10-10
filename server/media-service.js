@@ -13,7 +13,7 @@ function applyMediaAction(state,body){
 
  if(body.action==='trash-folder'){
   const source=String(body.source||folder),inside=path=>path===source||path?.startsWith(source+'/');
-  const automatic=libraryFolders({...next,customMediaFolders:[]});if(!next.mediaFolders.includes(source)||automatic.some(inside))fail('Folders belonging to live content are protected. Archive the content first.',409);
+  if(['Projects','Journal','Certificates','Site assets'].includes(source))fail('System root folders cannot be moved to Trash.',409);if(!next.mediaFolders.includes(source))fail('Folder not found.',404);
   const items=next.media.filter(m=>!m.trashedAt&&inside(m.folder));for(const item of items)if(references(next.draft,item.id)||references(next.published,item.id)||references(next.history,item.id)||references(next.documentHistory,item.id))fail('This folder contains files used by content or history.',409);
   const date=new Date().toISOString();next.trashedMediaFolders=[...(next.trashedMediaFolders||[]),{path:source,paths:(next.customMediaFolders||[]).filter(inside),ids:items.map(m=>m.id),date}];for(const item of items)item.trashedAt=date;
   next.customMediaFolders=(next.customMediaFolders||[]).filter(path=>!inside(path));next.mediaFolders=libraryFolders(next);return next;

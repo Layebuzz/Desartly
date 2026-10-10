@@ -63,3 +63,9 @@ test('normal media upload avoids full state inflation and recompression while pr
  const response=await contentResponse(new Request('https://site.test/api/studio/upload',{method:'POST',headers:{Origin:'https://site.test','Content-Type':'text/plain','X-File-Name':'test.txt'},body:'sample text'}),{},store,{put:async()=>({storage:'test',key:'test'})},null,{upload:true});
  assert.equal(response.status,200);const after=JSON.parse(db.prepare('SELECT value FROM portfolio_state').get().value);assert.deepEqual(after._historyArchive,rawBefore._historyArchive);assert.equal(after.mediaActivity[0].action,'upload');assert.equal(after.media.length,1);assert.ok(!after.customMediaFolders.includes('Projects/real-project'));
 });
+test('renaming a referenced asset preserves its chosen library folder',async()=>{
+ const before=largeHistory();before.draft.projects=[{id:'real-project',managed:true,coverImage:'/api/media/asset'}];before.media=[{id:'asset',url:'/api/media/asset',name:'original.webp',type:'image/webp',folder:'Site assets',variants:[]}];const {store}=fixture(before);
+ const env={OWNER_PASSWORD:'storage-test-password',OWNER_SESSION_SECRET:'storage-test-secret',OWNER_RATE_LIMITER:{limit:async()=>({success:true})}};const login=await authResponse(new Request('https://site.test/api/owner/login',{method:'POST',headers:{Origin:'https://site.test','Content-Type':'application/json'},body:JSON.stringify({password:env.OWNER_PASSWORD})}),env);const cookie=login.headers.get('set-cookie').split(';')[0];
+ const response=await contentResponse(new Request('https://site.test/api/studio/media-action',{method:'POST',headers:{Cookie:cookie,Origin:'https://site.test','Content-Type':'application/json'},body:JSON.stringify({action:'rename',ids:['asset'],name:'renamed.webp',revision:3})}),env,store,{},null,{});
+ assert.equal(response.status,200);assert.equal((await store.read()).media[0].folder,'Site assets');
+});

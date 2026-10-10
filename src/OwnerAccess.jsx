@@ -1,3 +1,4 @@
+import {WorkspaceLoading} from './cms/WorkspaceLoading.jsx';
 import {publicOrigin} from '../server/site-domains.js';
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,6 +27,7 @@ export function OwnerGate({ children }) {
       });
     return () => controller.abort();
   }, [location.pathname, location.search, navigate]);
+  if(status==="checking")return <WorkspaceLoading label="Checking secure access…"/>;
   return status === "owner" ? (
     children
   ) : (

@@ -1,3 +1,4 @@
+import {WorkspaceLoading} from './cms/WorkspaceLoading.jsx';
 import {privacyBody} from './privacy-content.js';
 import {installRuntimeMonitor} from './cms/runtime-monitor.js';
 installRuntimeMonitor();
@@ -1014,7 +1015,7 @@ function App() {
           ) : (
             <Routes>
               {import.meta.env.VITE_APP_TARGET !== "public" && <>
-              <Route path="/studio" element={<OwnerGate><React.Suspense fallback={<p>Opening Studio…</p>}><Studio/></React.Suspense></OwnerGate>}/><Route path="/studio/:section/:id?" element={<OwnerGate><React.Suspense fallback={<p>Opening Studio…</p>}><Studio/></React.Suspense></OwnerGate>}/>
+              <Route path="/studio" element={<OwnerGate><React.Suspense fallback={<WorkspaceLoading/>}><Studio/></React.Suspense></OwnerGate>}/><Route path="/studio/:section/:id?" element={<OwnerGate><React.Suspense fallback={<WorkspaceLoading/>}><Studio/></React.Suspense></OwnerGate>}/>
               <Route path="/preview/work/:slug" element={<OwnerGate><Project projects={projects}/></OwnerGate>}/><Route path="/preview/journal/:slug" element={<OwnerGate><BlogPost blogPosts={blogPosts}/></OwnerGate>}/>
               <Route path="/login" element={<Login />} />
               </>}
@@ -1063,6 +1064,6 @@ function App() {
   );
 }
 const root = createRoot(document.getElementById("root"));
-root.render(<SiteBootSkeleton/>);
+root.render(location.pathname.startsWith('/studio')?<WorkspaceLoading/>:<SiteBootSkeleton/>);
 function ContentUnavailable(){return <main className="content-unavailable" role="alert"><a href="/">Desartly</a><h1>A brief pause.</h1><p>The portfolio could not load. Please try again in a moment.</p><button className="button dark" onClick={()=>location.reload()}>Try again</button><a href="mailto:Komeilipv@gmail.com">Contact Ali</a></main>}
 bootstrapCloud().finally(() => root.render(cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<BrowserRouter><App /></BrowserRouter>));
