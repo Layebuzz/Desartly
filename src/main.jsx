@@ -487,7 +487,7 @@ function HtmlPreview(props) {
   const dialogRef = React.useRef(null);
   const launchRef = React.useRef(null);
   const [open,setOpen] = useState(false);
-  const block = props.block.id === "flightio-glass-system" ? {...props.block,html:flightioSystem,autoHeight:true} : props.block;
+  const block = props.block.id === "flightio-glass-system" ? {...props.block,title:"Flightio · Interactive component workspace",html:flightioSystem,autoHeight:true} : props.block;
   useEffect(()=>{
     if(!open) return;
     const previous=document.body.style.overflow;
