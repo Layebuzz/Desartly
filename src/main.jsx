@@ -83,6 +83,7 @@ import "./design-system.css";
 import "./footer.css";
 import "./journal-sidebar.css";
 import "./collection-layout.css";
+import "./mobile-navigation.css";
 import "./project-images.css";
 import {journalTopicId, journalSearchText} from "./journal-topics.js";
 import {bootstrapCloud,saveCloud,cloud,uploadMedia} from "./cloud";
@@ -217,7 +218,7 @@ function PublicHeader({items}){
 function MobileNavigation(){
  const {pathname}=useLocation();
  const items=[['/certificates','Certificates',Award],['/work','Projects',Briefcase],['/contact','Book a call',CalendarDays],['/journal','Journal',BookOpen],['/about','About',UserRound]];
- return <nav className="mobile-dock" aria-label="Primary mobile navigation">{items.map(([to,label,Icon])=><Link key={to} to={to} className={to==='/contact'?'mobile-dock-primary':undefined} aria-current={(pathname===to||pathname.startsWith(to+'/'))?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;
+ return <nav className="mobile-dock" aria-label="Primary mobile navigation">{items.map(([to,label,Icon])=><Link key={to} to={to} aria-current={(pathname===to||pathname.startsWith(to+'/'))?'page':undefined}><Icon size={20}/><span>{label}</span></Link>)}</nav>;
 }
 function EntryPage(props){return <Home {...props}/>;}
 function LegacyJournal(){const {slug}=useParams();return <Navigate to={slug?'/journal/'+slug:'/journal'} replace/>;}

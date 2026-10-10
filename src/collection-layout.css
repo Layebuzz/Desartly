@@ -47,18 +47,4 @@
  #main .work-page>.work-explorer,
  #main .journal-page .journal-discovery{display:none!important}
  #main :is(.work-page,.journal-page){padding-top:24px}
- .mobile-dock a[aria-current=page]{background:transparent;color:var(--color-text-secondary)}
-}
-
-@media(max-width:700px){
- .mobile-dock a{position:relative}
- .mobile-dock a[aria-current=page]::after{content:'';position:absolute;left:50%;top:calc(50% + 16px);bottom:auto;transform:translateX(-50%);width:14px!important;height:2px!important;border-radius:1px!important;background:currentColor;pointer-events:none}
- .mobile-dock a.mobile-dock-primary[aria-current=page]{background:#242936;color:white}
-}
-
-@media(max-width:700px){
- .mobile-dock a[aria-current=page]::after{top:calc(50% + 15px);bottom:auto}
-}
-@media(max-width:700px){
- .mobile-dock a[aria-current=page]::after{width:14px;height:2px;top:calc(50% + 16px);bottom:auto;border-radius:1px;left:50%;transform:translateX(-50%)}
 }
