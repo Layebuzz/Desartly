@@ -53,7 +53,7 @@ Projects have independent `coverImage` (cards/home feature) and `heroImage` (cas
 
 ### Native booking and Google Calendar
 
-Apply `server/migrations/0002_calendar.sql` to D1. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` as Worker secrets; the OAuth web client must allow `https://desartly.vercel.app/api/studio/calendar/callback`. `GOOGLE_REDIRECT_URI` can override that callback. Calendar API must be enabled. Connect the owner's account from Studio → Calendar and grant both requested calendar scopes. Use a production OAuth configuration for a durable owner connection; testing-mode consent has Google's expiration limits.
+Apply `server/migrations/0002_calendar.sql` to D1. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` as Worker secrets; the OAuth web client must allow `https://studio.desartly.info/api/studio/calendar/callback`. `GOOGLE_REDIRECT_URI` can override that callback. Calendar API must be enabled. Connect the owner's account from Studio → Calendar and grant both requested calendar scopes. Use a production OAuth configuration for a durable owner connection; testing-mode consent has Google's expiration limits.
 
 Studio → Calendar controls Tehran working days/hours, notice, days off and meeting buffers, and lists private website briefs. Owner cancellation and rescheduling update the existing Google event and notify attendees. Public availability reveals slots only. A stable request/event ID and atomic D1 holds prevent duplicate website reservations; uncertain responses can be retried with the same ID. This does not make an external Google Calendar edit atomic with a website booking.
 

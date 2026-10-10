@@ -211,7 +211,7 @@ export async function calendarResponse(request,env,ctx){
    const state=crypto.randomUUID(),verifier=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
    await env.DESARTLY_AUTH.put('google-calendar:state:'+state,JSON.stringify({verifier,emailOnly}),{expirationTtl:600});
    const challenge=b64(await crypto.subtle.digest('SHA-256',enc.encode(verifier))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
-   const params=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://desartly.vercel.app/api/studio/calendar/callback',response_type:'code',scope:(emailOnly?emailScopes:SCOPES).join(' '),...(emailOnly?{login_hint:bookingOwnerEmail}:{}),access_type:'offline',prompt:'consent',state,code_challenge:challenge,code_challenge_method:'S256'});
+   const params=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://studio.desartly.info/api/studio/calendar/callback',response_type:'code',scope:(emailOnly?emailScopes:SCOPES).join(' '),...(emailOnly?{login_hint:bookingOwnerEmail}:{}),access_type:'offline',prompt:'consent',state,code_challenge:challenge,code_challenge_method:'S256'});
    return new Response(null,{status:302,headers:{Location:'https://accounts.google.com/o/oauth2/v2/auth?'+params,'Cache-Control':'no-store'}});
   }
   if(path==='/api/studio/calendar/callback'&&request.method==='GET'){
@@ -220,7 +220,7 @@ export async function calendarResponse(request,env,ctx){
    await env.DESARTLY_AUTH.delete('google-calendar:state:'+state);
    if(url.searchParams.has('error'))return new Response(null,{status:302,headers:{Location:'/studio/calendar?connection=cancelled','Cache-Control':'no-store'}});
    const code=url.searchParams.get('code');if(!code||code.length>2000)throw fail('Calendar connection failed. Try again.',400);
-   const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,client_secret:env.GOOGLE_CLIENT_SECRET,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://desartly.vercel.app/api/studio/calendar/callback',code,code_verifier:stored.verifier,grant_type:'authorization_code'}),signal:AbortSignal.timeout(10000)});
+   const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,client_secret:env.GOOGLE_CLIENT_SECRET,redirect_uri:env.GOOGLE_REDIRECT_URI||'https://studio.desartly.info/api/studio/calendar/callback',code,code_verifier:stored.verifier,grant_type:'authorization_code'}),signal:AbortSignal.timeout(10000)});
    const data=await response.json();const required=stored.emailOnly?[emailScopes[0]]:SCOPES;
    if(!response.ok||!data.refresh_token||!data.access_token||required.some(scope=>!String(data.scope||'').split(' ').includes(scope)))throw fail('Allow the requested Google permissions to connect.',400);
    let email;

@@ -15,7 +15,7 @@ export function bookingEmail(row){
  const encoded=text=>base64(text).match(/.{1,76}/g).join('\r\n');
  const mime=[`From: Desartly <${bookingOwnerEmail}>`,`To: ${bookingOwnerEmail}`,
   `Subject: =?UTF-8?B?${base64('Desartly — New booking')}?=`,
-  `Message-ID: <booking-${row.id}@desartly.vercel.app>`,`Date: ${new Date().toUTCString()}`,
+  `Message-ID: <booking-${row.id}@desartly.info>`,`Date: ${new Date().toUTCString()}`,
   'MIME-Version: 1.0',`Content-Type: multipart/alternative; boundary="${boundary}"`,'',`--${boundary}`,'Content-Type: text/plain; charset=UTF-8','Content-Transfer-Encoding: base64','',encoded(body),`--${boundary}`,'Content-Type: text/html; charset=UTF-8','Content-Transfer-Encoding: base64','',encoded(bookingEmailHtml(row)),`--${boundary}--` ].join('\r\n');
  return Buffer.from(mime,'utf8').toString('base64url');
 }

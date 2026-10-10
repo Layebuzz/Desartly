@@ -4,7 +4,7 @@
 
 ## اتصال
 
-- آدرس سرور: `https://desartly.vercel.app/mcp`
+- آدرس سرور: `https://studio.desartly.info/mcp`
 - روش اتصال: **Streamable HTTP** با هدر `Authorization: Bearer YOUR_TOKEN`.
 - توکن را در **CMS → Connections** بسازید. توکن را فقط در تنظیمات امن کلاینت AI نگه دارید؛ داخل چت عمومی، فایل پروژه یا مخزن قرار ندهید.
 - توکن عادی دسترسی خواندن، آپلود و ذخیرهٔ پیش‌نویس دارد. برای انتشار، گزینهٔ **Allow publishing to the live site** نیز باید فعال باشد.
