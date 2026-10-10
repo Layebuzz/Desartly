@@ -1,3 +1,4 @@
+import {ideaResponse} from './idea-service.js';
 import {skillResponse} from './skill-service.js';
 import {workerPageResponse} from './worker-pages.js';
 import {staticAssetResponse} from './static-assets.js';
@@ -42,6 +43,7 @@ async function handleRequest(request,env,ctx){
     const calendar=await calendarResponse(request,env,ctx);if(calendar){if(request.method==='POST'&&new URL(request.url).pathname==='/api/calendar/book'&&calendar.ok)ctx.waitUntil(processTelegramQueue(env));return calendar;}
     const url = new URL(request.url);
     const backup=await mediaBackupResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env));if(backup)return backup;
+    const ideas=await ideaResponse(request,env);if(ideas)return ideas;
     const cms=await cmsResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),null);
     if(cms)return cms;
     if(url.pathname.startsWith("/api/")) return contentResponse(request,env,env.DB ? new D1Store(env.DB) : null,new MediaStorage(env),env.IMAGES ? async bytes => Promise.all([640,1280,2560].map(async width=>{const output=await env.IMAGES.input(new Blob([bytes]).stream()).transform({width,fit:"scale-down"}).output({format:"image/webp",quality:92});return {width,bytes:new Uint8Array(await output.response().arrayBuffer())};})) : null);

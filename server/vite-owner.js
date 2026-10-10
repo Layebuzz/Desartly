@@ -1,3 +1,4 @@
+import {ideaResponse} from './idea-service.js';
 import {skillResponse} from './skill-service.js';
 import {portfolioResponse} from './portfolio-service.js';
 import {mediaBackupResponse} from './media-backup.js';
@@ -33,6 +34,7 @@ export function ownerAccessPlugin() {
         if(!response) response=await skillResponse(request,env,store,store);
         if(!response) response=await portfolioResponse(request,env,store);
         if(!response) response=await mediaBackupResponse(request,env,store,store);
+        if(!response) response=await ideaResponse(request,env);
         if(!response) response=await cmsResponse(request,env,store,store,null);
         if (!response && requestUrl.pathname.startsWith("/api/")) response = await contentResponse(request, env, store, store, async bytes => {
           const input = sharp(bytes, {limitInputPixels: 40000000}).rotate();

@@ -13,7 +13,7 @@
 /* One page frame and heading contract across Studio routes. */
 .cms-shell .cms-main{width:100%;max-width:1464px;margin-inline:auto;box-sizing:border-box;min-width:0}
 .cms-shell .cms-main>.portfolio-maker,.cms-shell .cms-main>.cms-operations,.cms-shell .cms-main>.cms-observability,.cms-shell .cms-main>.mk2-workspace{width:100%;max-width:none;margin-inline:0}
-.cms-shell .cms-main .cms-page-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;min-height:96px;height:auto;padding:0 0 24px;margin:0 0 24px;border:0;background:transparent;box-sizing:border-box}
+.cms-shell .cms-main .cms-page-header{display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;min-height:96px;height:auto;padding:0 0 24px;margin:0 0 24px;border:0;background:transparent;box-sizing:border-box}
 .cms-shell .cms-page-header>div:first-child{min-width:0;flex:1 1 280px}
 .cms-shell .cms-page-header h1{margin:6px 0 0;font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-.035em}
 .cms-shell .cms-page-header p{margin:8px 0 0;font-size:13px;line-height:1.65;color:var(--cms-muted);max-width:680px}
