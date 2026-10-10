@@ -1,3 +1,4 @@
+import {BrandLoading,BootReady} from './BrandLoading.jsx';
 import flightioSystem from './flightio-system.html?raw';
 import {WorkspaceLoading} from './cms/WorkspaceLoading.jsx';
 import {privacyBody} from './privacy-content.js';
@@ -163,9 +164,7 @@ function SiteMotion({ disabled = false }) {
   return null;
 }
 
-function SiteBootSkeleton() {
-  return <div className="site-boot" aria-label="Loading website" aria-busy="true"><div className="site-boot-header"><i/><i/><i/></div><main><div className="site-boot-title skeleton-pulse"/><div className="site-boot-copy skeleton-pulse"/><div className="site-boot-grid"><i className="skeleton-pulse"/><i className="skeleton-pulse"/><i className="skeleton-pulse"/></div></main></div>;
-}
+function SiteBootSkeleton() { return <BrandLoading/>; }
 function GridPreview({ id }) {
   const { width, height, boxes } = composition(id);
   return (
@@ -883,7 +882,7 @@ function Certificates({ certificates }) {
         A record of learning, practice and new perspectives.
       </p></div>
       {certificates.length ? (
-        <React.Suspense fallback={<p className="credential-loading">Loading credentials…</p>}><CredentialGallery certificates={certificates}/></React.Suspense>
+        <React.Suspense fallback={<BrandLoading inline label="Loading credentials…"/>}><CredentialGallery certificates={certificates}/></React.Suspense>
       ) : (
         <div className="credential-empty">
           <span>01 / SPACE FOR WHAT’S NEXT</span>
@@ -1016,7 +1015,7 @@ function App() {
           {isWorkspace && location.pathname!=="/studio/layout" ? <LegacyStudioRedirect/> : isWorkspace ? (
             <OwnerGate>
 
-              <React.Suspense fallback={<p className="page">Loading editor…</p>}><OwnerWorkspace
+              <React.Suspense fallback={<WorkspaceLoading label="Loading editor…"/>}><OwnerWorkspace
                 {...{
                   projects,
                   setProjects,
@@ -1089,4 +1088,4 @@ function App() {
 const root = createRoot(document.getElementById("root"));
 root.render(location.pathname.startsWith('/studio')?<WorkspaceLoading/>:<SiteBootSkeleton/>);
 function ContentUnavailable(){return <main className="content-unavailable" role="alert"><a href="/">Desartly</a><h1>A brief pause.</h1><p>The portfolio could not load. Please try again in a moment.</p><button className="button dark" onClick={()=>location.reload()}>Try again</button><a href="mailto:Komeilipv@gmail.com">Contact Ali</a></main>}
-bootstrapCloud().finally(() => root.render(cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<BrowserRouter><App /></BrowserRouter>));
+bootstrapCloud().finally(() => root.render(<BootReady>{cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<BrowserRouter><App /></BrowserRouter>}</BootReady>));
