@@ -1,3 +1,4 @@
+import {OrbitError,SiteErrorBoundary} from './OrbitError.jsx';
 import {BrandLoading,BootReady} from './BrandLoading.jsx';
 import flightioSystem from './flightio-system.html?raw';
 import {WorkspaceLoading} from './cms/WorkspaceLoading.jsx';
@@ -953,21 +954,7 @@ function Editor({projects,certificates,contextPath='/',pages,setPages,stats,setS
  {contextPath==='/'?<Home projects={projects.filter(isVisibleProject)} stats={stats} clients={clients} blogPosts={blogPosts} homeSections={homeSections} pageOverride={page} editable onPagePatch={patch} onStatsChange={(id,v)=>setStats(list=>list.map(s=>s.id===id?{...s,...v}:s))} onClientChange={(id,v)=>setClients(list=>list.map(s=>s.id===id?{...s,...v}:s))} onClientsChange={setClients} onSectionsChange={setHomeSections} onFeaturedOrder={selectedProjects=>patch({selectedProjects})} onFeaturedChange={(i,id)=>{const ids=[...(page.selectedProjects||[])];ids[i]=id;patch({selectedProjects:ids});}}/>:contextPath==='/certificates'?<CredentialEditor items={certificateDraft} onChange={setCertificateDraft} onUpload={file=>optimizeImage(file)} onNotice={setNotice}/>:<><VisualCopy editable scope="site" copy={page.copy||{}} onChange={(key,value)=>patch({copy:{...page.copy,[key]:value}})}>{contextPath==='/about'?<About/>:contextPath==='/services'?<Services/>:contextPath==='/contact'?<Contact/>:contextPath==='/work'?<div className="page"><h1>{page.title||'Projects'}</h1><p>{page.intro||'Product thinking. Visual identities. Ideas that move.'}</p><p data-editor-ui>Project cards are managed in Studio → Projects.</p></div>:contextPath==='/journal'?<div className="page"><h1>{page.title||'Journal'}</h1><p>{page.intro||'Notes on design and making things.'}</p><p data-editor-ui>Articles are managed in Studio → Journal.</p></div>:<main className="page"><h1>{page.title||'Privacy'}</h1><p>{page.intro}</p><p>{page.body}</p></main>}</VisualCopy><PageModules blocks={page.blocks||[]} onChange={blocks=>patch({blocks})}/></>}
  </EditingPath.Provider></div></div></div>;
 }
-function NotFound() {
-  return (
-    <main className="page">
-      <span className="eyebrow">404 / A CONNECTION MISSING</span>
-      <h1>
-        Let’s find
-        <br />
-        another way.
-      </h1>
-      <Link className="button dark" to="/">
-        Back to Desartly <Arrow />
-      </Link>
-    </main>
-  );
-}
+function NotFound(){return <OrbitError/>;}
 function App() {
   const [projects, setProjects] = useState(() =>
       read("pol-published", initialProjects),
@@ -1087,5 +1074,5 @@ function App() {
 }
 const root = createRoot(document.getElementById("root"));
 root.render(location.pathname.startsWith('/studio')?<WorkspaceLoading/>:<SiteBootSkeleton/>);
-function ContentUnavailable(){return <main className="content-unavailable" role="alert"><a href="/">Desartly</a><h1>A brief pause.</h1><p>The portfolio could not load. Please try again in a moment.</p><button className="button dark" onClick={()=>location.reload()}>Try again</button><a href="mailto:Komeilipv@gmail.com">Contact Ali</a></main>}
-bootstrapCloud().finally(() => root.render(<BootReady>{cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<BrowserRouter><App /></BrowserRouter>}</BootReady>));
+function ContentUnavailable(){return <OrbitError kind="unavailable" standalone/>}
+bootstrapCloud().finally(() => root.render(<BootReady>{cloud.error&&!location.pathname.startsWith('/login')?<ContentUnavailable/>:<SiteErrorBoundary><BrowserRouter><App /></BrowserRouter></SiteErrorBoundary>}</BootReady>));

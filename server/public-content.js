@@ -1,3 +1,4 @@
+import {orbitNotFoundHtml} from '../src/shared/orbit-error.js';
 import {publicSite} from '../src/cms/schema.js';
 import {privacyBody} from '../src/privacy-content.js';
 import {resolveAbout} from '../src/about-content.js';
@@ -10,7 +11,7 @@ function block(b){if(!b||typeof b!=='object')return '';const heading=b.title?'<h
 function image(url,alt){if(typeof url!=='string'||!/^\/(?![\/\\])|^https:\/\//.test(url))return '';return '<img loading="lazy" src="'+esc(url)+'" alt="'+esc(alt||'')+'" style="max-width:100%;height:auto"/>';}
 export function knownPublicPath(site,path){if(links.some(([p])=>p===path)||path==='/privacy')return true;const[area,id,...extra]=path.split('/').filter(Boolean);return !extra.length&&['work','journal'].includes(area)&&visible(area==='work'?site.projects:site.blogPosts).some(d=>d.id===id);}
 export function initialPublicContent(site,path){
- if(!knownPublicPath(site,path))return '<main id="main"><h1>Page not found</h1><p>This page is unavailable.</p><a href="/work">Browse projects</a></main>';
+ if(!knownPublicPath(site,path))return orbitNotFoundHtml();
  const[area,id]=path.split('/').filter(Boolean),doc=visible(area==='work'?site.projects:area==='journal'?site.blogPosts:[]).find(d=>d.id===id),page=site.pages?.[path]||{};
  const titles={'/':'Ali Komeili — Independent designer','/work':'Selected projects','/journal':'Journal','/about':'About Ali Komeili','/services':'Design services','/certificates':'Certificates','/contact':'Book a project conversation','/privacy':'Privacy'};
  let body=text(doc?.summary||doc?.excerpt||page.intro)+text(doc?null:page.body);
