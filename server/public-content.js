@@ -33,5 +33,5 @@ export function publicBootstrap(site){
  const visible=publicSite(site),keys=['projects','categories','certificates','pages','nav','stats','clients','blogPosts','homeSections','settings'];
  return JSON.stringify({site:Object.fromEntries(keys.filter(k=>visible[k]!==undefined).map(k=>[k,visible[k]]))}).replaceAll('<','\\u003c').replaceAll('\u2028','\\u2028').replaceAll('\u2029','\\u2029');
 }
-export function pageBody(html,site,path){return html.replace(/<div id="root">\s*<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div><script id="desartly-published" type="application/json">'+publicBootstrap(site)+'</script>');}
+export function pageBody(html,site,path){return html.replace(/<div id="root">(?:\s*|<div class="initial-loading"[^>]*><span><\/span><\/div>)<\/div>/,'<div id="root"><div class="initial-public-content">'+initialPublicContent(site,path)+'</div></div><script id="desartly-published" type="application/json">'+publicBootstrap(site)+'</script>');}
 
