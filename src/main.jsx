@@ -1,3 +1,4 @@
+import flightioSystem from './flightio-system.html?raw';
 import {WorkspaceLoading} from './cms/WorkspaceLoading.jsx';
 import {privacyBody} from './privacy-content.js';
 import {installRuntimeMonitor} from './cms/runtime-monitor.js';
@@ -483,8 +484,24 @@ function Grid({ block, cover = 0 }) {
   );
 }
 function HtmlPreview(props) {
-  if (props.block.component === "divar-categories") return <section className="html-block"><div className="live-component-label"><span aria-hidden="true">↔</span><span>Responsive component</span></div><div className="live-component-frame"><DivarCategories /></div></section>;
-  return <HtmlFrame {...props} />;
+  const dialogRef = React.useRef(null);
+  const launchRef = React.useRef(null);
+  const [open,setOpen] = useState(false);
+  const block = props.block.id === "flightio-glass-system" ? {...props.block,html:flightioSystem,autoHeight:true} : props.block;
+  useEffect(()=>{
+    if(!open) return;
+    const previous=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    dialogRef.current?.showModal();
+    return ()=>{document.body.style.overflow=previous;};
+  },[open]);
+  const close=()=>{dialogRef.current?.close();setOpen(false);launchRef.current?.focus();};
+  const specimen=(modal=false)=>block.component === "divar-categories" ? <DivarCategories/> : <HtmlFrame {...props} block={modal?{...block,scrollSync:false}:block} editable={modal?false:props.editable}/>;
+  return <div className="interactive-sample">
+    <div className="interactive-sample-bar"><span>Live, responsive demo · Try the controls</span><button ref={launchRef} onClick={()=>setOpen(true)}>Open interactive demo <span aria-hidden="true">↗</span></button></div>
+    {specimen()}
+    {open&&<dialog ref={dialogRef} className="interactive-dialog" aria-label={block.title||"Interactive demo"} onCancel={close} onClick={e=>{if(e.target===e.currentTarget)close();}}><div className="interactive-dialog-shell"><header><span>{block.title||"Interactive demo"}</span><button autoFocus onClick={close} aria-label="Close interactive demo">Close ×</button></header><div className="interactive-dialog-body">{specimen(true)}</div></div></dialog>}
+  </div>;
 }
 function HtmlFrame({ block, editable = false, onChange, onTitleChange }) {
   const frameRef = React.useRef(null);

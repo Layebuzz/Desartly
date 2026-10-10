@@ -1,0 +1,5 @@
+# Flightio component workspace
+Audience: portfolio visitors inspecting a travel design system. Direction: quiet airport wayfinding, ink and ivory with Flightio spectrum used as a route signature. Alternatives considered: aurora glass, editorial travel journal, technical departure board; choose departure board for legible component inspection.
+Tokens: ink #172434, muted #546577, paper #f4f6f8, blue #1859d4, radius 16px, space 8/16/24/32, motion 160ms ease-out.
+Contract: library tabs switch specimens; travel mode changes route results; editable route fields validate before search; dark toggle changes semantic surfaces; specimen results are explicitly simulated. Mobile single column, controls >=44px, visible focus, reduced motion.
+Shared preview: inline working sample plus Open interactive demo button. Native modal dialog opened above page chrome, named title, Escape/backdrop/Close dismissal, focus restored to launcher, browser focus containment. Sandboxed iframe retains allow-scripts only. Modal suppresses scroll-sync and uses its own scrolling.
