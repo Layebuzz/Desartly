@@ -3,7 +3,6 @@ export const orbitGraphic=`<svg viewBox="0 0 640 460" fill="none" xmlns="http://
  <circle cx="320" cy="230" r="164" stroke="currentColor" opacity=".12" stroke-dasharray="2 8"/>
  <g stroke="currentColor" stroke-width="1.2"><ellipse cx="320" cy="230" rx="244" ry="91" transform="rotate(-28 320 230)" opacity=".3"/><ellipse cx="320" cy="230" rx="213" ry="136" transform="rotate(34 320 230)" opacity=".16"/></g>
  <circle cx="320" cy="230" r="66" fill="var(--color-surface,#f6f7f9)"/><circle cx="320" cy="230" r="66" stroke="var(--color-focus,#7551cf)" stroke-opacity=".3"/>
- <path d="M268 216C294 200 349 203 379 224M260 241C297 225 345 230 376 247" stroke="var(--color-focus,#7551cf)" stroke-opacity=".35"/>
  <circle cx="116" cy="331" r="11" fill="currentColor"/><circle cx="499" cy="138" r="5" fill="var(--color-focus,#7551cf)"/>
  <g class="orbit-satellite"><circle cx="320" cy="66" r="8" fill="var(--color-focus,#7551cf)"/><circle cx="320" cy="66" r="15" stroke="var(--color-focus,#7551cf)" stroke-opacity=".2"/></g>
  <path d="M481 343h12m-6-6v12M154 110h8m-4-4v8" stroke="currentColor" opacity=".35"/>
