@@ -1,3 +1,4 @@
+import {PageHeader} from './PageHeader.jsx';
 import React,{useEffect,useRef,useState} from 'react';
 import {Mail,Send,FileText,Trash2,Plus,RefreshCw,ArrowLeft,ArrowRight,Star,Archive,Eye,LayoutTemplate,Reply,Forward,Check,X,Search} from 'lucide-react';
 import {api} from './context.jsx';
@@ -31,7 +32,7 @@ export function Mailbox({refreshStudio}){
  const counts=Object.fromEntries((data?.counts||[]).map(c=>[c.folder,c]));
  const previewHtml=compose?mailDesignHtml(compose.body,compose.template,compose.fields):selected?.direction==='outbound'?mailDesignHtml(selected.body,selected.template,parse(selected.template_data,{})):null;
  return <div className="mail-workspace">
- <header className="mail-heading"><div className="mail-identity"><img src="/email/desartly-avatar.png" alt="Desartly"/><div><span>EMAIL / PROJECT BRIEFS</span><h1>Your conversations. One inbox.</h1><p>{data?.address||'Komeili@desartly.info'} <span className="mail-connected">{data?.configured?'● Connected':'○ Connecting'}</span></p></div></div><div className="cms-actions"><button onClick={()=>leave(()=>{fresh();setGallery(true);})}><LayoutTemplate size={16}/>Templates</button><button className="cms-primary" onClick={()=>leave(()=>fresh())}><Plus size={16}/>Compose</button></div></header>
+ <PageHeader eyebrow="EMAIL / PROJECT BRIEFS" title="Your conversations. One inbox." description={<>{data?.address||'Komeili@desartly.info'} · {data?.configured?'Connected':'Connecting'}</>}><div className="cms-actions"><button onClick={()=>leave(()=>{fresh();setGallery(true);})}><LayoutTemplate size={16}/>Templates</button><button className="cms-primary" onClick={()=>leave(()=>fresh())}><Plus size={16}/>Compose</button></div></PageHeader>
  {error&&<p role="alert" className="cms-message error">{error}</p>}{notice&&<p role="status" className="cms-message">{notice}</p>}
  {discard&&<div className="mail-discard" role="alert"><p>Your current message has unsaved changes. Save it as a draft before leaving, or discard your edits.</p><button onClick={async()=>{if(await action('/api/studio/mail/draft',compose)){const next=discard;setDiscard(null);setCompose(null);next();}}}>Save draft & continue</button><button onClick={()=>{const next=discard;setDiscard(null);setCompose(null);next();}}>Discard edits</button><button onClick={()=>setDiscard(null)}>Keep editing</button></div>}
  {data&&!data.configured&&<p role="status">Sending is available after domain verification and connection are complete.</p>}

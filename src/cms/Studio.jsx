@@ -1,3 +1,4 @@
+import {PageHeader} from './PageHeader.jsx';
 import {Marketing} from './Marketing.jsx';
 import {AgentHub} from './AgentHub.jsx';
 import {SkillLibrary} from './SkillLibrary.jsx';
@@ -48,7 +49,7 @@ export default function Studio(){useEffect(()=>{const trap=e=>{if(e.key!=='Tab')
  {section==='marketing'&&<Marketing state={state} refresh={refresh} notify={notify} onError={onError}/>}
  {section==='mail'&&<Mailbox refreshStudio={refresh}/>}
  {section==='portfolio'&&<PortfolioMaker/>}
- {section==='overview'&&<><KnowledgeGraph state={state}/><GrowthDashboard state={state} refresh={refresh} notify={notify} onError={onError}/></>}
+ {section==='overview'&&<><PageHeader eyebrow="YOUR WORKSPACE" title="Overview" description="Your content, progress and next steps."/><KnowledgeGraph state={state}/><GrowthDashboard state={state} refresh={refresh} notify={notify} onError={onError}/></>}
  {['projects','articles'].includes(section)&&(id?<DocumentEditor key={section+'/'+id} kind={section==='projects'?'project':'article'} id={id} state={state} refresh={refresh} refreshMedia={refreshMedia} notify={notify} onError={onError}/>:<Library kind={section==='projects'?'project':'article'} items={state[section]} notify={notify} onError={onError}/>)}
  {section==='inbox'&&<Navigate to="/studio/mail" replace/>}
  {section==='media'&&<FileWorkspace uploadFile={uploadFile} state={state} refresh={refreshMedia} notify={notify} onError={onError}/>}
@@ -62,7 +63,7 @@ export default function Studio(){useEffect(()=>{const trap=e=>{if(e.key!=='Tab')
  {section==='settings'&&<StudioSettings state={state} refresh={refresh} notify={notify} onError={onError}/>}
  </>}</main><footer className="cms-footer"><span>Desartly Studio · Made for the way you create.</span><span>Drafts stay private until published.</span></footer></div></div>;
 }
-function Title({eyebrow,title,description,children}){return <div className="cms-heading"><div><span className="cms-eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>{children}</div>}
+const Title=PageHeader;
 function Empty({title,text}){return <div className="cms-empty"><FolderOpen size={30}/><h2>{title}</h2><p>{text}</p></div>}
 function Library({kind,items,notify,onError}){const [query,setQuery]=useState(''),[filter,setFilter]=useState('All'),[sort,setSort]=useState('recent');const navigate=useNavigate(),plural=kind==='project'?'projects':'articles';const visible=items.filter(d=>(filter==='Archived'?d.status==='Archived':d.status!=='Archived')&&(filter==='All'||d.status===filter)&&[d.title,d.category,d.industry,d.brandPersonality,d.id].join(' ').toLowerCase().includes(query.toLowerCase())).sort((a,b)=>sort==='title'?a.title.localeCompare(b.title):(b.updatedAt||'').localeCompare(a.updatedAt||''));
  async function importFile(file){try{const document=JSON.parse(await file.text());const value=await api('/api/cms/document',{action:'create',kind,document});notify('Imported as a private draft. Review it before publishing.');navigate('/studio/'+plural+'/'+value.document.id);}catch(e){onError(e);}}
