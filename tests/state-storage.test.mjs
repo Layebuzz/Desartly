@@ -48,6 +48,10 @@ test('D1 archive references restore published content and full CMS history',asyn
  assert.deepEqual(publicState.published,state.published);
  assert.equal(publicState.history,undefined);
  assert.deepEqual(await store.read(),state);
+ stored.draft.projects=[];
+ db.prepare('UPDATE portfolio_state SET value=? WHERE id=1').run(JSON.stringify(stored));
+ assert.deepEqual((await store.read()).draft.projects,[]);
+ assert.deepEqual((await store.readPublic()).published,state.published);
  db.prepare('DELETE FROM portfolio_content_archives').run();
  await assert.rejects(store.readPublic(),/Referenced content archive is missing/);
 });
