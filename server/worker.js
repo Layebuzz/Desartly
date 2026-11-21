@@ -35,7 +35,10 @@ async function handleRequest(request,env,ctx){
       const row=await env.DB.prepare("SELECT json_extract(value,'$._contentArchive') AS content,json_extract(value,'$._historyArchive') AS history FROM portfolio_state WHERE id=1").first();
       const tables=await env.DB.prepare("SELECT name,sql FROM sqlite_master WHERE type='table' AND (name LIKE '%archive%' OR name LIKE '%content%' OR name LIKE '%state%')").all();
       const shape=value=>{if(!value)return null;const parsed=JSON.parse(value);return Object.fromEntries(Object.entries(parsed).map(([key,item])=>[key,typeof item==='string'?item.slice(0,100):item]));};
-      return Response.json({content:shape(row?.content),history:shape(row?.history),tables:tables.results},{headers:{'Cache-Control':'no-store'}});
+      const id=row?.content&&JSON.parse(row.content).id;
+      const archive=id?await env.DB.prepare("SELECT value FROM portfolio_content_archives WHERE id=?").bind(id).first():null;
+      const archiveValue=archive?.value;
+      return Response.json({content:shape(row?.content),history:shape(row?.history),tables:tables.results,archive:{found:!!archive,kind:typeof archiveValue,length:archiveValue?.length,prefix:archiveValue?.slice(0,80)}},{headers:{'Cache-Control':'no-store'}});
     }
     if(new URL(request.url).pathname.startsWith('/api/skills'))return skillResponse(request,env,env.DB?new D1Store(env.DB):null,new MediaStorage(env));
     const staticAsset=await staticAssetResponse(request,env,new MediaStorage(env));if(staticAsset)return staticAsset;
