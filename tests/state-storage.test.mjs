@@ -32,6 +32,25 @@ test('public reads restore published content without expanding historical snapsh
  assert.equal(publicState.history,undefined);assert.equal(publicState.documentHistory,undefined);
  assert.deepEqual((await store.read()).history,state.history);
 });
+test('D1 archive references restore published content and full CMS history',async()=>{
+ const state=largeHistory();state.published.projects=[{id:'public',blocks:[{html:'<p>هویت بصری</p>'.repeat(500)}]}];
+ const {db,store}=fixture(state);
+ db.exec('CREATE TABLE portfolio_content_archives(id TEXT PRIMARY KEY,value TEXT NOT NULL);CREATE TABLE portfolio_history_archives(id TEXT PRIMARY KEY,value TEXT NOT NULL)');
+ const stored=JSON.parse(encodeStoredState(state));
+ assert.equal(stored._contentArchive.encoding,'gzip-base64-v1');
+ const content=stored._contentArchive,history=stored._historyArchive;
+ db.prepare('INSERT INTO portfolio_content_archives VALUES(?,?)').run('content-1',JSON.stringify(content));
+ db.prepare('INSERT INTO portfolio_history_archives VALUES(?,?)').run('history-1',JSON.stringify(history));
+ stored._contentArchive={encoding:'d1-reference-v1',id:'content-1'};
+ stored._historyArchive={encoding:'d1-reference-v1',id:'history-1'};
+ db.prepare('UPDATE portfolio_state SET value=? WHERE id=1').run(JSON.stringify(stored));
+ const publicState=await store.readPublic();
+ assert.deepEqual(publicState.published,state.published);
+ assert.equal(publicState.history,undefined);
+ assert.deepEqual(await store.read(),state);
+ db.prepare('DELETE FROM portfolio_content_archives').run();
+ await assert.rejects(store.readPublic(),/Referenced content archive is missing/);
+});
 test('an optimized JPEG upload succeeds with a formerly over-budget history and preserves every snapshot',async()=>{
  const before=largeHistory(),{db,store}=fixture(before),files=new Map();
  const jpeg=await sharp({create:{width:900,height:600,channels:3,background:'#668844'}}).jpeg().toBuffer();
