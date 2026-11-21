@@ -24,6 +24,14 @@ test('lossless history storage preserves legacy state, revisions and Unicode whi
  assert.ok(Buffer.byteLength(plain)>stateStorageLimit);assert.ok(Buffer.byteLength(stored)<stateStorageLimit);assert.deepEqual(decodeStoredState(stored),state);
  const raw=JSON.parse(stored);assert.equal(raw._historyArchive.encoding,'gzip-base64-v1');assert.deepEqual(raw.media,state.media);assert.deepEqual(raw.draft.projects.map(p=>p.id),state.draft.projects.map(p=>p.id));assert.deepEqual(decodeStoredState(plain),state);assert.equal(encodeStoredState({history:[],media:[]}),JSON.stringify({history:[],media:[]}));
 });
+test('public reads restore published content without expanding historical snapshots',async()=>{
+ const state=largeHistory();state.publishedAt='2026-11-21T00:00:00.000Z';state.published.projects=[{id:'public',blocks:[{type:'html',html:'<p>هویت بصری</p>'.repeat(300)}]}];
+ const {db,store}=fixture(state);db.prepare('UPDATE portfolio_state SET value=? WHERE id=1').run(encodeStoredState(state));
+ const publicState=await store.readPublic();
+ assert.deepEqual(publicState.published,state.published);assert.equal(publicState.publishedAt,state.publishedAt);
+ assert.equal(publicState.history,undefined);assert.equal(publicState.documentHistory,undefined);
+ assert.deepEqual((await store.read()).history,state.history);
+});
 test('an optimized JPEG upload succeeds with a formerly over-budget history and preserves every snapshot',async()=>{
  const before=largeHistory(),{db,store}=fixture(before),files=new Map();
  const jpeg=await sharp({create:{width:900,height:600,channels:3,background:'#668844'}}).jpeg().toBuffer();
