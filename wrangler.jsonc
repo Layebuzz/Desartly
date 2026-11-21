@@ -5,7 +5,23 @@
     "directory": "./dist",
     "not_found_handling": "single-page-application",
     "binding": "ASSETS",
-    "run_worker_first": true
+    "run_worker_first": [
+      "/*",
+      "!/assets/*",
+      "!/studio-app/assets/*",
+      "!/*.js",
+      "!/*.css",
+      "!/*.svg",
+      "!/*.png",
+      "!/*.jpg",
+      "!/*.jpeg",
+      "!/*.webp",
+      "!/*.avif",
+      "!/*.gif",
+      "!/*.ico",
+      "!/*.woff",
+      "!/*.woff2"
+    ]
   },
   "main": "./server/worker.js",
   "compatibility_flags": [
