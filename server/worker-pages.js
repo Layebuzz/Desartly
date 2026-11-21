@@ -21,7 +21,7 @@ export async function workerPageResponse(request,env,store){
   let html=await shell.text();
   if(route.studio)return respond(html,200,undefined,{'Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'});
   if(route.booking)return respond(html.replace(/<title>[^<]*<\/title>/,'<title>Book a conversation — Ali Komeili · Desartly</title>'),200,undefined,{'Cache-Control':'no-store','X-Robots-Tag':'noindex, follow'});
-  const state=await store.read();
+  const state=await (store.readPublic?.()??store.read());
   if(!state.publishedAt)throw Error('No published site');
   const site=publicSite(state.published);
   if(path==='/sitemap.xml')return respond(sitemap(site),200,'application/xml; charset=utf-8');
