@@ -2,6 +2,19 @@ import {defaults} from '../src/cms/schema.js';
 import {isVisibleProject} from '../src/cms/visibility.js';
 import {encodeStoredStateAsync,decodeStoredStateAsync,decodePublicStateAsync,stateStorageLimit} from './state-storage.js';
 export function initialState(){return {revision:0,draft:defaults(),published:defaults(),history:[],media:[],inbox:[],events:{},updatedAt:null};}
+async function resolveArchiveReferences(value,db,publicOnly=false){
+ const state=JSON.parse(value);
+ for(const [key,table] of [['_contentArchive','portfolio_content_archives'],['_historyArchive','portfolio_history_archives']]){
+  if(publicOnly&&key==='_historyArchive')continue;
+  const reference=state[key];
+  if(reference?.encoding!=='d1-reference-v1')continue;
+  if(typeof reference.id!=='string'||!reference.id)throw Error('Invalid stored archive reference.');
+  const row=await db.prepare(`SELECT value FROM ${table} WHERE id=?`).bind(reference.id).first();
+  if(!row?.value)throw Error('Referenced content archive is missing.');
+  state[key]=JSON.parse(row.value);
+ }
+ return JSON.stringify(state);
+}
 export class D1Store{
  constructor(db){this.db=db;}
  async skillList(){const rows=await this.db.prepare('SELECT value FROM agent_skills').all();return rows.results.map(r=>JSON.parse(r.value));}
@@ -9,8 +22,8 @@ export class D1Store{
  async skillWrite(skill,expected){const statement=expected===0?this.db.prepare('INSERT OR IGNORE INTO agent_skills(id,revision,value) VALUES(?,?,?)').bind(skill.id,skill.revision,JSON.stringify(skill)):this.db.prepare('UPDATE agent_skills SET revision=?,value=? WHERE id=? AND revision=?').bind(skill.revision,JSON.stringify(skill),skill.id,expected);const result=await statement.run();if(!result.meta.changes)throw Object.assign(Error('Skill changed. Refresh before uploading.'),{status:409});}
  async readAccess(){const row=await this.db.prepare("SELECT json_extract(value,'$.agentKeys') AS keys FROM portfolio_state WHERE id=1").first();return {agentKeys:JSON.parse(row?.keys||'[]')};}
  async storageUsage(){const row=await this.db.prepare('SELECT length(CAST(value AS BLOB)) AS bytes FROM portfolio_state WHERE id=1').first();return row?.bytes||0;}
- async read(){const row=await this.db.prepare('SELECT value FROM portfolio_state WHERE id = 1').first();return row?await decodeStoredStateAsync(row.value):initialState();}
- async readPublic(){const row=await this.db.prepare('SELECT value FROM portfolio_state WHERE id = 1').first();return row?await decodePublicStateAsync(row.value):initialState();}
+ async read(){const row=await this.db.prepare('SELECT value FROM portfolio_state WHERE id = 1').first();return row?await decodeStoredStateAsync(await resolveArchiveReferences(row.value,this.db)):initialState();}
+ async readPublic(){const row=await this.db.prepare('SELECT value FROM portfolio_state WHERE id = 1').first();return row?await decodePublicStateAsync(await resolveArchiveReferences(row.value,this.db,true)):initialState();}
  async write(state,expected){const next={...state,revision:expected+1,updatedAt:new Date().toISOString()},stored=next.historyStorageVersion===1?await encodeStoredStateAsync(next):JSON.stringify(next);if(new TextEncoder().encode(stored).length>stateStorageLimit)throw Object.assign(Error(next.historyStorageVersion===1?'Active CMS content exceeds its storage limit after lossless history compression. Keep large assets in the media library.':'CMS content metadata exceeds its storage limit. Image optimization is separate; lossless history storage must be enabled by the site administrator.'),{status:413});await this.db.prepare('INSERT OR IGNORE INTO portfolio_state(id,revision,value) VALUES(1,0,?)').bind(JSON.stringify(initialState())).run();const result=await this.db.prepare('UPDATE portfolio_state SET revision=?, value=? WHERE id=1 AND revision=?').bind(next.revision,stored,expected).run();if(!result.meta.changes)throw Object.assign(Error('Content changed in another session. Reload before saving.'),{status:409});return next;}
  async readMarketing(){const row=await this.db.prepare("SELECT revision,json_extract(value,'$.marketing') AS marketing FROM portfolio_state WHERE id=1").first();return {revision:row?.revision||0,marketing:JSON.parse(row?.marketing||'{"programs":[],"tasks":[]}')};}
  async writeMarketing(marketing,expected){const value=JSON.stringify(marketing);if(new TextEncoder().encode(value).length>220000)throw Object.assign(Error('Marketing records reached their storage budget.'),{status:413});const result=await this.db.prepare("UPDATE portfolio_state SET revision=?,value=json_set(value,'$.marketing',json(?),'$.revision',?,'$.updatedAt',?) WHERE id=1 AND revision=? AND length(CAST(json_set(value,'$.marketing',json(?)) AS BLOB))<=1800000").bind(expected+1,value,expected+1,new Date().toISOString(),expected,value).run();if(!result.meta.changes)throw Object.assign(Error('Marketing changed. Retry with fresh records.'),{status:409});}
