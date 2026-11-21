@@ -26,5 +26,5 @@ export async function workerPageResponse(request,env,store){
   const site=publicSite(state.published);
   if(path==='/sitemap.xml')return respond(sitemap(site),200,'application/xml; charset=utf-8');
   return respond(pageBody(pageHead(html,site,path),site,path),knownPublicPath(site,path)?200:404);
- }catch{return respond('Content is temporarily unavailable. Please retry.',503,'text/plain; charset=utf-8',{'Cache-Control':'no-store','Retry-After':'30'});}
+ }catch(error){console.error('public-page-render-failed',path,error);return respond('Content is temporarily unavailable. Please retry.',503,'text/plain; charset=utf-8',{'Cache-Control':'no-store','Retry-After':'30'});}
 }
