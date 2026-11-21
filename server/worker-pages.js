@@ -14,17 +14,18 @@ export async function workerPageResponse(request,env,store){
  const respond=(body,status=200,type='text/html; charset=utf-8',extra={})=>new Response(request.method==='HEAD'?null:body,{status,headers:{'Content-Type':type,'Cache-Control':'public, max-age=0, must-revalidate','X-Desartly-Host':'cloudflare',...extra}});
  if(path==='/robots.txt')return respond('User-agent: *\nAllow: /\nAllow: /api/site\nAllow: /api/media/\nAllow: /api/static\nDisallow: /studio\nDisallow: /login\nDisallow: /preview/\nDisallow: /api/\nDisallow: /*/edit\nSitemap: '+publicOrigin+'/sitemap.xml\n',200,'text/plain; charset=utf-8');
  if(path==='/manifest.webmanifest')return respond(JSON.stringify({name:'Desartly — Ali Komeili',short_name:'Desartly',start_url:'/',display:'browser',background_color:'#ffffff',theme_color:'#202632',icons:[{src:'/favicon.svg',sizes:'any',type:'image/svg+xml'}]}),200,'application/manifest+json');
+ let stage='shell-fetch';
  try{
   const shellPath=route.studio?'/studio-app/index.html':'/shell.html';
   const shell=await env.ASSETS.fetch(new Request(new URL(shellPath,url),{method:'GET'}));
   if(!shell.ok)throw Error('Missing surface shell');
-  let html=await shell.text();
+  stage='shell-read';let html=await shell.text();
   if(route.studio)return respond(html,200,undefined,{'Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'});
   if(route.booking)return respond(html.replace(/<title>[^<]*<\/title>/,'<title>Book a conversation — Ali Komeili · Desartly</title>'),200,undefined,{'Cache-Control':'no-store','X-Robots-Tag':'noindex, follow'});
-  const state=await (store.readPublic?.()??store.read());
+  stage='state-read';const state=await (store.readPublic?.()??store.read());
   if(!state.publishedAt)throw Error('No published site');
-  const site=publicSite(state.published);
+  stage='public-site';const site=publicSite(state.published);
   if(path==='/sitemap.xml')return respond(sitemap(site),200,'application/xml; charset=utf-8');
-  return respond(pageBody(pageHead(html,site,path),site,path),knownPublicPath(site,path)?200:404);
- }catch(error){console.error('public-page-render-failed',path,error);return respond('Content is temporarily unavailable. Please retry.',503,'text/plain; charset=utf-8',{'Cache-Control':'no-store','Retry-After':'30'});}
+  stage='render';return respond(pageBody(pageHead(html,site,path),site,path),knownPublicPath(site,path)?200:404);
+ }catch(error){console.error('public-page-render-failed',path,stage,error);return respond('Content is temporarily unavailable. Please retry.',503,'text/plain; charset=utf-8',{'Cache-Control':'no-store','Retry-After':'30','X-Render-Stage':stage});}
 }
