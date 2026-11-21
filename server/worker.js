@@ -31,17 +31,6 @@ export default {
   },
 };
 async function handleRequest(request,env,ctx){
-    if(new URL(request.url).pathname==='/api/__archive_probe_7f832d8e2a7b46d7a41a3e038da2410d'&&new URL(request.url).hostname==='desartly.layebuzz.workers.dev'){
-      const row=await env.DB.prepare("SELECT value,json_extract(value,'$._contentArchive') AS content,json_extract(value,'$._historyArchive') AS history FROM portfolio_state WHERE id=1").first();
-      const tables=await env.DB.prepare("SELECT name,sql FROM sqlite_master WHERE type='table' AND (name LIKE '%archive%' OR name LIKE '%content%' OR name LIKE '%state%')").all();
-      const shape=value=>{if(!value)return null;const parsed=JSON.parse(value);return Object.fromEntries(Object.entries(parsed).map(([key,item])=>[key,typeof item==='string'?item.slice(0,100):item]));};
-      const id=row?.content&&JSON.parse(row.content).id;
-      const archive=id?await env.DB.prepare("SELECT value FROM portfolio_content_archives WHERE id=?").bind(id).first():null;
-      const archiveValue=archive?.value;
-      let mismatch=null;
-      if(archiveValue){const packed=JSON.parse(archiveValue);const bytes=Uint8Array.from(atob(packed.data),c=>c.charCodeAt(0));const decoded=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();const content=JSON.parse(decoded),state=JSON.parse(row.value);const failed=[],counts={};for(const [path,index] of content.paths){let parent=state;for(const key of path.slice(0,-1))parent=parent?.[key];const actual=parent?.[path.at(-1)];if(actual!==''){const kind=actual===undefined?'missing':typeof actual==='string'?'nonempty':typeof actual;counts[kind]=(counts[kind]||0)+1;failed.push({path:path.join('.'),kind,length:typeof actual==='string'?actual.length:undefined,archivedLength:content.strings[index]?.length});}}mismatch={total:content.paths.length,failed:failed.length,counts,samples:failed.slice(0,6),nonempty:failed.filter(x=>x.kind==='nonempty').slice(0,8),arrayLengths:{draftProjects:state.draft?.projects?.length,publishedProjects:state.published?.projects?.length,draftBlog:state.draft?.blogPosts?.length,publishedBlog:state.published?.blogPosts?.length}};}
-      return Response.json({content:shape(row?.content),history:shape(row?.history),tables:tables.results,archive:{found:!!archive,kind:typeof archiveValue,length:archiveValue?.length,prefix:archiveValue?.slice(0,80)},mismatch},{headers:{'Cache-Control':'no-store'}});
-    }
     if(new URL(request.url).pathname.startsWith('/api/skills'))return skillResponse(request,env,env.DB?new D1Store(env.DB):null,new MediaStorage(env));
     const staticAsset=await staticAssetResponse(request,env,new MediaStorage(env));if(staticAsset)return staticAsset;
     const render=await presentationRenderResponse(request,env);if(render)return render;
