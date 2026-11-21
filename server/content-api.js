@@ -17,7 +17,7 @@ export async function contentResponse(request,env,store,media,transform,trustedA
  if(privatePath&&!owner)return json({error:'Owner sign-in required.'},401);
  if(!['GET','HEAD'].includes(request.method)&&request.headers.get('Origin')!==url.origin)return json({error:'Request origin rejected.'},403);
  const mediaOnly=owner&&(path.startsWith('/api/media/')||['/api/studio/upload','/api/studio/media-state'].includes(path))&&store.readMedia;
- let state=mediaOnly?await store.readMedia():await store.read();
+ let state=mediaOnly?await store.readMedia():path==='/api/site'&&request.method==='GET'&&store.readPublic?await store.readPublic():await store.read();
  const libraryWrite=['/api/studio/upload','/api/studio/media-action','/api/studio/media','/api/studio/media-text'].includes(path)&&store.writeMedia;
  const save=async next=>{const organised=libraryWrite?{...next,mediaFolders:libraryFolders(next)}:organiseMedia(next);if(mediaOnly)organised.customMediaFolders=next._registeredCustomMediaFolders??next.customMediaFolders;state=await (libraryWrite?store.writeMedia(organised,state.revision):store.write(organised,state.revision));return state;};
  if(path==='/api/studio/media-state'&&request.method==='GET')return json({...state,mediaFolders:libraryFolders(state),mediaCanUndo:Boolean(state.mediaUndo?.length)});
